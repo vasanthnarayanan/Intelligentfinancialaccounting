@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Purchase Sheet</title>
+<style type="text/css">@import "/css/jquery-ui.css";</style>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="/css/ifas/ifas.css" rel="stylesheet">
+<style type="text/css">
+.otherdateclass,.help-block {
+  display: none;
+}
+
+.autocomplete-suggestions {
+  border: 1px solid #999;
+  background: #FFF;
+  overflow: auto;
+}
+
+.autocomplete-suggestion {
+  padding: 2px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.autocomplete-selected {
+  background: #F0F0F0;
+}
+
+.autocomplete-suggestions strong {
+  font-weight: normal;
+  color: #3399FF;
+}
+
+.autocomplete-group {
+  padding: 2px 5px;
+}
+
+.autocomplete-group strong {
+  display: block;
+  border-bottom: 1px solid #000;
+}
+tr.group,
+tr.group:hover {
+    background-color: #ddd !important;
+}
+</style>
+<script src="/js/jquery.latest.min.js"></script>
+<script src="/js/jquery.autocomplete.js"></script>
+<script src="/js/jquery-ui.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+var cflag=0;
+var iflag=0;
+var customerName;
+var customerId;
+$(document).ready(function(){
+customerName = $('#customernameid');
+customerId = $('#customeridid');
+$('#purchasesheet').DataTable( {
+		"processing": true,
+        "serverSide": true,
+        "ordering": false,
+        "searching": false,
+        "ajax": "/listActivePurchase?rowCount="+${rowCount},
+        "columns": [
+        	{ "data": "recordDate", "visible": false },
+            { "data": "name",
+            	"render": function(data,type,row,meta){
+            		return '<a class="customersheetredirect" href="/customerAccountSheet?customername='+row.name+'&customerid='+row.customerId+'&pageno=1">'+row.name+'</a>';
+            	} },
+            { "data": "itemName" },
+            { "data": "itemQuantity" },
+            { "data": "itemType" },
+            { "data": "pieces" },
+            { "data": "cost" },
+            { "data":"remarks",
+            	"render": function(data,type,row,meta){
+            		if(null == row.remarks){
+            			return '<small></small>';
+            		}else{
+            			return '<small class="text-muted">'+row.remarks+'</small>';
+            		}
+            		
+            	} },
+            { "data": null,
+            	"render": function(data,type,row,meta){
+            		return '<a href="/editPurchase?recordid='+row.recordId+'" title="edit" class="editpurchase btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span></a> <a href="'+row.recordId+'" title="delete" class="deletepurchase btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span></a>';
+            	} }
+        ],
+        "drawCallback": function ( settings ) {
+            var api = this.api();
+            var rows = api.rows( {page:'current'} ).nodes();
+            var last=null;
+ 
+            api.column(0, {page:'current'} ).data().each( function ( group, i ) {
+                if ( last !== group ) {
+                    $(rows).eq( i ).before(
+                        '<tr class="group"><td colspan="8">'+group+'</td></tr>'
+                    );
+ 
+                    last = group;
+                }
+            } );
+        }
+    } );
+/**--Start of datepick--**/
+	$('.seldateclass').bind('change', function() {
+    var seldateclass = this;
+    var seldatewrapper = $(seldateclass).parent();
+    var otherdateclass = $(seldatewrapper).parent().find('.otherdateclass');
+    if ($(seldateclass).val().trim() === 'others') {
+      $(seldateclass).prop('disabled', true);
+      $(seldatewrapper).hide();
+      $(otherdateclass).show();
+      var pickdateclass = $(otherdateclass).find('.pickdateclass');
+      $(pickdateclass).prop('disabled', false);
+      $(pickdateclass).prop('readonly', true);
+      $(pickdateclass).datepicker({
+        dateFormat: 'dd/mm/yy',
+        showButtonPanel: true,
+        beforeShow: function(input) {
+          setTimeout(function() {
+            var buttonPane = $(input)
+              .datepicker("widget")
+              .find(".ui-datepicker-buttonpane");
+
+            $("<button>", {
+              text: "Clear",
+              click: function() {
+                //Code to clear your date field (text box, read only field etc.) I had to remove the line below and add custom code here
+                $.datepicker._clearDate(input);
+              }
+            }).appendTo(buttonPane).addClass("ui-datepicker-clear ui-state-default ui-priority-primary ui-corner-all");
+          }, 1)
+        },
+        onChangeMonthYear: function(year, month, instance) {
+          setTimeout(function() {
+            var buttonPane = $(instance)
+              .datepicker("widget")
+              .find(".ui-datepicker-buttonpane");
+
+            $("<button>", {
+              text: "Clear",
+              click: function() {
+                //Code to clear your date field (text box, read only field etc.) I had to remove the line below and add custom code here
+                $.datepicker._clearDate(instance.input);
+              }
+            }).appendTo(buttonPane).addClass("ui-datepicker-clear ui-state-default ui-priority-primary ui-corner-all");
+          }, 1);
+        },
+        onClose: function(selectedDate) {
+          if (selectedDate.length == 0) {
+            $(seldatewrapper).show();
+            $(seldateclass).prop('disabled', false).val("today");
+            $(pickdateclass).prop('readonly', false);
+            $(pickdateclass).prop('disabled', true);
+            $(otherdateclass).hide();
+          }
+        }
+      });
+      $(pickdateclass).focus();
+    }
+  });
+  /**--End of datepick--**/
+  $(customerName).devbridgeAutocomplete({
+	    	serviceUrl:'/listCustomersLike',
+	    	minChars:1,
+	    	noCache:true,
+	    	onSearchStart: function(query){
+	    	cflag=0;
+			$(customerName).closest('.form-group').removeClass('has-success');
+			$(customerName).closest('.form-group').addClass('has-error');
+			$(customerName).parent().find('.help-block').show();
+			$(customerId).val('');
+	    	},
+	    	onSelect: function (suggestion){
+	    	cflag=1;
+			$(customerName).parent().find('.help-block').hide();
+			$(customerName).closest('.form-group').removeClass('has-error');
+			$(customerName).closest('.form-group').addClass('has-success');
+	    	$(customerId).val(suggestion.data);
+	    	}
+	    });
+	    $('.itemnameclass').devbridgeAutocomplete({
+	    	serviceUrl:'/listItemsLike',
+	    	minChars:1,
+	    	noCache:true,
+	    	onSearchStart: function(query){
+	    	iflag =0;
+	    	$(this).closest('.form-group').removeClass('has-success');
+			$(this).closest('.form-group').addClass('has-error');
+	    	$(this).parent().find('.itemidclass').val('');
+	    	$(this).closest('.form-group').find('.costclass').val('');
+	    	$(this).parent().find('.help-block').show();
+	    	$(this).parent().find('.help-block').html('<small>Invalid Item</small>');
+	    	},
+	    	onSelect: function (suggestion){
+	    	iflag =1;
+			$(this).closest('.form-group').removeClass('has-error');
+			$(this).closest('.form-group').addClass('has-success');
+	    	$(this).parent().find('.itemidclass').val(suggestion.data[0].itemId);
+	    	$(this).parent().find('.help-block').show();
+	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+'</small>');
+		    $(this).closest('.form-group').find('.costclass').val(suggestion.data[0].cost);
+	    	}
+	    });
+  /*-- Deleting entry --*/
+	$('#purchasesheet tbody').on('click','.deletepurchase',function(event){
+		window.recordId=$(this).attr('href').trim();
+		var choice=confirm('Do you want to delete this entry ?');
+		if(choice==true)
+			{
+			$.ajax({
+				type: "GET",
+				url: "/removePurchase",
+				data:{purchaseRecordId: recordId},
+				success: function(responseData)
+				{
+					window.location.href="/showPurchaseSheet";
+				}
+			});
+			}
+		event.preventDefault();
+	});
+	/*-- End of deleting entry --*/
+	
+	$('#addpurchase').submit(function(event){
+		if(iflag==0||cflag==0)
+			{
+			event.preventDefault()
+			}
+	});
+});
+</script>
+</head>
+<body id="transaction">
+#include("mainnavigation.vm")
+<div id="contentcontainer" class="container-fluid">
+  <div class="row">
+    <div id="sidenavigation" class="col-sm-3">
+      <div class="list-group">
+        <a href="/addTransaction" class="list-group-item">Add Transaction</a>
+        <a href="/showSalesSheet" class="list-group-item">Sales Sheet</a>
+        <a href="/showPurchaseSheet" class="list-group-item active">Purchase Sheet</a>
+        <a href="/showFaultSheet" class="list-group-item">Fault Sheet</a>
+      </div>
+    </div>
+    <div id="content" class="col-sm-9">
+
+      <div id="quickaddform" class="collapse">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h1 class="panel-title">
+            Purchase Information
+            </h1>
+          </div>
+          <div class="panel-body">
+            <form id="addpurchase" class="form-horizontal" action="/addPurchase" method="post">
+              <fieldset>
+                <div class="form-group">
+                  <label class="col-sm-2">Date</label>
+                  <label class="col-sm-2">Customer Name</label>
+                  <label class="col-sm-2">Item Name</label>
+                  <label class="col-sm-2">Pieces</label>
+                  <label class="col-sm-2">Cost</label>
+                  <label class="col-sm-2">Remarks</label>
+                </div>
+
+                <div class="form-group">
+                  <div class="col-sm-2 seldatewrapper">
+                    <select class="form-control seldateclass" name="purchaseDate">
+                      <option value="today">Today</option>
+                      <option value="yesterday">Yesterday</option>
+                      <option value="others">Others</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-2 otherdateclass">
+                    <input type="text" class="form-control pickdateclass" name="purchaseDate" disabled="disabled" />
+                  </div>
+                  <div class='col-sm-2'>
+                    <input class="form-control" id="customernameid" name="purchaseCustomerName" placeholder="Customer Name" required="true" size="30" type="text" />
+              		<input type="hidden" id="customeridid" name="purchaseCustomerId"/>
+              		<span class="help-block text-uppercase"><small>Invalid Customer</small></span>
+                  </div>
+                  <div class="col-sm-2">
+                    <input type="text" class="form-control itemnameclass" name="itemname" placeholder="Item Name" required="true" size="30" />
+                    <input type="hidden" class="itemidclass" name="purchaseItemId" />
+                    <span class="help-block text-uppercase"><small>Item information placeholder</small></span>
+                  </div>
+                  <div class="col-sm-2">
+                    <input type="number" class="form-control piecesclass" name="purchasePieces" placeholder="Pieces" required="true" size="30" />
+                  </div>
+                  <div class="col-sm-2">
+                    <input type="number" step="any" class="form-control costclass" name="purchaseCost" placeholder="Cost" required="true" size="30" />
+                  </div>
+                  <div class="col-sm-2">
+                    <input type="text" class="form-control remarksclass" name="purchaseRemarks" placeholder="Remarks" size="30" />
+                  </div>
+                </div>
+
+                <div class="form-group">
+
+                  <div class="col-sm-12">
+                  <!-- unhide when direct transaction implemented --!>
+                    <div class="checkbox pull-left hide">
+                      <label>
+                        <input type="checkbox"> Cash</label>
+                    </div>
+                    <div class="pull-right">
+                      <input type="submit" class="btn btn-primary" value="Submit">
+                      <input type="reset" class="btn btn-default" value="Reset">
+                    </div>
+
+                  </div>
+                </div>
+
+              </fieldset>
+
+            </form>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="row">
+        <div class="col-sm-12 pull-right">
+          <div class="pull-right">
+            <a href="#" role="button" class="btn btn-default" data-toggle="collapse" data-target="#quickaddform">
+        Quick Add
+      </a>
+            <a href="/addMultiPurchase" class="btn btn-default">
+        Add
+      </a>
+          </div>
+
+        </div>
+
+      </div>
+      <div class="row">
+      <table id="purchasesheet" class="display" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+            	<th>Date</th>
+                <th>Customer Name</th>
+                <th>Item Name</th>
+                <th>Item Quantity</th>
+                <th>Item Type</th>
+                <th>Pieces</th>
+                <th>Cost</th>
+                <th>Remarks</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+       </table>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

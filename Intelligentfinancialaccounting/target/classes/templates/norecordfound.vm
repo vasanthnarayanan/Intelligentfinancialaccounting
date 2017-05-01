@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Error page</title>
+<link rel=StyleSheet href="/css/reset.css" type="text/css" media="screen" />
+<link rel=StyleSheet href="/css/ifmsstyle.css" type="text/css" media="screen" />
+<link rel=StyleSheet href="/css/applicationstyle.css" type="text/css" media="screen" />
+<script type="text/javascript">
+<!--
+function delayer(){
+    window.location = "/listCustomers?pageno=1&sorttype=normal";
+}
+//-->
+</script>
+</head>
+<body onLoad="setTimeout('delayer()', 5000)">
+<div id="topdeco"></div>
+<div id="pagecontainer">
+<div id="header">IFAS</div>
+#include("/static/html/MainNavigation.html")
+<div id="mainnavdeco"></div>
+<div id="contentcontainer">
+	<div id="sidenavigation"></div>
+	<div id="content">
+	<div class="errorcontent">
+		<p>No relevant record is found</p>
+		<p> You will be redirected automatically to index in 5 secs ...!(<a href="/listCustomers?pageno=1&sorttype=normal">or Click this</a>)</p>
+	</div>
+	</div>
+</div>
+<div id="footer"></div>
+</div>
+</body>
+</html>

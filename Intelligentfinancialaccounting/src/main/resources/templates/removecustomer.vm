@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit Customer</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/ifas/ifas.css" rel="stylesheet">
+<style>
+.help-block {
+  display: none;
+}
+.autocomplete-suggestions {
+  border: 1px solid #999;
+  background: #FFF;
+  overflow: auto;
+}
+
+.autocomplete-suggestion {
+  padding: 2px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.autocomplete-selected {
+  background: #F0F0F0;
+}
+
+.autocomplete-suggestions strong {
+  font-weight: normal;
+  color: #3399FF;
+}
+
+.autocomplete-group {
+  padding: 2px 5px;
+}
+
+.autocomplete-group strong {
+  display: block;
+  border-bottom: 1px solid #000;
+}
+</style>
+<script src="/js/jquery.latest.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.autocomplete.js"></script>
+<script src="/js/autocomplete.js"></script>
+<script type="text/javascript">
+var flag=0;
+var customerName;
+var customerId;
+var initialBalance;
+function autocompleteOnSearch(searchBoxId,query){
+						flag=0;
+						$(customerId).closest('.form-group').removeClass('has-success');
+						$(customerId).closest('.form-group').addClass('has-error');
+						$(customerId).parent().find('.help-block').show();
+						$(customerName).val('');
+}
+function autocompleteOnSelect(searchBoxId,suggestion){
+		$.ajax({
+				type: "POST",
+				url: "/getCustomerById",
+				data:{customerid: suggestion.value},
+				dataType: 'json',
+				success: function(responseData)
+				{
+					if(responseData.activeFlag==0)
+						{
+						flag=0;
+						$(customerId).closest('.form-group').removeClass('has-success');
+						$(customerId).closest('.form-group').addClass('has-error');
+						$(customerId).parent().find('.help-block').show();
+						}
+					else if(responseData.activeFlag==1)
+						{
+						flag=1;
+						$(customerId).parent().find('.help-block').hide();
+						$(customerId).closest('.form-group').removeClass('has-error');
+						$(customerId).closest('.form-group').addClass('has-success');
+						}
+					customerName.val(responseData.name);
+					initialBalance.val(responseData.initialBalance);
+				}
+				/*-- End of success --*/
+			});
+			/*-- End of ajax --*/
+}
+$(function(){
+	customerName = $('#f_customername');
+	customerId = $('#f_customerid');
+	initialBalance = $('#f_initialbalance');
+	/*-- Autocomplete fn call--*/
+	devbridgeAutoComplete('#f_customerid','/listCustomerIdLike');
+	/*-- End of Autocomplete fn call--*/
+	
+	$('#removecust').submit(function(event){
+		if(flag==0)
+			{
+			event.preventDefault()
+			}else{
+				var choice = confirm('Do you want to delete this entry ?');
+				if(!(choice==true)){
+				event.preventDefault()
+				}
+			}
+		});
+			
+});
+</script>
+</head>
+<body id="customer">
+#include("mainnavigation.vm")
+<div id="contentcontainer" class="container-fluid">
+  <div class="row">
+    <div id="sidenavigation" class="col-sm-3">
+      <div class="list-group">
+      	<a href="/addCustomer" class="list-group-item">Add Customer</a>
+		<a href="/editCustomer" class="list-group-item">Edit Customer</a>
+		<a href="/removeCustomer" class="list-group-item active">Remove Customer</a>
+      </div>
+    </div>
+    <div id="content" class="col-sm-9">
+    <form class="form-horizontal" name="removecustomer" id="removecust" action="/removeCustomerNormal" method="post">
+    <fieldset>
+	<legend>Customer Information</legend>
+	<div class="form-group">
+	<label id="idlabel" class="control-label col-sm-2" for="f_customerid">Id</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Customer Id" id="f_customerid" name="customerId" autocomplete="off" required="true"/>
+		<span class="help-block"><small>Please enter valid Customer Id or Customer Id does not exists</small></span>
+	</div>
+	</div>
+	<div class="form-group">
+	<label id="namelabel" class="control-label col-sm-2" for="f_customername">Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Customer Name" id="f_customername" name="name" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_initialbalance">Initial Balance</label>
+	<div class="col-sm-10">
+		<input type="number" class="form-control" placeholder="Initial Balance" id="f_initialbalance" name="initialBalance" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	</fieldset>
+	<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+	<input type="submit" name="submit" class="btn btn-primary" value="Remove customer" />
+	<input type="reset" id="reset" class="btn btn-default" value="Reset" /> 
+	</div>
+	</form>
+    </div>
+ </div>
+</body>
+</html>

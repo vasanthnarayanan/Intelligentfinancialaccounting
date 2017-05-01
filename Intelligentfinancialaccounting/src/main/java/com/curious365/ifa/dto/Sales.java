@@ -1,0 +1,107 @@
+package com.curious365.ifa.dto;
+
+import java.io.Serializable;
+
+import org.springframework.util.StringUtils;
+
+public class Sales implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4471571304940948851L;
+	private long salesRecordId;
+	private String salesDate;
+	private String salesCustomerName;
+	private long salesCustomerId;
+	private long salesItemId;
+	private String salesItemName;
+	private String salesItemQuantity;
+	private String salesItemType;
+	public String getSalesItemQuantity() {
+		return salesItemQuantity;
+	}
+	public void setSalesItemQuantity(String salesItemQuantity) {
+		this.salesItemQuantity = salesItemQuantity;
+	}
+	public String getSalesItemType() {
+		return salesItemType;
+	}
+	public void setSalesItemType(String salesItemType) {
+		this.salesItemType = salesItemType;
+	}
+	private long salesPieces;
+	private double salesCost;
+	private int activeFlag;
+	private String salesRemarks;
+	public long getSalesRecordId() {
+		return salesRecordId;
+	}
+	public void setSalesRecordId(long salesRecordId) {
+		this.salesRecordId = salesRecordId;
+	}
+	public String getSalesDate() {
+		return salesDate;
+	}
+	public void setSalesDate(String salesDate) {
+		this.salesDate = salesDate;
+	}
+	public String getSalesCustomerName() {
+		if(StringUtils.hasText(salesCustomerName)){
+			salesCustomerName = salesCustomerName.toUpperCase();
+		}
+		return salesCustomerName;
+	}
+	public void setSalesCustomerName(String salesCustomerName) {
+		this.salesCustomerName = salesCustomerName;
+	}
+	public long getSalesItemId() {
+		return salesItemId;
+	}
+	public void setSalesItemId(long salesItemId) {
+		this.salesItemId = salesItemId;
+	}
+	public long getSalesPieces() {
+		return salesPieces;
+	}
+	public void setSalesPieces(long salesPieces) {
+		this.salesPieces = salesPieces;
+	}
+	public double getSalesCost() {
+		return salesCost;
+	}
+	public void setSalesCost(double salesCost) {
+		this.salesCost = salesCost;
+	}
+	public int getActiveFlag() {
+		return activeFlag;
+	}
+	public void setActiveFlag(int activeFlag) {
+		this.activeFlag = activeFlag;
+	}
+	public long getSalesCustomerId() {
+		return salesCustomerId;
+	}
+	public void setSalesCustomerId(long salesCustomerId) {
+		this.salesCustomerId = salesCustomerId;
+	}
+	public String getSalesItemName() {
+		if(StringUtils.hasText(salesItemName)){
+			salesItemName = salesItemName.toUpperCase();
+		}
+		return salesItemName;
+	}
+	public void setSalesItemName(String salesItemName) {
+		this.salesItemName = salesItemName;
+	}
+	public String getSalesRemarks() {
+		if(!StringUtils.hasText(salesRemarks)){
+			salesRemarks = "";
+		}
+		return salesRemarks;
+	}
+	public void setSalesRemarks(String salesRemarks) {
+		this.salesRemarks = salesRemarks;
+	}
+	
+}

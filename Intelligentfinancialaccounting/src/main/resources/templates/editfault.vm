@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fault Sheet</title>
+<style type="text/css">@import "/css/jquery-ui.css";</style>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/ifas/ifas.css" rel="stylesheet">
+<style type="text/css">
+.otherdateclass,.help-block {
+  display: none;
+}
+
+.autocomplete-suggestions {
+  border: 1px solid #999;
+  background: #FFF;
+  overflow: auto;
+}
+
+.autocomplete-suggestion {
+  padding: 2px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.autocomplete-selected {
+  background: #F0F0F0;
+}
+
+.autocomplete-suggestions strong {
+  font-weight: normal;
+  color: #3399FF;
+}
+
+.autocomplete-group {
+  padding: 2px 5px;
+}
+
+.autocomplete-group strong {
+  display: block;
+  border-bottom: 1px solid #000;
+}
+</style>
+<script src="/js/jquery.latest.min.js"></script>
+<script src="/js/jquery.autocomplete.js"></script>
+<script src="/js/jquery-ui.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+var cflag=1;
+var iflag=1;
+var customerName;
+var customerId;
+var itemName;
+$(document).ready(function(){
+customerName = $('#f_faultcustomername');
+customerId = $('#f_faultcustomerid');
+itemName = $('#f_faultitemname');
+$(itemName).parent().find('.help-block').show();
+	/**--Start of datepick--**/
+	var pickdateclass = $('.pickdateclass');
+	$(pickdateclass).datepicker({
+        dateFormat: 'dd/mm/yy',
+        showButtonPanel: true,
+        beforeShow: function(input) {
+          setTimeout(function() {
+            var buttonPane = $(input)
+              .datepicker("widget")
+              .find(".ui-datepicker-buttonpane");
+
+            $("<button>", {
+              text: "Clear",
+              click: function() {
+                //Code to clear your date field (text box, read only field etc.) I had to remove the line below and add custom code here
+                $.datepicker._clearDate(input);
+              }
+            }).appendTo(buttonPane).addClass("ui-datepicker-clear ui-state-default ui-priority-primary ui-corner-all");
+          }, 1)
+        },
+        onChangeMonthYear: function(year, month, instance) {
+          setTimeout(function() {
+            var buttonPane = $(instance)
+              .datepicker("widget")
+              .find(".ui-datepicker-buttonpane");
+
+            $("<button>", {
+              text: "Clear",
+              click: function() {
+                //Code to clear your date field (text box, read only field etc.) I had to remove the line below and add custom code here
+                $.datepicker._clearDate(instance.input);
+              }
+            }).appendTo(buttonPane).addClass("ui-datepicker-clear ui-state-default ui-priority-primary ui-corner-all");
+          }, 1);
+        },
+        onClose: function(selectedDate) {
+          if (selectedDate.length == 0) {
+          	cflag=0;
+          	$(pickdateclass).closest('.form-group').removeClass('has-success');
+		  	$(pickdateclass).closest('.form-group').addClass('has-error');
+			$(pickdateclass).parent().find('.help-block').show();
+          }else{
+          	cflag=1;
+			$(pickdateclass).parent().find('.help-block').hide();
+			$(pickdateclass).closest('.form-group').removeClass('has-error');
+			$(pickdateclass).closest('.form-group').addClass('has-success');
+          }
+        }
+      });
+  /**--End of datepick--**/
+	/**--End of datepick--**/
+  $(customerName).devbridgeAutocomplete({
+	    	serviceUrl:'/listCustomersLike',
+	    	minChars:1,
+	    	noCache:true,
+	    	onSearchStart: function(query){
+	    	cflag=0;
+			$(customerName).closest('.form-group').removeClass('has-success');
+			$(customerName).closest('.form-group').addClass('has-error');
+			$(customerName).parent().find('.help-block').show();
+			$(customerId).val('');
+	    	},
+	    	onSelect: function (suggestion){
+	    	cflag=1;
+			$(customerName).parent().find('.help-block').hide();
+			$(customerName).closest('.form-group').removeClass('has-error');
+			$(customerName).closest('.form-group').addClass('has-success');
+	    	$(customerId).val(suggestion.data);
+	    	}
+	    });
+	    $(itemName).devbridgeAutocomplete({
+	    	serviceUrl:'/listItemsLike',
+	    	minChars:1,
+	    	noCache:true,
+	    	onSearchStart: function(query){
+	    	iflag =0;
+	    	$(this).closest('.form-group').removeClass('has-success');
+			$(this).closest('.form-group').addClass('has-error');
+	    	$(this).parent().find('#f_faultitemid').val('');
+	    	$('#f_faultcost').val('');
+	    	$(this).parent().find('.help-block').show();
+	    	$(this).parent().find('.help-block').html('<small>Invalid Item</small>');
+	    	},
+	    	onSelect: function (suggestion){
+	    	iflag =1;
+			$(this).closest('.form-group').removeClass('has-error');
+			$(this).closest('.form-group').addClass('has-success');
+	    	$(this).parent().find('#f_faultitemid').val(suggestion.data[0].itemId);
+	    	$(this).parent().find('.help-block').show();
+	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+'</small>');
+		    $('#f_faultcost').val(suggestion.data[0].cost);
+	    	}
+	    });
+	$('#editfault').submit(function(event){
+		
+		if(iflag==0||cflag==0)
+			{
+			event.preventDefault()
+			}
+		
+	});
+		
+});
+</script>
+</head>
+<body id="fault">
+#include("mainnavigation.vm")
+<div id="contentcontainer" class="container-fluid">
+  <div class="row">
+    <div id="sidenavigation" class="col-sm-3">
+      <div class="list-group">
+	    <a href="/addTransaction" class="list-group-item">Add Transaction</a>
+		<a href="/showSalesSheet" class="list-group-item">Sales Sheet</a>
+		<a href="/showPurchaseSheet" class="list-group-item">Purchase Sheet</a>
+		<a href="/showFaultSheet" class="list-group-item">Fault Sheet</a>
+      </div>
+    </div>
+    <div id="content" class="col-sm-9">
+    	<form class="form-horizontal" id="editfault" name="editfault" action="/editFault" method="post">
+    <fieldset>
+	<legend>Purchase Information</legend>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_faultrecordid">Id</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Fault Id" id="f_faultrecordid" name="faultRecordId" value="${record.faultRecordId}" readonly="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_transactiondate" class="control-label col-sm-2">Date</label>
+	<div class="col-sm-10">
+        <input type="text" class="form-control pickdateclass" name="faultDate" value="${record.faultDate}" readonly="true" required="true"/>
+        <span class="help-block"><small>Please select a valid date</small></span>
+	</div>
+	</div>
+	<div class="form-group">
+	<label id="namelabel" class="control-label col-sm-2" for="f_faultcustomername">Customer Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Customer Name" id="f_faultcustomername" name="faultCustomerName" value="${record.faultCustomerName}" autocomplete="off" required="true"/>
+		<input type="hidden" id="f_faultcustomerid" name="faultCustomerId" value="${record.faultCustomerId}"/>
+		<span class="help-block"><small>Please enter valid Customer Id or Customer Id does not exists</small></span>
+	</div>
+	</div>
+	<div class="form-group">
+	<label id="namelabel" class="control-label col-sm-2" for="f_faultitemname">Item Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Customer Name" id="f_faultitemname" name="faultItemName" value="${record.faultItemName}" autocomplete="off" required="true"/>
+		<input type="hidden" id="f_faultitemid" name="faultItemId" value="${record.faultItemId}"/>
+		<span class="help-block"><small>${record.faultItemQuantity} kg ${record.faultItemType}</small></span>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_faultpieces">Pieces</label>
+	<div class="col-sm-10">
+		<input type="number" class="form-control" placeholder="Pieces" id="f_faultpieces" name="faultPieces" value="${record.faultPieces}" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_faultcost">Cost</label>
+	<div class="col-sm-10">
+		<input type="number" step="any" class="form-control" placeholder="Cost" id="f_faultcost" name="faultCost" value="${record.faultCost}" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_faultremarks">Remarks</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Remarks" id="f_faultremarks" name="faultRemarks" value="${record.faultRemarks}" autocomplete="off"/>
+	</div>
+	</div>
+	</fieldset>
+	<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+	<input type="submit" name="upddatefault" class="btn btn-primary" value="Update Fault" />
+	<input type="reset" name="reset" class="btn btn-default" value="Reset" />
+	</div>
+	</div>
+	</form>
+	</div>
+ </div>
+</div>
+</body>
+</html>

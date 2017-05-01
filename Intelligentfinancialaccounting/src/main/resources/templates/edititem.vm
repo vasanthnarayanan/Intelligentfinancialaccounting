@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit Item</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/ifas/ifas.css" rel="stylesheet">
+<style>
+.help-block {
+  display: none;
+}
+.autocomplete-suggestions {
+  border: 1px solid #999;
+  background: #FFF;
+  overflow: auto;
+}
+
+.autocomplete-suggestion {
+  padding: 2px 5px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.autocomplete-selected {
+  background: #F0F0F0;
+}
+
+.autocomplete-suggestions strong {
+  font-weight: normal;
+  color: #3399FF;
+}
+
+.autocomplete-group {
+  padding: 2px 5px;
+}
+
+.autocomplete-group strong {
+  display: block;
+  border-bottom: 1px solid #000;
+}
+</style>
+<script src="/js/jquery.latest.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.autocomplete.js"></script>
+<script src="/js/autocomplete.js"></script>
+<script type="text/javascript">
+var flag=1;
+var itemId;
+var itemOldName;
+var itemNewName;
+var itemQuantity;
+var itemType;
+var itemCost;
+var itemStock;
+function autocompleteOnSearch(searchBoxId,query){
+					flag=0;
+					$(itemOldName).closest('.form-group').removeClass('has-success');
+					$(itemOldName).closest('.form-group').addClass('has-error');
+					$(itemOldName).parent().find('.help-block').show();
+					/*-- Clearing fields --*/
+					$(itemId).val('');
+					$(itemNewName).val('');
+					$(itemQuantity).val('');
+					$(itemType).val('');
+					$(itemCost).val('');
+					$(itemStock).val('');
+	}
+	function autocompleteOnSelect(searchBoxId,suggestion){
+					flag=1;
+					$(itemOldName).parent().find('.help-block').hide();
+					$(itemOldName).closest('.form-group').removeClass('has-error');
+					$(itemOldName).closest('.form-group').addClass('has-success');
+					/*-- Populating fields --*/
+					$(itemId).val(suggestion.data[0].itemId);
+					$(itemNewName).val(suggestion.data[0].itemName);
+					$(itemQuantity).val(suggestion.data[0].quantityId);
+					$(itemType).val(suggestion.data[0].typeId);
+					$(itemCost).val(suggestion.data[0].cost);
+					$(itemStock).val(suggestion.data[0].stock);
+		}
+$(function(){
+	itemId = $('#f_itemid');
+	itemOldName = $('#f_itemoldname');
+	itemNewName = $('#f_itemnewname');
+	itemQuantity = $('#f_itemquantity');
+	itemType = $('#f_itemtype');
+	itemCost = $('#f_itemcost');
+	itemStock = $('#f_itemstock');
+	
+	/*-- Autocomplete fn call--*/
+	devbridgeAutoComplete('#f_itemoldname','/listItemsLike');
+	/*-- End of Autocomplete fn call--*/
+	
+	$('#updateitem').submit(function(event){
+		if(flag==0)
+			{
+			event.preventDefault()
+			}
+	});
+	
+});
+</script>
+</head>
+<body id="item">
+#include("mainnavigation.vm")
+<div id="contentcontainer" class="container-fluid">
+  <div class="row">
+    <div id="sidenavigation" class="col-sm-3">
+      <div class="list-group">
+      	<a href="/addItem" class="list-group-item">Add Item</a>
+		<a href="/editItem" class="list-group-item active">Edit Item</a>
+		<a href="/removeItem" class="list-group-item">Remove Item</a>
+      </div>
+    </div>
+    <div id="content" class="col-sm-9">
+    <form class="form-horizontal" name="updateitem" id="updateitem" action="/editItem" method="post">
+    <fieldset>
+	<legend>Item Information</legend>
+	#if($redirect)
+	<script type="text/javascript">
+	$(function(){
+		flag=1;
+		$(itemQuantity).val("${item.quantityId}");
+		$(itemType).val("${item.typeId}");
+		$(itemId).parent().find('.help-block').hide();
+		$(itemId).closest('.form-group').removeClass('has-error');
+		$(itemId).closest('.form-group').addClass('has-success');
+	});
+	</script>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_itemid">Id</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Item Id" id="f_itemid" name="itemId" autocomplete="off" required="true" value="${item.itemId}" readonly="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label id="oldnamelabel" class="control-label col-sm-2" for="f_itemoldname">Old Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Item Name" id="f_itemoldname" name="oldItemName" autocomplete="off" value="${item.itemName}"  required="true"/>
+		<span class="help-block"><small>Please enter valid Item or Item does not exists</small></span>
+	</div>
+	</div>
+	<div class="form-group">
+	<label id="newnamelabel" class="control-label col-sm-2" for="f_itemnewname">New Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Item Name" id="f_itemnewname" name="itemName" autocomplete="off" value="${item.itemName}"  required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_itemquantity" class="control-label col-sm-2">Quantity</label>
+	<div class="col-sm-10">
+		<select id="f_itemquantity" class="form-control" name="quantityId" required="true">
+			<option value="">--Quantity--</option>
+			<option value="1000">5 kg</option>
+			<option value="1001">10 kg</option>
+			<option value="1002">25 kg</option>
+			<option value="1003">50 kg</option>
+			<option value="1004">75 kg</option>
+			<option value="1005">100 kg</option>
+		</select>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_itemtype" class="control-label col-sm-2" >Type</label>
+	<div class="col-sm-10">
+		<select id="f_itemtype" class="form-control" name="typeId" required="true">
+			<option value="">--Type--</option>
+			<option value="1000">Jute bags</option>
+			<option value="1001">Non-woven plastic bags</option>
+			<option value="1002">Woven plastic bags</option>
+			<option value="1003">Plastic bags</option>
+		</select>
+	</div>	
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_itemcost">Cost</label>
+	<div class="col-sm-10">
+		<input type="number" class="form-control" placeholder="Cost" id="f_itemcost" name="cost" autocomplete="off" value="${item.cost}" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_itemstock">Stock</label>
+	<div class="col-sm-10">
+		<input type="number" class="form-control" placeholder="Stock" id="f_itemstock" name="stock" autocomplete="off" value="${item.stock}" required="true"/>
+	</div>
+	</div>
+	#else
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_itemid">Id</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Item Id" id="f_itemid" name="itemId" autocomplete="off" required="true" readonly="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label id="oldnamelabel" class="control-label col-sm-2" for="f_itemoldname">Old Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Item Name" id="f_itemoldname" name="oldItemName" autocomplete="off" required="true"/>
+		<span class="help-block"><small>Please enter valid Item or Item does not exists</small></span>
+	</div>
+	</div>
+	<div class="form-group">
+	<label id="newnamelabel" class="control-label col-sm-2" for="f_itemnewname">New Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Item Name" id="f_itemnewname" name="itemName" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_itemquantity" class="control-label col-sm-2">Quantity</label>
+	<div class="col-sm-10">
+		<select id="f_itemquantity" class="form-control" name="quantityId" required="true">
+			<option value="">--Quantity--</option>
+			<option value="1000">5 kg</option>
+			<option value="1001">10 kg</option>
+			<option value="1002">25 kg</option>
+			<option value="1003">50 kg</option>
+			<option value="1004">75 kg</option>
+			<option value="1005">100 kg</option>
+		</select>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_itemtype" class="control-label col-sm-2" >Type</label>
+	<div class="col-sm-10">
+		<select id="f_itemtype" class="form-control" name="typeId" required="true">
+			<option value="">--Type--</option>
+			<option value="1000">Jute bags</option>
+			<option value="1001">Non-woven plastic bags</option>
+			<option value="1002">Woven plastic bags</option>
+			<option value="1003">Plastic bags</option>
+		</select>
+	</div>	
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_itemcost">Cost</label>
+	<div class="col-sm-10">
+		<input type="number" step="any" class="form-control" placeholder="Cost" id="f_itemcost" name="cost" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_itemstock">Stock</label>
+	<div class="col-sm-10">
+		<input type="number" class="form-control" placeholder="Stock" id="f_itemstock" name="stock" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	#end
+	
+	</fieldset>
+	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+			<input type="submit" name="submit" class="btn btn-primary" value="Update Item" />
+			<input type="reset" id="reset" class="btn btn-default" value="Reset" /> 
+		</div>
+	</form>
+    </div>
+ </div>
+</body>
+</html>

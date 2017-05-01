@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Add Customer</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/ifas/ifas.css" rel="stylesheet">
+<style>
+.help-block {
+  display: none;
+}
+</style>
+<script src="/js/jquery.latest.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+$(function(){
+	var customerName=$('#f_customername');
+	var flag=0;
+	$(customerName).blur(function(){
+		setTimeout(function(){
+		$.ajax({
+			type: "POST",
+			url: "/checkCustomerName",
+			data: {customername:customerName.val()},
+			success: function(responseData)
+			{
+				if(responseData.trim()=="available")
+					{
+					$(customerName).parent().find('.help-block').hide();
+					$(customerName).closest('.form-group').removeClass('has-error');
+					$(customerName).closest('.form-group').addClass('has-success');
+					flag=1;
+					}
+				else if(responseData.trim()=="unavailable")
+					{
+						$(customerName).closest('.form-group').removeClass('has-success');
+						$(customerName).closest('.form-group').addClass('has-error');
+						$(customerName).parent().find('.help-block').show();
+						flag=0;
+					}
+			}
+			/*---End of ajax call---*/
+		});
+	},500);
+});
+	
+	$('#addcust').submit(function(event){
+		if(flag==0)
+			{
+			event.preventDefault();
+			}
+			
+	});
+	
+});
+</script>
+</head>
+<body id="customer">
+#include("mainnavigation.vm")
+<div id="contentcontainer" class="container-fluid">
+  <div class="row">
+    <div id="sidenavigation" class="col-sm-3">
+      <div class="list-group">
+      	<a href="/addCustomer" class="list-group-item active">Add Customer</a>
+		<a href="/editCustomer" class="list-group-item">Edit Customer</a>
+		<a href="/removeCustomer" class="list-group-item">Remove Customer</a>
+      </div>
+    </div>
+    <div id="content" class="col-sm-9">
+    <form class="form-horizontal" name="addcustomer" id="addcust" action="/addCustomer" method="post">
+    <fieldset>
+	<legend>Customer Information</legend>
+	<div class="form-group">
+	<label id="namelabel" class="control-label col-sm-2" for="f_customername">Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Customer Name" id="f_customername" name="name" value="" autocomplete="off" required="true"/>
+		<span class="help-block"><small>Please enter valid Customer Name or Customer Name already exists</small></span>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_initialbalance">Initial Balance</label>
+	<div class="col-sm-10">
+		<input type="number" class="form-control" placeholder="Initial Balance" id="f_initialbalance" name="initialBalance" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	</fieldset>
+	<fieldset>
+	<legend>Additional details</legend>
+	<div class="form-group">
+	<label for="f_customeraddress" class="control-label col-sm-2">Address</label>
+	<div class="col-sm-10">
+		<textarea rows="3"class="form-control" placeholder="Customer Address" id="f_customeraddress" name="customeraddress"></textarea>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_customerphonenumber" class="control-label col-sm-2" >Phone number</label>
+	<div class="col-sm-10">
+		<input type="phone" id="f_customerphonenumber" class="form-control" placeholder="Customer Phone" name="customerphonenumber"/>
+	</div>	
+	</div>
+	</fieldset>
+	<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+	<input type="submit" name="submit" class="btn btn-primary" value="Add customer" />
+	</div>
+	</form>
+    </div>
+ </div>
+</body>
+</html>
