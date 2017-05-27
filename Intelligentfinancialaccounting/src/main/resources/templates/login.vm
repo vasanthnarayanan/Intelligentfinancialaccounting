@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IFAS Home</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/ifas/ifas.css" rel="stylesheet">
+<script src="/js/jquery.latest.min.js"></script>
+</head>
+<body id="login">
+#parse("mainnavigation.vm")
+<div id="contentcontainer" class="container-fluid">
+  <div class="row">
+    <div id="sidenavigation" class="col-sm-3">
+    </div>
+    <div id="content" class="col-sm-9">
+    	<div class="row">
+    	#if($error)
+	    <div class="alert alert-danger">
+	        <a href="#" class="close" data-dismiss="alert">&times;</a>
+	        <strong>Error! </strong> Invalid Username and Password.
+	    </div>
+	    #end
+	    #if($logout)
+	    <div class="alert alert-info">
+	        <a href="#" class="close" data-dismiss="alert">&times;</a>
+	        <strong>Note!</strong> You have been logged out..
+	    </div>
+	    #end
+    	</div>
+    	<div class="row">
+    		<form class="form-horizontal" name="loginForm" action="login" method="post">
+		    <fieldset>
+			<legend>Login</legend>
+			<div class="form-group">
+			<label class="control-label col-sm-2" for="f_username">Username</label>
+			<div class="col-sm-4">
+				<input type="text" class="form-control" placeholder="Username" id="f_username" name="username" value="" autocomplete="off" required="true"/>
+			</div>
+			</div>
+			<div class="form-group">
+			<label class="control-label col-sm-2" for="f_password">Password</label>
+			<div class="col-sm-4">
+				<input type="password" class="form-control" placeholder="Password" id="f_password" name="password" autocomplete="off" required="true"/>
+			</div>
+			</div>
+			</fieldset>
+			<div class="form-group">
+				<div class="col-sm-offset-2 col-sm-4">
+				<input type="submit" name="submit" class="btn btn-primary" value="Login" />
+			</div>
+			
+			</form>
+    	</div>
+    </div>
+  </div>
+  </div>
+</body>
+</html>
