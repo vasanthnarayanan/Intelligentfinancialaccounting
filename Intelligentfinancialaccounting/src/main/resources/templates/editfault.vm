@@ -164,7 +164,7 @@ $(itemName).parent().find('.help-block').show();
 </script>
 </head>
 <body id="fault">
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">

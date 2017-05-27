@@ -18,7 +18,11 @@
       <li id="navAccounts"><a href="/showSalesSheet">Accounts</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="#">Login</a></li>
+    #if($authenticated)
+    	<li id="navLogin"><a href="/logout">Logout</a></li>
+    #else
+		<li id="navLogin"><a href="/login">Login</a></li>    	
+    #end
     </ul>
   </div>
 </nav>

@@ -193,7 +193,7 @@ function initiateactions(){
 </script>
 </head>
 <body id="transaction">
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">

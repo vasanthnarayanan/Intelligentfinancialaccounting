@@ -18,7 +18,7 @@ function delayer(){
 <div id="topdeco"></div>
 <div id="pagecontainer">
 <div id="header">IFAS</div>
-#include("/static/html/MainNavigation.html")
+#parse("/static/html/MainNavigation.html")
 <div id="mainnavdeco"></div>
 <div id="contentcontainer">
 	<div id="sidenavigation"></div>
