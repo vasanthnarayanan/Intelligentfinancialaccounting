@@ -11,7 +11,7 @@ public class HomeController {
 	private Log log = LogFactory.getLog(HomeController.class);
 	
 
-	@RequestMapping("/home")
+	@RequestMapping(value={"/home","/"})
 	public String welcome(){
 		log.debug("welcome");
 		return "welcome";
