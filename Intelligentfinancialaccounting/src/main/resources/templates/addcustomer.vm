@@ -91,13 +91,13 @@ $(function(){
 	<div class="form-group">
 	<label for="f_customeraddress" class="control-label col-sm-2">Address</label>
 	<div class="col-sm-10">
-		<textarea rows="3"class="form-control" placeholder="Customer Address" id="f_customeraddress" name="customeraddress"></textarea>
+		<textarea rows="3"class="form-control" placeholder="Customer Address" id="f_customeraddress" name="customerAddress"></textarea>
 	</div>
 	</div>
 	<div class="form-group">
 	<label for="f_customerphonenumber" class="control-label col-sm-2" >Phone number</label>
 	<div class="col-sm-10">
-		<input type="phone" id="f_customerphonenumber" class="form-control" placeholder="Customer Phone" name="customerphonenumber"/>
+		<input type="number" id="f_customerphonenumber" class="form-control" placeholder="Customer Phone" name="customerPhoneNumber"/>
 	</div>	
 	</div>
 	</fieldset>

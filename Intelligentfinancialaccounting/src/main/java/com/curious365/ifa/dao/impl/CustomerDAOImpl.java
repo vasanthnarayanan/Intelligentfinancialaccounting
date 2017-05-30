@@ -57,7 +57,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 
 	@Override
 	public boolean addNewCustomer(Customer bean) {
-		int flag = jdbcTemplate.update(QueryConstants.INSERT_CUSTOMER, new Object[]{bean.getName(),Constants.ACTIVE,bean.getInitialBalance()});
+		int flag = jdbcTemplate.update(QueryConstants.INSERT_CUSTOMER, new Object[]{bean.getName(),Constants.ACTIVE,bean.getInitialBalance(),bean.getCustomerAddress(),bean.getCustomerPhoneNumber()});
 		if(flag>0){
 			return true;
 		}else{
@@ -102,7 +102,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 	
 	@Override
 	public boolean editCustomer(Customer bean) {
-		int flag = jdbcTemplate.update(QueryConstants.UPDATE_CUSTOMER, new Object[]{bean.getName(),bean.getInitialBalance(),bean.getCustomerId()});
+		int flag = jdbcTemplate.update(QueryConstants.UPDATE_CUSTOMER, new Object[]{bean.getName(),bean.getInitialBalance(),bean.getCustomerAddress(),bean.getCustomerPhoneNumber(),bean.getCustomerId()});
 		if(flag>0){
 			return true;
 		}else{

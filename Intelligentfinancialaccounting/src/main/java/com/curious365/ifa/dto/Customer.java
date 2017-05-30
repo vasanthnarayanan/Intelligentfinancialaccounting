@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import org.springframework.util.StringUtils;
 
+import com.curious365.ifa.common.Constants;
+
 public class Customer implements Serializable {
 
 	/**
@@ -24,6 +26,9 @@ public class Customer implements Serializable {
 		this.customerId = customerId;
 	}
 	public String getCustomerAddress() {
+		if(!StringUtils.hasText(customerAddress)){
+			this.customerAddress = Constants.EMPTY_STRING;
+		}
 		return customerAddress;
 	}
 	public void setCustomerAddress(String customerAddress) {

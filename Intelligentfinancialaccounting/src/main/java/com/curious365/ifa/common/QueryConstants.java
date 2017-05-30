@@ -12,11 +12,11 @@ public class QueryConstants {
 	public static final String LIST_CUSTOMERS_ASC_WT_PAGING = "select * from ( select a.*, ROWNUM rnum from (select * from customer where activeflag=? order by name) a where ROWNUM <= ?)where rnum  > ?";
 	public static final String LIST_CUSTOMERS_DESC_WT_PAGING = "select * from ( select a.*, ROWNUM rnum from (select * from customer where activeflag=? order by name desc) a where ROWNUM <= ?)where rnum  > ?";
 	public static final String CHECK_CUSTOMERNAME_AVAILABILITY = "select count(*) from customer where activeflag=? and name=?";
-	public static final String INSERT_CUSTOMER = "insert into customer(customerid,name,activeflag,initialbalance) values(id_sequence.nextVal,?,?,?)";
+	public static final String INSERT_CUSTOMER = "insert into customer(customerid,name,activeflag,initialbalance,customeraddress,customerphonenumber) values(id_sequence.nextVal,?,?,?,?,?)";
 	public static final String LIST_CUSTOMERS_LIKE = "select * from customer where activeflag=? and name like ?";
 	public static final String LIST_CUSTOMER_IDS_LIKE = "select customerid from customer where activeflag=? and customerid like ?";
 	public static final String GET_CUSTOMER_BY_ID = "select * from customer where activeflag=? and customerid=?";
-	public static final String UPDATE_CUSTOMER = "update customer set name=?,initialbalance=? where customerid=?";
+	public static final String UPDATE_CUSTOMER = "update customer set name=?,initialbalance=?,customeraddress=?,customerphonenumber=? where customerid=?";
 	public static final String SOFT_DELETE_CUSTOMER = "update customer set activeflag=? where customerid=?";
 	
 	/**

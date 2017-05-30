@@ -119,6 +119,11 @@ public class AccountingDAOImpl implements AccountingDAO {
 		return jdbcTemplate.queryForObject(QueryConstants.COUNT_ACTIVE_SALES,Long.class,new Object[]{Constants.ACTIVE});
 	}
 
+	@Override
+	public Long getActiveSalesCount() throws Exception {
+		return jdbcTemplate.queryForObject("Select count(*) from sales where activeflag=?",Long.class,new Object[]{Constants.ACTIVE});
+	}
+
 
 	@Override
 	public Long getActivePurchaseRowCount() throws Exception {

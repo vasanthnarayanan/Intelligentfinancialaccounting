@@ -15,6 +15,7 @@ public interface AccountingDAO {
 	public boolean editTransaction(Transaction record);
 	public boolean softDeleteTransaction(long transactionId);
 	public Long getActiveSalesRowCount() throws Exception;
+	public Long getActiveSalesCount() throws Exception;
 	public Long getActivePurchaseRowCount() throws Exception;
 	public Long getActiveFaultRowCount() throws Exception;
 	public long getCurrentTransactionId();

@@ -47,14 +47,20 @@
 <script src="/js/autocomplete.js"></script>
 <script type="text/javascript">
 var flag=${customer.activeFlag};
-var customerName;
 var customerId;
+var customerName;
+var initialBalance;
+var address;
+var phoneNumber;
 function autocompleteOnSearch(searchBoxId,query){
 						flag=0;
 						$(customerId).closest('.form-group').removeClass('has-success');
 						$(customerId).closest('.form-group').addClass('has-error');
 						$(customerId).parent().find('.help-block').show();
 						$(customerName).val('');
+						$(initialBalance).val('');
+						$(address).val('');
+						$(phoneNumber).val('');
 }
 function autocompleteOnSelect(searchBoxId,suggestion){
 		$.ajax({
@@ -79,6 +85,9 @@ function autocompleteOnSelect(searchBoxId,suggestion){
 						$(customerId).closest('.form-group').addClass('has-success');
 						}
 					customerName.val(responseData.name);
+					initialBalance.val(responseData.initialBalance);
+					address.val(responseData.customerAddress);
+					phoneNumber.val(responseData.customerPhoneNumber);
 				}
 				/*-- End of success --*/
 			});
@@ -87,6 +96,10 @@ function autocompleteOnSelect(searchBoxId,suggestion){
 $(function(){
 	customerName = $('#f_customername');
 	customerId = $('#f_customerid');
+	initialBalance = $('#f_initialbalance');
+	address = $('#f_customeraddress');
+	phoneNumber = $('#f_customerphonenumber');
+	
 	/*-- Autocomplete fn call--*/
 	devbridgeAutoComplete('#f_customerid','/listCustomerIdLike');
 	/*-- End of Autocomplete fn call--*/
@@ -147,6 +160,21 @@ $(function(){
 	<div class="col-sm-10">
 		<input type="number" class="form-control" placeholder="Initial Balance" id="f_initialbalance" name="initialBalance" value="${customer.initialBalance}" autocomplete="off" required="true"/>
 	</div>
+	</div>
+	</fieldset>
+	<fieldset>
+	<legend>Additional details</legend>
+	<div class="form-group">
+	<label for="f_customeraddress" class="control-label col-sm-2">Address</label>
+	<div class="col-sm-10">
+		<textarea rows="3"class="form-control" placeholder="Customer Address" id="f_customeraddress" name="customerAddress" autocomplete="off" >${customer.customerAddress}</textarea>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_customerphonenumber" class="control-label col-sm-2" >Phone number</label>
+	<div class="col-sm-10">
+		<input type="number" id="f_customerphonenumber" class="form-control" placeholder="Customer Phone" name="customerPhoneNumber" value="${customer.customerPhoneNumber}" autocomplete="off" />
+	</div>	
 	</div>
 	</fieldset>
 	<div class="form-group">

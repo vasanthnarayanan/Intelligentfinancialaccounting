@@ -75,6 +75,9 @@ public class CustomerController {
 			customer = new Customer();
 			customer.setName(Constants.EMPTY_STRING);
 			customer.setCustomerId(Constants.EMPTY_STRING);
+			customer.setInitialBalance(Constants.ZERO);
+			customer.setCustomerAddress(Constants.EMPTY_STRING);
+			customer.setCustomerPhoneNumber(Constants.EMPTY_STRING);
 			customer.setActiveFlag(Constants.ZERO);
 		}
 		mav.addObject("customer", customer);
