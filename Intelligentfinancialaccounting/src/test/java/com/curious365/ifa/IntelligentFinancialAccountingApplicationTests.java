@@ -10,4 +10,5 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @SpringApplicationConfiguration(classes = IntelligentFinancialAccountingApplication.class)
 public abstract class IntelligentFinancialAccountingApplicationTests {
 	protected Log log = LogFactory.getLog(this.getClass());
+	
 }
