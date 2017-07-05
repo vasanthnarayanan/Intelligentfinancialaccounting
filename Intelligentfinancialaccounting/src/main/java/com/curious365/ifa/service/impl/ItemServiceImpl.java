@@ -12,6 +12,8 @@ import com.curious365.ifa.common.Constants;
 import com.curious365.ifa.dao.ItemDAO;
 import com.curious365.ifa.dto.Item;
 import com.curious365.ifa.dto.ItemAutocomplete;
+import com.curious365.ifa.dto.ItemQuantity;
+import com.curious365.ifa.dto.ItemType;
 import com.curious365.ifa.service.ItemService;
 
 @Service
@@ -33,6 +35,7 @@ public class ItemServiceImpl implements ItemService {
 		StringBuilder sb = new StringBuilder();
 		Map<String,Object> similarItems = new HashMap<String,Object>();
 		List<ItemAutocomplete> suggestions = new ArrayList<ItemAutocomplete>();
+		sb.append(Constants.PERCENTAGE);
 		sb.append(query);
 		sb.append(Constants.PERCENTAGE);
 		List<Item> items = itemDAO.listItemLike(sb.toString());
@@ -53,8 +56,9 @@ public class ItemServiceImpl implements ItemService {
 	}
 
 	@Override
-	public boolean addNewItem(Item item) {
-		return itemDAO.addNewItem(item);
+	public long addNewItem(Item item) {
+			itemDAO.addNewItem(item);
+			return itemDAO.getCurrentItemId();
 		}
 
 	@Override
@@ -75,6 +79,38 @@ public class ItemServiceImpl implements ItemService {
 	@Override
 	public double getCostByItemId(String itemId) {
 		return itemDAO.getCostByItemId(itemId);
+	}
+
+	@Override
+	public long addNewItemType(ItemType itemType) {
+		itemDAO.addNewItemType(itemType);
+		return itemDAO.getCurrentItemTypeId();
+	}
+
+	@Override
+	public void removeItemTypeById(String itemTypeId) {
+		itemDAO.removeItemType(itemTypeId);
+	}
+
+	@Override
+	public long addNewItemQuantity(int itemQuantity) {
+		itemDAO.addNewItemQuantity(itemQuantity);
+		return itemDAO.getCurrentItemQuantityId();
+	}
+
+	@Override
+	public void removeItemQuantityById(String itemQuantityId) {
+		itemDAO.removeItemQuantity(itemQuantityId);
+	}
+
+	@Override
+	public List<ItemType> listItemTypes() {
+		return itemDAO.listItemTypes();
+	}
+
+	@Override
+	public List<ItemQuantity> listItemQuantities() {
+		return itemDAO.listItemQuantities();
 	}
 
 }

@@ -51,6 +51,8 @@
 var dflag=1;
 var cflag=1;
 var iflag=1;
+var salesDate;
+var invoiceId;
 var customerName;
 var customerId;
 var itemName;
@@ -58,6 +60,8 @@ $(document).ready(function(){
 customerName = $('#f_salescustomername');
 customerId = $('#f_salescustomerid');
 itemName = $('#f_salesitemname');
+invoiceId = $('#f_invoiceid');
+salesDate = $('#f_salesdate');
 $(itemName).parent().find('.help-block').show();
 
 	/**--Start of datepick--**/
@@ -97,12 +101,12 @@ $(itemName).parent().find('.help-block').show();
         },
         onClose: function(selectedDate) {
           if (selectedDate.length == 0) {
-          	cflag=0;
+          	dflag=0;
           	$(pickdateclass).closest('.form-group').removeClass('has-success');
 		  	$(pickdateclass).closest('.form-group').addClass('has-error');
 			$(pickdateclass).parent().find('.help-block').show();
           }else{
-          	cflag=1;
+          	dflag=1;
 			$(pickdateclass).parent().find('.help-block').hide();
 			$(pickdateclass).closest('.form-group').removeClass('has-error');
 			$(pickdateclass).closest('.form-group').addClass('has-success');
@@ -111,19 +115,38 @@ $(itemName).parent().find('.help-block').show();
       });
   /**--End of datepick--**/
 	/**--End of datepick--**/
+	$(invoiceId).devbridgeAutocomplete({
+	    	serviceUrl:'/listInvoiceLike?invoicetype=SALES',
+	    	minChars:1,
+	    	noCache:true,
+	    	onSearchStart: function(query){
+	    	cflag=0;
+	    	$(invoiceId).parent().find('.help-block').show();
+	    	$(salesDate).val('');
+			$(customerName).val('');
+			$(customerId).val('');
+	    	},
+	    	onSelect: function (suggestion){
+	    	cflag=1;
+			$(invoiceId).parent().find('.help-block').hide();
+			$(salesDate).val(suggestion.data[0].invoiceDate);
+			$(customerName).val(suggestion.data[0].invoiceCustomerName);
+			$(customerId).val(suggestion.data[0].invoiceCustomerId);
+	    	}
+	    });
   $(customerName).devbridgeAutocomplete({
 	    	serviceUrl:'/listCustomersLike',
 	    	minChars:1,
 	    	noCache:true,
 	    	onSearchStart: function(query){
-	    	dflag=0;
+	    	cflag=0;
 			$(customerName).closest('.form-group').removeClass('has-success');
 			$(customerName).closest('.form-group').addClass('has-error');
 			$(customerName).parent().find('.help-block').show();
 			$(customerId).val('');
 	    	},
 	    	onSelect: function (suggestion){
-	    	dflag=1;
+	    	cflag=1;
 			$(customerName).parent().find('.help-block').hide();
 			$(customerName).closest('.form-group').removeClass('has-error');
 			$(customerName).closest('.form-group').addClass('has-success');
@@ -138,7 +161,7 @@ $(itemName).parent().find('.help-block').show();
 	    	iflag =0;
 	    	$(this).closest('.form-group').removeClass('has-success');
 			$(this).closest('.form-group').addClass('has-error');
-	    	$(this).parent().find('#f_salesitemid').val('');
+	    	$('#f_salesitemid').val('');
 	    	$('#f_salescost').val('');
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>Invalid Item</small>');
@@ -147,16 +170,53 @@ $(itemName).parent().find('.help-block').show();
 	    	iflag =1;
 			$(this).closest('.form-group').removeClass('has-error');
 			$(this).closest('.form-group').addClass('has-success');
-	    	$(this).parent().find('#f_salesitemid').val(suggestion.data[0].itemId);
+	    	$('#f_salesitemid').val(suggestion.data[0].itemId);
+	    	$('#f_salesstock').val(suggestion.data[0].stock);
 	    	$(this).parent().find('.help-block').show();
-	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+'</small>');
+	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+' Stock In Hand '+suggestion.data[0].stock+'</small>');
 		    $('#f_salescost').val(suggestion.data[0].cost);
 	    	}
 	    });
+	/**-- validate stock on pieces focusout --*/
+  $('#transaction').on('blur','#f_salespieces',function(event){
+  	var itemId = $('#f_salesitemid').val();
+  	if(itemId){
+  	var salesPieces = parseInt($(this).val());
+  	var stockInHand = parseInt($('#f_salesstock').val());
+  	if(salesPieces>stockInHand){
+  			sflag =0;
+			alert("Requirement exceeds stock in hand.Please check!");
+		}else{
+			sflag =1;
+			var salesCost = parseFloat($('#f_salescost').val());
+			var taxRate =  parseFloat($('#f_salestaxrate').val())
+			var total = salesPieces * salesCost;
+			var tax = (total*taxRate)/100;
+			var totalwttax = total+tax;
+			$('#f_salesamount').val(total);
+			$('#f_salestax').val(tax);
+			$('#f_salestotal').val(totalwttax);
+		}
+	}else{
+		alert("Please select an Item!");
+	}
+  });
+  $('#transaction').on('blur','#f_salescost',function(event){
+	  var salesPieces = parseFloat($('#f_salespieces').val());
+	  var salesCost = parseFloat($('#f_salescost').val());
+		var taxRate =  parseFloat($('#f_salestaxrate').val())
+		var total = salesPieces * salesCost;
+		var tax = (total*taxRate)/100;
+		var totalwttax = total+tax;
+		$('#f_salesamount').val(total);
+		$('#f_salestax').val(tax);
+		$('#f_salestotal').val(totalwttax);
+	  });
 	$('#editsales').submit(function(event){
 		
-		if(iflag==0||cflag==0||dflag==0)
+		if(iflag==0||cflag==0||dflag==0||sflag==0)
 			{
+			alert("Please check entry!");
 			event.preventDefault()
 			}
 		
@@ -165,7 +225,7 @@ $(itemName).parent().find('.help-block').show();
 });
 </script>
 </head>
-<body id="sales">
+<body id="transaction">
 #parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
@@ -178,9 +238,31 @@ $(itemName).parent().find('.help-block').show();
       </div>
     </div>
     <div id="content" class="col-sm-9">
+    <div class="row">
+    	#if($error)
+		    <div class="alert alert-danger">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Error!</strong> $error
+		    </div>
+	    #end
+	    #if($info)
+		    <div class="alert alert-info">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Note!</strong> $info
+		    </div>
+	    #end
+    	</div>
     	<form class="form-horizontal" id="editsales" name="editsales" action="/editSales" method="post">
     <fieldset>
 	<legend>Sales Information</legend>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_invoiceid">Invoice Id</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Invoice Id" id="f_invoiceid" name="invoiceId" value="${record.invoiceId}" autocomplete="off" required="true"/>
+		<a href="/editInvoice?invoiceid=${record.invoiceId}">Goto Invoice</a>
+		<span class="help-block"><small>Please enter valid Invoice Id or Invoice Id does not exists</small></span>
+	</div>
+	</div>
 	<div class="form-group">
 	<label class="control-label col-sm-2" for="f_salesrecordid">Id</label>
 	<div class="col-sm-10">
@@ -190,14 +272,14 @@ $(itemName).parent().find('.help-block').show();
 	<div class="form-group">
 	<label for="f_transactiondate" class="control-label col-sm-2">Date</label>
 	<div class="col-sm-10">
-        <input type="text" class="form-control pickdateclass" name="salesDate" value="${record.salesDate}" readonly="true" required="true"/>
+        <input type="text" class="form-control" id="f_salesdate" name="salesDate" value="${record.salesDate}" readonly="true" required="true"/>
         <span class="help-block"><small>Please select a valid date</small></span>
 	</div>
 	</div>
 	<div class="form-group">
 	<label id="namelabel" class="control-label col-sm-2" for="f_salescustomername">Customer Name</label>
 	<div class="col-sm-10">
-		<input type="text" class="form-control" placeholder="Customer Name" id="f_salescustomername" name="salesCustomerName" value="${record.salesCustomerName}" autocomplete="off" required="true"/>
+		<input type="text" class="form-control" placeholder="Customer Name" id="f_salescustomername" name="salesCustomerName" value="${record.salesCustomerName}" autocomplete="off" readonly="true"/>
 		<input type="hidden" id="f_salescustomerid" name="salesCustomerId" value="${record.salesCustomerId}"/>
 		<span class="help-block"><small>Please enter valid Customer Id or Customer Id does not exists</small></span>
 	</div>
@@ -207,7 +289,8 @@ $(itemName).parent().find('.help-block').show();
 	<div class="col-sm-10">
 		<input type="text" class="form-control" placeholder="Customer Name" id="f_salesitemname" name="salesItemName" value="${record.salesItemName}" autocomplete="off" required="true"/>
 		<input type="hidden" id="f_salesitemid" name="salesItemId" value="${record.salesItemId}"/>
-		<span class="help-block"><small>${record.salesItemQuantity} kg ${record.salesItemType}</small></span>
+		<input type="hidden" id="f_salesstock" name="stockInHand" value="${record.salesStock}"/>
+		<span class="help-block"><small>${record.salesItemQuantity} kg ${record.salesItemType} Stock In Hand ${record.salesStock}</small></span>
 	</div>
 	</div>
 	<div class="form-group">
@@ -220,6 +303,25 @@ $(itemName).parent().find('.help-block').show();
 	<label class="control-label col-sm-2" for="f_salescost">Cost</label>
 	<div class="col-sm-10">
 		<input type="number" step="any" class="form-control" placeholder="Cost" id="f_salescost" name="salesCost" value="${record.salesCost}" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_salestotal">Amount</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Amount" id="f_salesamount" name="salesAmount" value="${record.salesAmount}" readonly="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_salestax">Tax</label>
+	<div class="col-sm-10">
+		<input type="hidden" class="form-control" id="f_salestaxrate" name="salesTaxRate" value="${record.salesTaxRate}" />
+		<input type="text" class="form-control" placeholder="Tax" id="f_salestax" name="salesTax" value="${record.salesTax}" readonly="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_salestax">Total</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Total" id="f_salestotal" name="salesTotal" value="${record.salesTotal}" readonly="true"/>
 	</div>
 	</div>
 	<div class="form-group">

@@ -8,11 +8,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.curious365.ifa.dto.Customer;
 import com.curious365.ifa.dto.Item;
 import com.curious365.ifa.service.ItemService;
 
@@ -47,6 +49,19 @@ public class ItemRestController {
 			query = query.toLowerCase();
 		}
 		return itemService.populateAutocomplete(query);
+	}
+	
+	@RequestMapping(value="/addItemAsync",method=RequestMethod.POST)
+	public String addItem(@ModelAttribute Item item){
+		log.debug("entering..");
+		String message = "Unable to add item!Please retry.";
+		try{
+			itemService.addNewItem(item);
+		message = "Success";
+		}catch(Exception e){
+			
+		}
+		return message;
 	}
 	
 	@RequestMapping("/getItemById")

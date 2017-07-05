@@ -35,7 +35,9 @@ public class SalesDAOImpl implements SalesDAO {
 				QueryConstants.ADD_SALES,
 				new Object[] { record.getSalesDate(),record.getSalesCustomerId(),
 						record.getSalesItemId(), record.getSalesPieces(),
-						record.getSalesCost(),record.getSalesRemarks(),Constants.ACTIVE });
+						record.getSalesCost(),record.getSalesRemarks(),
+						record.getSalesTax(),record.getSalesTaxRate(),
+						record.getInvoiceId(),Constants.ACTIVE });
 		if(flag>0){
 			return true;
 		}else{
@@ -50,7 +52,9 @@ public class SalesDAOImpl implements SalesDAO {
 				QueryConstants.UPDATE_SALES,
 				new Object[] { record.getSalesDate(),record.getSalesCustomerId(),
 						record.getSalesItemId(), record.getSalesPieces(),
-						record.getSalesCost(),record.getSalesRemarks(),record.getSalesRecordId() });
+						record.getSalesCost(),record.getSalesRemarks(),
+						record.getSalesTax(),record.getSalesTaxRate(),
+						record.getInvoiceId(),record.getSalesRecordId() });
 		if(flag>0){
 			return true;
 		}else{
@@ -98,5 +102,40 @@ public class SalesDAOImpl implements SalesDAO {
 	@Override
 	public long getCurrentSalesId() {
 		return jdbcTemplate.queryForObject(QueryConstants.GET_SALES_CURR_SEQ, Long.class);
+	}
+
+
+	@Override
+	public List<Content> listAllSalesInclPriveleged(int strtRow, int endRow,
+			int isActive) {
+		List<Content> salesList = null;
+		try{
+			salesList = jdbcTemplate.query(QueryConstants.LIST_ALL_SALES_INCL_PRIV,new SalesRowMapper(),new Object[]{isActive,endRow,strtRow});
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return salesList;
+	}
+	
+	@Override
+	public Long getActiveSalesRowCount() throws Exception {
+		return jdbcTemplate.queryForObject(QueryConstants.COUNT_ACTIVE_SALES,Long.class,new Object[]{Constants.ACTIVE});
+	}
+	
+	@Override
+	public Long getActiveSalesRowCountInclPriveleged() throws Exception {
+		return jdbcTemplate.queryForObject(QueryConstants.COUNT_ACTIVE_SALES_INCL_PRIV,Long.class,new Object[]{Constants.ACTIVE});
+	}
+
+
+	@Override
+	public List<Sales> listSalesByInvoiceId(long invoiceId) {
+		List<Sales> salesList = null;
+		try{
+			salesList = jdbcTemplate.query(QueryConstants.LIST_SALES_BY_INVOICE_ID, new BeanPropertyRowMapper<Sales>(Sales.class),new Object[]{Constants.ACTIVE,invoiceId});
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return salesList;
 	}
 }

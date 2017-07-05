@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 
 import com.curious365.ifa.util.SaveSecurityContextDetailsHandler;
 
@@ -35,7 +36,10 @@ public class IFASWebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 @Override
 	 protected void configure(HttpSecurity http) throws Exception {
 
-	   http.authorizeRequests()
+	   http.headers().addHeaderWriter(
+		        new XFrameOptionsHeaderWriter(
+		                XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+	   .and().authorizeRequests()
 	   .antMatchers("/resources/**").permitAll()
 	   .antMatchers("/removeCustomer").access("hasRole('ROLE_ADMIN')")  
 	   .anyRequest().authenticated()

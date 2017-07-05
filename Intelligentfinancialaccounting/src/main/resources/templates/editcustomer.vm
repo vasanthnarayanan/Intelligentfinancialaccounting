@@ -46,12 +46,15 @@
 <script src="/js/jquery.autocomplete.js"></script>
 <script src="/js/autocomplete.js"></script>
 <script type="text/javascript">
-var flag=${customer.activeFlag};
+var flag=$!{customer.activeFlag};
 var customerId;
 var customerName;
 var initialBalance;
 var address;
+var state;
+var taxUniqueId;
 var phoneNumber;
+var priveleged;
 function autocompleteOnSearch(searchBoxId,query){
 						flag=0;
 						$(customerId).closest('.form-group').removeClass('has-success');
@@ -60,7 +63,10 @@ function autocompleteOnSearch(searchBoxId,query){
 						$(customerName).val('');
 						$(initialBalance).val('');
 						$(address).val('');
+						$(state).val('');
+						$(taxUniqueId).val('');
 						$(phoneNumber).val('');
+						$(priveleged).prop('checked', false);
 }
 function autocompleteOnSelect(searchBoxId,suggestion){
 		$.ajax({
@@ -87,7 +93,12 @@ function autocompleteOnSelect(searchBoxId,suggestion){
 					customerName.val(responseData.name);
 					initialBalance.val(responseData.initialBalance);
 					address.val(responseData.customerAddress);
+					state.val(responseData.customerState);
+					taxUniqueId.val(responseData.taxUniqueId);
 					phoneNumber.val(responseData.customerPhoneNumber);
+					if(responseData.priveleged == 1){
+					$(priveleged).prop('checked', true);
+					}
 				}
 				/*-- End of success --*/
 			});
@@ -98,7 +109,10 @@ $(function(){
 	customerId = $('#f_customerid');
 	initialBalance = $('#f_initialbalance');
 	address = $('#f_customeraddress');
+	state = $('#f_customerstate');
+	taxUniqueId = $('#f_taxuniqueid');
 	phoneNumber = $('#f_customerphonenumber');
+	priveleged = $('#f_priveleged');
 	
 	/*-- Autocomplete fn call--*/
 	devbridgeAutoComplete('#f_customerid','/listCustomerIdLike');
@@ -144,7 +158,7 @@ $(function(){
 		#if(${customer.activeFlag}==0)
 		<input type="text" class="form-control" placeholder="Customer Id" id="f_customerid" name="customerId" autocomplete="off" required="true"/>
 		#else
-		<input type="text" class="form-control" placeholder="Customer Id" id="f_customerid" name="customerId" value="${customer.customerId}" readonly="true" required="true"/>
+		<input type="text" class="form-control" placeholder="Customer Id" id="f_customerid" name="customerId" value="$!{customer.customerId}" readonly="true" required="true"/>
 		#end
 		<span class="help-block"><small>Please enter valid Customer Id or Customer Id does not exists</small></span>
 	</div>
@@ -152,13 +166,13 @@ $(function(){
 	<div class="form-group">
 	<label id="namelabel" class="control-label col-sm-2" for="f_customername">Name</label>
 	<div class="col-sm-10">
-		<input type="text" class="form-control" placeholder="Customer Name" id="f_customername" name="name" value="${customer.name}" autocomplete="off" required="true"/>
+		<input type="text" class="form-control" placeholder="Customer Name" id="f_customername" name="name" value="$!{customer.name}" autocomplete="off" required="true"/>
 	</div>
 	</div>
 	<div class="form-group">
 	<label class="control-label col-sm-2" for="f_initialbalance">Initial Balance</label>
 	<div class="col-sm-10">
-		<input type="number" class="form-control" placeholder="Initial Balance" id="f_initialbalance" name="initialBalance" value="${customer.initialBalance}" autocomplete="off" required="true"/>
+		<input type="number" class="form-control" placeholder="Initial Balance" id="f_initialbalance" name="initialBalance" value="$!{customer.initialBalance}" autocomplete="off" required="true"/>
 	</div>
 	</div>
 	</fieldset>
@@ -167,20 +181,91 @@ $(function(){
 	<div class="form-group">
 	<label for="f_customeraddress" class="control-label col-sm-2">Address</label>
 	<div class="col-sm-10">
-		<textarea rows="3"class="form-control" placeholder="Customer Address" id="f_customeraddress" name="customerAddress" autocomplete="off" >${customer.customerAddress}</textarea>
+		<textarea rows="3"class="form-control" placeholder="Customer Address" id="f_customeraddress" name="customerAddress" autocomplete="off" >$!{customer.customerAddress}</textarea>
+	</div>
+	</div>
+	#if(${customer.customerId})
+	<script>
+	$(function(){
+		$(state).val("$!{customer.customerState}");
+	});
+	</script>
+	#end
+	<div class="form-group">
+	<label for="f_customerstate" class="control-label col-sm-2">State</label>
+	<div class="col-sm-10">
+	<select class="form-control" id="f_customerstate" name="customerState">
+		<option value="">------------Select State------------</option>
+		#foreach($state in $states)
+				<option value="$state.stateCode">$state.stateName</option>
+			#end
+		<!-- <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+		<option value="Andhra Pradesh">Andhra Pradesh</option>
+		<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+		<option value="Assam">Assam</option>
+		<option value="Bihar">Bihar</option>
+		<option value="Chandigarh">Chandigarh</option>
+		<option value="Chhattisgarh">Chhattisgarh</option>
+		<option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+		<option value="Daman and Diu">Daman and Diu</option>
+		<option value="Delhi">Delhi</option>
+		<option value="Goa">Goa</option>
+		<option value="Gujarat">Gujarat</option>
+		<option value="Haryana">Haryana</option>
+		<option value="Himachal Pradesh">Himachal Pradesh</option>
+		<option value="Jammu and Kashmir">Jammu and Kashmir</option>
+		<option value="Jharkhand">Jharkhand</option>
+		<option value="Karnataka">Karnataka</option>
+		<option value="Kerala">Kerala</option>
+		<option value="Lakshadweep">Lakshadweep</option>
+		<option value="Madhya Pradesh">Madhya Pradesh</option>
+		<option value="Maharashtra">Maharashtra</option>
+		<option value="Manipur">Manipur</option>
+		<option value="Meghalaya">Meghalaya</option>
+		<option value="Mizoram">Mizoram</option>
+		<option value="Nagaland">Nagaland</option>
+		<option value="Orissa">Orissa</option>
+		<option value="Pondicherry">Pondicherry</option>
+		<option value="Punjab">Punjab</option>
+		<option value="Rajasthan">Rajasthan</option>
+		<option value="Sikkim">Sikkim</option>
+		<option value="Tamil Nadu">Tamil Nadu</option>
+		<option value="Tripura">Tripura</option>
+		<option value="Uttaranchal">Uttaranchal</option>
+		<option value="Uttar Pradesh">Uttar Pradesh</option>
+		<option value="West Bengal">West Bengal</option> -->
+	</select>
 	</div>
 	</div>
 	<div class="form-group">
 	<label for="f_customerphonenumber" class="control-label col-sm-2" >Phone number</label>
 	<div class="col-sm-10">
-		<input type="number" id="f_customerphonenumber" class="form-control" placeholder="Customer Phone" name="customerPhoneNumber" value="${customer.customerPhoneNumber}" autocomplete="off" />
+		<input type="number" id="f_customerphonenumber" class="form-control" placeholder="Customer Phone" name="customerPhoneNumber" value="$!{customer.customerPhoneNumber}" autocomplete="off" />
 	</div>	
 	</div>
+	<div class="form-group">
+	<label for="f_taxuniqueid" class="control-label col-sm-2" >Tax Unique Id</label>
+	<div class="col-sm-10">
+		<input type="text" id="f_taxuniqueid" class="form-control" placeholder="Tax Id" name="taxUniqueId" value="$!{customer.taxUniqueId}"/>
+	</div>	
+	</div>
+	#if($role=="ROLE_ADMIN")
+	<div class="form-group">
+	<div class="checkbox">
+		#if(${customer.priveleged}==1)
+		<label id="f_priveleged_label" class="control-label col-sm-offset-1 col-sm-2"><input id="f_priveleged" name="priveleged" type="checkbox" value="1" checked> Priveleged</label>
+		#else
+		<label id="f_priveleged_label" class="control-label col-sm-offset-1 col-sm-2"><input id="f_priveleged" name="priveleged" type="checkbox" value="1"> Priveleged</label>
+		#end
+	</div>
+	</div>
+	#end
 	</fieldset>
 	<div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">
 	<input type="submit" name="submit" class="btn btn-primary" value="Update customer" />
 	<input type="reset" id="reset" class="btn btn-default" value="Reset" /> 
+	</div>
 	</div>
 	</form>
     </div>

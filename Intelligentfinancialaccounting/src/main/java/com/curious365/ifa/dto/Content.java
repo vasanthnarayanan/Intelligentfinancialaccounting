@@ -7,6 +7,7 @@ private String recordType;
 private long recordId;
 private double cost;
 private long pieces;
+private double tax;
 private double total;
 private String recordDate;
 private String name;
@@ -97,5 +98,11 @@ public String getRemarks() {
 }
 public void setRemarks(String remarks) {
 	this.remarks = remarks;
+}
+public double getTax() {
+	return tax;
+}
+public void setTax(double tax) {
+	this.tax = tax;
 }
 }

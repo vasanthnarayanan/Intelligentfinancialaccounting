@@ -13,8 +13,12 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.curious365.ifa.common.TransactionStatus;
 import com.curious365.ifa.dao.AccountingDAO;
+import com.curious365.ifa.dao.CustomerDAO;
+import com.curious365.ifa.dto.BankAccount;
 import com.curious365.ifa.dto.Content;
 import com.curious365.ifa.dto.Transaction;
 import com.curious365.ifa.exceptions.NoRecordFound;
@@ -25,6 +29,8 @@ public class AccountingServiceImpl implements AccountingService {
 
 	@Autowired
 	private AccountingDAO accountingDAO;
+	@Autowired
+	private CustomerDAO customerDAO;
 
 	public AccountingDAO getAccountingDAO() {
 		return accountingDAO;
@@ -160,18 +166,74 @@ public class AccountingServiceImpl implements AccountingService {
 		return rowCount;
 	}
 
+	@Transactional(readOnly = false , rollbackFor = Exception.class)
 	@Override
-	public boolean createTransaction(Transaction record) {
+	public boolean createTransaction(Transaction record) throws Exception {
+		if(record.getIsIncome().equalsIgnoreCase("Y")){
+			customerDAO.decreaseCurrentBalance(""+record.getTransactionCustomerId(), record.getTransactionAmount());
+		}else{
+			customerDAO.increaseCurrentBalance(""+record.getTransactionCustomerId(), record.getTransactionAmount());
+		}
 		return accountingDAO.createTransaction(record);
 	}
 
+	@Transactional(readOnly = false , rollbackFor = Exception.class)
 	@Override
-	public boolean editTransaction(Transaction record) {
+	public boolean editTransaction(Transaction record) throws Exception  {
+		Transaction oldData = getRecordById(record.getTransactionRecordId());
+		if(record.getIsIncome().equalsIgnoreCase(oldData.getIsIncome())&&record.getTransactionCustomerId()==oldData.getTransactionCustomerId()){
+			// same transaction income type and customer
+			double change = record.getTransactionAmount() - oldData.getTransactionAmount();
+			if(change>0){
+				if(record.getIsIncome().equalsIgnoreCase("Y")){
+					customerDAO.decreaseCurrentBalance(""+record.getTransactionCustomerId(), change);
+				}else{
+					customerDAO.increaseCurrentBalance(""+record.getTransactionCustomerId(), change);
+				}
+			}else if (change<0){
+				if(oldData.getIsIncome().equalsIgnoreCase("Y")){
+					customerDAO.increaseCurrentBalance(""+oldData.getTransactionCustomerId(), -change);
+				}else{
+					customerDAO.decreaseCurrentBalance(""+oldData.getTransactionCustomerId(), -change);
+				}
+			}	
+		}else if(record.getTransactionCustomerId()==oldData.getTransactionCustomerId()){
+			// same customer
+			// reversing effect , so double effect changes
+			if(record.getIsIncome().equalsIgnoreCase("Y")){
+				customerDAO.decreaseCurrentBalance(""+record.getTransactionCustomerId(), record.getTransactionAmount()*2);
+			}else{
+				customerDAO.increaseCurrentBalance(""+record.getTransactionCustomerId(), record.getTransactionAmount()*2);
+			}
+		}else{
+			// different transaction type and customer
+			// nullify oldcustomer changes
+			if(oldData.getIsIncome().equalsIgnoreCase("Y")){
+				customerDAO.increaseCurrentBalance(""+oldData.getTransactionCustomerId(), record.getTransactionAmount());
+			}else{
+				customerDAO.decreaseCurrentBalance(""+oldData.getTransactionCustomerId(), record.getTransactionAmount());
+			}
+			
+			// recreate new customer changes
+			if(record.getIsIncome().equalsIgnoreCase("Y")){
+				customerDAO.decreaseCurrentBalance(""+record.getTransactionCustomerId(), record.getTransactionAmount());
+			}else{
+				customerDAO.increaseCurrentBalance(""+record.getTransactionCustomerId(), record.getTransactionAmount());
+			}
+		}
+		
 		return accountingDAO.editTransaction(record);
 	}
 
+	@Transactional(readOnly = false , rollbackFor = Exception.class)
 	@Override
-	public boolean removeTransaction(long transactionId) {
+	public boolean removeTransaction(long transactionId) throws Exception  {
+		Transaction oldData = getRecordById(transactionId);
+		if(oldData.getIsIncome().equalsIgnoreCase("Y")){
+			customerDAO.increaseCurrentBalance(""+oldData.getTransactionCustomerId(), oldData.getTransactionAmount());
+		}else{
+			customerDAO.decreaseCurrentBalance(""+oldData.getTransactionCustomerId(), oldData.getTransactionAmount());
+		}
 		return accountingDAO.softDeleteTransaction(transactionId);
 	}
 
@@ -181,38 +243,23 @@ public class AccountingServiceImpl implements AccountingService {
 	}
 
 	@Override
-	public long getActiveSalesRowCount() {
-		long rowCount = 0;
-		try {
-			rowCount = accountingDAO.getActiveSalesRowCount();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			return rowCount;
-		}
+	public List<BankAccount> listBankAccounts() {
+		return accountingDAO.listBankAccounts();
 	}
-	
+
 	@Override
-	public long getActivePurchaseRowCount() {
-		long rowCount = 0;
-		try {
-			rowCount = accountingDAO.getActivePurchaseRowCount();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			return rowCount;
-		}
+	public boolean createBankAccount(BankAccount bankAccount) throws Exception {
+		return accountingDAO.createBankAccount(bankAccount);
 	}
-	
+
 	@Override
-	public long getActiveFaultRowCount() {
-		long rowCount = 0;
-		try {
-			rowCount = accountingDAO.getActiveFaultRowCount();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			return rowCount;
-		}
+	public List<Transaction> listPendingTransactions(int strtRow,int endRow,int length) {
+		return accountingDAO.listTransactionByStatus(TransactionStatus.PENDING.getValue(),strtRow,endRow,length);
 	}
+
+	@Override
+	public long countPendingTransactions() {
+		return accountingDAO.countTransactionByStatus(TransactionStatus.PENDING.getValue());
+	}
+
 }

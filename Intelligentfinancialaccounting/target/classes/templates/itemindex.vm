@@ -55,7 +55,7 @@ $("document").ready(function(){
 </script>
 </head>
 <body id="item">
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">

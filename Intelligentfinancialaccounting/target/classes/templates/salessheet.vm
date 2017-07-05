@@ -56,6 +56,7 @@ tr.group:hover {
 <script type="text/javascript">
 var cflag=0;
 var iflag=0;
+var sflag=0;
 var customerName;
 var customerId;
 $(document).ready(function(){
@@ -195,6 +196,7 @@ $('#salessheet').DataTable( {
 	    	$(this).closest('.form-group').removeClass('has-success');
 			$(this).closest('.form-group').addClass('has-error');
 	    	$(this).parent().find('.itemidclass').val('');
+	    	$(this).parent().find('.stockclass').val('');
 	    	$(this).closest('.form-group').find('.costclass').val('');
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>Invalid Item</small>');
@@ -204,11 +206,29 @@ $('#salessheet').DataTable( {
 			$(this).closest('.form-group').removeClass('has-error');
 			$(this).closest('.form-group').addClass('has-success');
 	    	$(this).parent().find('.itemidclass').val(suggestion.data[0].itemId);
+	    	$(this).parent().find('.stockclass').val(suggestion.data[0].stock);
 	    	$(this).parent().find('.help-block').show();
-	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+'</small>');
+	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+' Stock In Hand '+suggestion.data[0].stock+'</small>');
 		    $(this).closest('.form-group').find('.costclass').val(suggestion.data[0].cost);
 	    	}
 	    });
+  /**-- validate stock on pieces focusout --*/
+  $('#transaction').on('blur','.piecesclass',function(event){
+  	var itemId = $(this).closest('.form-group').find('.itemidclass').val();
+  	if(itemId){
+  	var salesPieces = parseInt($(this).val());
+  	var stockInHand = parseInt($(this).closest('.form-group').find('.stockclass').val());
+  	if(salesPieces>stockInHand){
+  			sflag =0;
+			alert("Requirement exceeds stock in hand.Please check!");
+		}else{
+			sflag =1;
+		}
+	}else{
+		alert("Please select an Item!");
+	}
+  });
+	
   /*-- Deleting entry --*/
 	$('#salessheet tbody').on('click','.deletesales',function(event){
 		window.recordId=$(this).attr('href').trim();
@@ -230,8 +250,9 @@ $('#salessheet').DataTable( {
 	/*-- End of deleting entry --*/
 	
 	$('#addsales').submit(function(event){
-		if(iflag==0||cflag==0)
+		if(iflag==0||cflag==0||sflag==0)
 			{
+			alert("Please check entry!");
 			event.preventDefault()
 			}
 	});
@@ -239,7 +260,7 @@ $('#salessheet').DataTable( {
 </script>
 </head>
 <body id="transaction">
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
@@ -251,7 +272,20 @@ $('#salessheet').DataTable( {
       </div>
     </div>
     <div id="content" class="col-sm-9">
-
+		<div class="row">
+    	#if($error)
+		    <div class="alert alert-danger">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Error!</strong> $error
+		    </div>
+	    #end
+	    #if($info)
+		    <div class="alert alert-info">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Note!</strong> $info
+		    </div>
+	    #end
+    	</div>
       <div id="quickaddform" class="collapse">
         <div class="panel panel-default">
           <div class="panel-heading">
@@ -290,10 +324,11 @@ $('#salessheet').DataTable( {
                   <div class="col-sm-2">
                     <input type="text" class="form-control itemnameclass" name="itemname" placeholder="Item Name" required="true" size="30" />
                     <input type="hidden" class="itemidclass" name="salesItemId" />
+                    <input type="hidden" class="stockclass" name="stockInHand" />
                     <span class="help-block text-uppercase"><small>Item information placeholder</small></span>
                   </div>
                   <div class="col-sm-2">
-                    <input type="number" class="form-control piecesclass" name="salesPieces" placeholder="Pieces" required="true" size="30" />
+                    <input type="number" class="form-control piecesclass" id="salesPieces" name="salesPieces" placeholder="Pieces" required="true" size="30" />
                   </div>
                   <div class="col-sm-2">
                     <input type="number" step="any" class="form-control costclass" name="salesCost" placeholder="Cost" required="true" size="30" />
@@ -306,7 +341,7 @@ $('#salessheet').DataTable( {
                 <div class="form-group">
 
                   <div class="col-sm-12">
-                  <!-- unhide when direct transaction implemented --!>
+                  <!-- unhide when direct transaction implemented -->
                     <div class="checkbox pull-left hide">
                       <label>
                         <input type="checkbox"> Cash</label>

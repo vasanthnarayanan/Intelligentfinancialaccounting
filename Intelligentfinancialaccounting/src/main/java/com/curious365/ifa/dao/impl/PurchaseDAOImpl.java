@@ -35,7 +35,9 @@ public class PurchaseDAOImpl implements PurchaseDAO {
 				QueryConstants.ADD_PURCHASE,
 				new Object[] { record.getPurchaseDate(),record.getPurchaseCustomerId(),
 						record.getPurchaseItemId(), record.getPurchasePieces(),
-						record.getPurchaseCost(),record.getPurchaseRemarks(),Constants.ACTIVE });
+						record.getPurchaseCost(),record.getPurchaseRemarks(),
+						record.getPurchaseTax(),record.getPurchaseTaxRate(),
+						record.getInvoiceId(),Constants.ACTIVE });
 		if(flag>0){
 			return true;
 		}else{
@@ -50,7 +52,9 @@ public class PurchaseDAOImpl implements PurchaseDAO {
 				QueryConstants.UPDATE_PURCHASE,
 				new Object[] { record.getPurchaseDate(),record.getPurchaseCustomerId(),
 						record.getPurchaseItemId(), record.getPurchasePieces(),
-						record.getPurchaseCost(),record.getPurchaseRemarks(),record.getPurchaseRecordId() });
+						record.getPurchaseCost(),record.getPurchaseRemarks(),
+						record.getPurchaseTax(),record.getPurchaseTaxRate(),
+						record.getInvoiceId(),record.getPurchaseRecordId() });
 		if(flag>0){
 			return true;
 		}else{
@@ -99,5 +103,40 @@ public class PurchaseDAOImpl implements PurchaseDAO {
 	@Override
 	public long getCurrentPurchaseId() {
 		return jdbcTemplate.queryForObject(QueryConstants.GET_PURCHASE_CURR_SEQ, Long.class);
+	}
+
+
+	@Override
+	public List<Content> listAllPurchaseInclPriveleged(int strtRow, int endRow,
+			int isActive) {
+		List<Content> purchaseList = null;
+		try{
+			purchaseList = jdbcTemplate.query(QueryConstants.LIST_ALL_PURCHASE_INCL_PRIV,new PurchaseRowMapper(),new Object[]{isActive,endRow,strtRow});
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return purchaseList;
+	}
+	
+	@Override
+	public Long getActivePurchaseRowCount() throws Exception {
+		return jdbcTemplate.queryForObject(QueryConstants.COUNT_ACTIVE_PURCHASE,Long.class,new Object[]{Constants.ACTIVE});
+	}
+
+	@Override
+	public Long getActivePurchaseRowCountInclPriveleged() throws Exception {
+		return jdbcTemplate.queryForObject(QueryConstants.COUNT_ACTIVE_PURCHASE_INCL_PRIV,Long.class,new Object[]{Constants.ACTIVE});
+	}
+
+
+	@Override
+	public List<Purchase> listPurchaseByInvoiceId(long invoiceId) {
+		List<Purchase> purchaseList = null;
+		try{
+			purchaseList = jdbcTemplate.query(QueryConstants.LIST_PURCHASE_BY_INVOICE_ID, new BeanPropertyRowMapper<Purchase>(Purchase.class),new Object[]{Constants.ACTIVE,invoiceId});
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return purchaseList;
 	}
 }

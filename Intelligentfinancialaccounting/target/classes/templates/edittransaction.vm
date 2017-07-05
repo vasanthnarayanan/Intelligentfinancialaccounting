@@ -49,41 +49,78 @@
 <script src="/js/autocomplete.js"></script>
 <script type="text/javascript">
 var cflag=1;
+var rcflag=1;
 var dflag=1;
 var customerName;
 var customerId;
 function autocompleteOnSearch(searchBoxId,query){
-					cflag=0;
-					$(customerName).closest('.form-group').removeClass('has-success');
-					$(customerName).closest('.form-group').addClass('has-error');
-					$(customerName).parent().find('.help-block').show();
-					/*-- Clearing fields --*/
-					$(customerId).val('');
+		if(searchBoxId == customerNameBoxId){
+			cflag=0;
+			$(customerName).closest('.form-group').removeClass('has-success');
+			$(customerName).closest('.form-group').addClass('has-error');
+			$(customerName).parent().find('.help-block').show();
+			/*-- Clearing fields --*/
+			$(customerId).val('');
+		}else if(searchBoxId == refCustomerBoxId){
+			rcflag=0;
+			$(refCustomerName).closest('.form-group').removeClass('has-success');
+			$(refCustomerName).closest('.form-group').addClass('has-error');
+			$(refCustomerName).parent().find('.help-block').show();
+			/*-- Clearing fields --*/
+			$(refCustomerId).val('');
+		}
 	}
 	function autocompleteOnSelect(searchBoxId,suggestion){
-					if(null == suggestion)
-					{
-					cflag=0;
-					$(customerName).closest('.form-group').removeClass('has-success');
-					$(customerName).closest('.form-group').addClass('has-error');
-					$(customerName).parent().find('.help-block').show();
-					/*-- Clearing fields --*/
-					$(customerId).val('');
-					}
-					else
-					{
-					cflag=1;
-					$(customerName).parent().find('.help-block').hide();
-					$(customerName).closest('.form-group').removeClass('has-error');
-					$(customerName).closest('.form-group').addClass('has-success');
-					/*-- Populating fields --*/
-					$(customerId).val(suggestion.data);
-					}
+			if(searchBoxId == customerNameBoxId){
+				if(null == suggestion)
+				{
+				cflag=0;
+				$(customerName).closest('.form-group').removeClass('has-success');
+				$(customerName).closest('.form-group').addClass('has-error');
+				$(customerName).parent().find('.help-block').show();
+				/*-- Clearing fields --*/
+				$(customerId).val('');
+				}
+				else
+				{
+				cflag=1;
+				$(customerName).parent().find('.help-block').hide();
+				$(customerName).closest('.form-group').removeClass('has-error');
+				$(customerName).closest('.form-group').addClass('has-success');
+				/*-- Populating fields --*/
+				$(customerId).val(suggestion.data);
+				}	
+			}else if(searchBoxId == refCustomerBoxId){
+				if(null == suggestion)
+				{
+				rcflag=0;
+				$(refCustomerName).closest('.form-group').removeClass('has-success');
+				$(refCustomerName).closest('.form-group').addClass('has-error');
+				$(refCustomerName).parent().find('.help-block').show();
+				/*-- Clearing fields --*/
+				$(refCustomerId).val('');
+				}
+				else
+				{
+				rcflag=1;
+				$(refCustomerName).parent().find('.help-block').hide();
+				$(refCustomerName).closest('.form-group').removeClass('has-error');
+				$(refCustomerName).closest('.form-group').addClass('has-success');
+				/*-- Populating fields --*/
+				$(refCustomerId).val(suggestion.data);
+				}
+			}
 					
 		}
 $(function(){
 	customerName = $('#f_transactioncustomername');
 	customerId = $('#f_transactioncustomerid');
+	customerNameBoxId= "#f_transactioncustomername";
+	refCustomerBoxId= "#f_refcustomername";
+	refCustomerName= $('#f_refcustomername');
+	refCustomerId= $('#f_refcustomerid');
+	$('.cheque').hide();
+	$('.neft').hide();
 	/**--Start of datepick--**/
 	var pickdateclass = $('.pickdateclass');
 	$(pickdateclass).datepicker({
@@ -122,14 +159,14 @@ $(function(){
         onClose: function(selectedDate) {
           if (selectedDate.length == 0) {
           	dflag=0;
-          	$(pickdateclass).closest('.form-group').removeClass('has-success');
-		  	$(pickdateclass).closest('.form-group').addClass('has-error');
-			$(pickdateclass).parent().find('.help-block').show();
+          	$(this).closest('.form-group').removeClass('has-success');
+		  	$(this).closest('.form-group').addClass('has-error');
+			$(this).parent().find('.help-block').show();
           }else{
           	dflag=1;
-			$(pickdateclass).parent().find('.help-block').hide();
-			$(pickdateclass).closest('.form-group').removeClass('has-error');
-			$(pickdateclass).closest('.form-group').addClass('has-success');
+			$(this).parent().find('.help-block').hide();
+			$(this).closest('.form-group').removeClass('has-error');
+			$(this).closest('.form-group').addClass('has-success');
           }
         }
       });
@@ -137,16 +174,34 @@ $(function(){
   
   /*-- Autocomplete fn call--*/
 	devbridgeAutoComplete('#f_transactioncustomername','/listCustomersLike');
+	devbridgeAutoComplete('#f_refcustomername','/listCustomersLike');
 	/*-- End of Autocomplete fn call--*/
 	
+	/*-- Transaction Type listener --*/
+	$('#f_modeofpayment').on('change',function(){
+		var modeOfPayment = $(this).val();
+		if(modeOfPayment=="CASH"){
+			$('.cheque').hide();
+			$(".form-cheque-required").prop('required',false);
+		}else if(modeOfPayment=="CHEQUE"){
+			$('.cheque').show();
+			$(".form-cheque-required").prop('required',true);
+		}else if(modeOfPayment=="NEFT"){
+			$('.cheque').hide();
+			$(".form-cheque-required").prop('required',false);
+			$('.neft').show();
+			$(".form-neft-required").prop('required',true);
+		}
+	});
+	
 	$('#content').on('click','#f_updatetxBtn',function(event){
-		if(cflag==0||dflag==0){
+		if(cflag==0||dflag==0||rcflag==0){
 			event.preventDefault()	
 		}
 	});
 	
 	$('#content').on('click','#f_removetxBtn',function(event){
-		if(cflag==0||dflag==0)
+		if(cflag==0||dflag==0||rcflag==0)
 			{
 				event.preventDefault()
 			}else{
@@ -164,7 +219,7 @@ $(function(){
 </script>
 </head>
 <body>
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
@@ -225,6 +280,92 @@ $(function(){
 		</div>
 		#end
 	</div>
+	</div>
+	<script>
+	$(function(){
+		$('#f_modeofpayment').val("${record.modeOfPayment}");
+		var modeOfPayment = "${record.modeOfPayment}";
+		if(modeOfPayment=="CASH"){
+			$('.cheque').hide();
+			$(".form-cheque-required").prop('required',false);
+		}else if(modeOfPayment=="CHEQUE"){
+			$('.cheque').show();
+			$(".form-cheque-required").prop('required',true);
+		}else if(modeOfPayment=="NEFT"){
+			$('.cheque').hide();
+			$(".form-cheque-required").prop('required',false);
+			$('.neft').show();
+			$(".form-neft-required").prop('required',true);
+		}
+		$('#f_transactionstatus').val("${record.transactionStatus}");
+		$('#f_chequebankid').val("${record.chequeBankId}");
+		$('#f_bankid').val("${record.bankId}");
+	});
+	</script>
+	<div class="form-group">
+	<label for="f_modeofpayment" class="control-label col-sm-2" >Mode Of Payment</label>
+	<div class="col-sm-10">
+		<select id="f_modeofpayment" class="form-control" name="modeOfPayment" required="true">
+			<option value="">--Mode--</option>
+			<option value="CASH">Cash</option>
+			<option value="CHEQUE">Cheque</option>
+			<option value="NEFT">Neft</option>
+		</select>
+	</div>	
+	</div>
+	<div class="form-group cheque">
+	<label class="control-label col-sm-2" for="f_chequenumber">Cheque Number</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control form-cheque-required" placeholder="Cheque Number" id="f_chequenumber" name="chequeNumber" value="$!{record.chequeNumber}" autocomplete="off"/>
+	</div>
+	</div>
+	<div class="form-group cheque">
+	<label class="control-label col-sm-2" for="f_chequebankid">Cheque Bank Name</label>
+	<div class="col-sm-10">
+		<select id="f_chequebankid" class="form-control form-cheque-required" name="chequeBankId">
+			<option value="">--Bank--</option>
+			#foreach($bank in $banks)
+				<option value="$bank.bankId">$bank.bankName</option>
+			#end
+		</select>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_refcustomername">Ref Customer Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Customer Name" id="f_refcustomername" name="refCustomerName" value="$!{record.refCustomerName}" autocomplete="off"/>
+		<input type="hidden" id="f_refcustomerid" name="refCustomerId" value="$!{record.refCustomerId}" />
+		<span class="help-block"><small>Please enter valid Customer Id or Customer Id does not exists</small></span>
+	</div>
+	</div>
+	<div class="form-group cheque neft">
+	<label for="f_bankid" class="control-label col-sm-2" >Bank Name</label>
+	<div class="col-sm-10">
+		<select id="f_bankid" class="form-control form-cheque-required  form-neft-required" name="bankId">
+			<option value="">--Bank--</option>
+			#foreach($bank in $banks)
+				<option value="$bank.bankId">$bank.bankName</option>
+			#end
+		</select>
+	</div>	
+	</div>
+	<div class="form-group">
+	<label for="f_duedate" class="control-label col-sm-2">Due Date</label>
+	<div class="col-sm-10">
+        <input type="text" class="form-control pickdateclass" name="dueDate" value="$!{record.dueDate}" readonly="true"/>
+        <span class="help-block"><small>Please select a valid date</small></span>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_transactionstatus" class="control-label col-sm-2" >Transaction Status</label>
+	<div class="col-sm-10">
+		<select id="f_transactionstatus" class="form-control" name="transactionStatus" required="true">
+			<option value="">--Status--</option>
+			<option value="COMPLETE">Complete</option>
+			<option value="PENDING">Pending</option>
+			<option value="REJECTED">Rejected</option>
+		</select>
+	</div>	
 	</div>
 	<div class="form-group">
 	<label class="control-label col-sm-2" for="f_transactionremarks">Remarks</label>

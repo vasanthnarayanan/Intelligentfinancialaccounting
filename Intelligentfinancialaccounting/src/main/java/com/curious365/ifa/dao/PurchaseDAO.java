@@ -10,6 +10,10 @@ public interface PurchaseDAO {
 	public boolean edit(Purchase record);
 	public boolean softDelete(long purchaseId);
 	public Purchase getRecordById(long purchaseId);
+	public List<Purchase> listPurchaseByInvoiceId(long invoiceId);
+	public Long getActivePurchaseRowCount() throws Exception;
+	public Long getActivePurchaseRowCountInclPriveleged() throws Exception;
 	public List<Content> listAllPurchase(int strtRow,int endRow,int isActive);
+	public List<Content> listAllPurchaseInclPriveleged(int strtRow,int endRow,int isActive);
 	public long getCurrentPurchaseId();
 }

@@ -16,11 +16,12 @@ $("document").ready(function(){
 	$('#customerindex').DataTable( {
         "ajax": "/listActiveCustomers",
         "columns": [
-            { "data": "customerId" },
+            { "data": "customerId", "visible": false  },
             { "data": "name",
             	"render": function(data,type,row,meta){
             		return '<a class="customersheetredirect text-uppercase" href="/customerAccountSheet?customername='+row.name+'&customerid='+row.customerId+'&initialbalance='+row.initialBalance+'&pageno=1">'+row.name+'</a>';
             	} },
+            { "data": "currentBalance"},
             { "data": null,
             	"render": function(data,type,row,meta){
             		return '<a href="/editCustomer?customerid='+row.customerId+'" title="edit" class="editcustomer btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</a> <a href="'+row.customerId+'" title="delete" class="deletecustomer btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span> Delete</a>';
@@ -67,6 +68,7 @@ $("document").ready(function(){
             <tr>
                 <th>Customer Id</th>
                 <th>Name</th>
+                <th>Balance</th>
                 <th>Action</th>
             </tr>
         </thead>

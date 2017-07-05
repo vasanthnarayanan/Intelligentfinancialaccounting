@@ -9,6 +9,25 @@ public class PurchaseForm implements Serializable {
 	 */
 	private static final long serialVersionUID = -8358977764186902263L;
 	private String purchaseCustomerName;
+	private String purchaseDate;
+	private double cashPaid;
+	public String getPurchaseDate() {
+		return purchaseDate;
+	}
+
+	public void setPurchaseDate(String purchaseDate) {
+		this.purchaseDate = purchaseDate;
+	}
+
+	public String getInvoiceRemarks() {
+		return invoiceRemarks;
+	}
+
+	public void setInvoiceRemarks(String invoiceRemarks) {
+		this.invoiceRemarks = invoiceRemarks;
+	}
+
+	private String invoiceRemarks;
 	public String getPurchaseCustomerName() {
 		return purchaseCustomerName;
 	}
@@ -34,5 +53,13 @@ public class PurchaseForm implements Serializable {
 
 	public void setRecords(List<Purchase> records) {
 		this.records = records;
+	}
+
+	public double getCashPaid() {
+		return cashPaid;
+	}
+
+	public void setCashPaid(double cashPaid) {
+		this.cashPaid = cashPaid;
 	}
 }

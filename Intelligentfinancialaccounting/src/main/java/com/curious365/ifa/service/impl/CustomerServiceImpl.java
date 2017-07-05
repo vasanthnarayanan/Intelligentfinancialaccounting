@@ -7,12 +7,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import com.curious365.ifa.common.Constants;
 import com.curious365.ifa.dao.CustomerDAO;
 import com.curious365.ifa.dto.Autocomplete;
 import com.curious365.ifa.dto.Customer;
+import com.curious365.ifa.dto.State;
 import com.curious365.ifa.service.CustomerService;
 
 @Service
@@ -33,6 +35,11 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<Customer> listActiveCustomers() {
 		return customerDAO.listCustomers(Constants.ACTIVE);
 	}
+	
+	@Override
+	public List<Customer> listActiveCustomersInclPrivileged() {
+		return customerDAO.listCustomersInclPriveleged(Constants.ACTIVE);
+	}
 
 
 	@Override
@@ -45,8 +52,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	public boolean addNewCustomer(Customer customer) {
-		return customerDAO.addNewCustomer(customer);
+	public long addNewCustomer(Customer customer) {
+		customerDAO.addNewCustomer(customer);
+		return customerDAO.getCurrentCustomerId();
 	}
 
 	@Override
@@ -57,6 +65,25 @@ public class CustomerServiceImpl implements CustomerService {
 		sb.append(query);
 		sb.append(Constants.PERCENTAGE);
 		List<Customer> items = customerDAO.listCustomerLike(sb.toString());
+		for (Customer customer : items) {
+			Autocomplete suggestion = new Autocomplete();
+			suggestion.setData(customer.getCustomerId());
+			suggestion.setValue(customer.getName());
+			suggestions.add(suggestion);
+		}
+		similarItems.put(Constants.QUERY, query);
+		similarItems.put(Constants.SUGGESTIONS, suggestions);
+		return similarItems;
+	}
+	
+	@Override
+	public Map<String, Object> populateAutocompleteInclPrivileged(String query) {
+		StringBuilder sb = new StringBuilder();
+		Map<String,Object> similarItems = new HashMap<String,Object>();
+		List<Autocomplete> suggestions = new ArrayList<Autocomplete>();
+		sb.append(query);
+		sb.append(Constants.PERCENTAGE);
+		List<Customer> items = customerDAO.listCustomerInclPrivelegedLike(sb.toString());
 		for (Customer customer : items) {
 			Autocomplete suggestion = new Autocomplete();
 			suggestion.setData(customer.getCustomerId());
@@ -91,15 +118,48 @@ public class CustomerServiceImpl implements CustomerService {
 		similarItems.put(Constants.SUGGESTIONS, suggestions);
 		return similarItems;
 	}
-
+	
 	@Override
-	public boolean editCustomer(Customer customer) {
+	public Map<String, Object> populateIdAutocompleteInclPrivileged(String query) {
+		StringBuilder sb = new StringBuilder();
+		Map<String,Object> similarItems = new HashMap<String,Object>();
+		List<Autocomplete> suggestions = new ArrayList<Autocomplete>();
+		sb.append(query);
+		sb.append(Constants.PERCENTAGE);
+		List<String> items = customerDAO.listCustomerIdInclPrivelegedLike(sb.toString());
+		for (String item : items) {
+			Autocomplete suggestion = new Autocomplete();
+			suggestion.setData(item);
+			suggestion.setValue(item);
+			suggestions.add(suggestion);
+		}
+		similarItems.put(Constants.QUERY, query);
+		similarItems.put(Constants.SUGGESTIONS, suggestions);
+		return similarItems;
+	}
+
+	@Transactional(readOnly = false , rollbackFor = Exception.class)
+	@Override
+	public boolean editCustomer(Customer customer) throws Exception {
+		Customer oldData = customerDAO.getCustomerById(customer.getCustomerId());
+		double change = customer.getInitialBalance() - oldData.getInitialBalance();
+		
+		if(change>0){
+			customerDAO.increaseCurrentBalance(customer.getCustomerId(), change);
+		}else if(change<0){
+			customerDAO.decreaseCurrentBalance(customer.getCustomerId(), -change);
+		}
 		return customerDAO.editCustomer(customer);
 	}
 
 	@Override
 	public boolean removeCustomer(String customerId) {
 		return customerDAO.removeCustomer(customerId);
+	}
+
+	@Override
+	public List<State> listState() {
+		return customerDAO.listIndianState();
 	}
 	
 }

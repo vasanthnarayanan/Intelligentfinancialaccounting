@@ -48,8 +48,11 @@
 <script src="/js/jquery-ui.js"></script>
 <script src="/js/bootstrap.min.js"></script>
 <script type="text/javascript">
+var dflag=1;
 var cflag=1;
 var iflag=1;
+var faultDate;
+var invoiceId;
 var customerName;
 var customerId;
 var itemName;
@@ -57,7 +60,10 @@ $(document).ready(function(){
 customerName = $('#f_faultcustomername');
 customerId = $('#f_faultcustomerid');
 itemName = $('#f_faultitemname');
+invoiceId = $('#f_invoiceid');
+faultDate = $('#f_faultdate');
 $(itemName).parent().find('.help-block').show();
+
 	/**--Start of datepick--**/
 	var pickdateclass = $('.pickdateclass');
 	$(pickdateclass).datepicker({
@@ -95,12 +101,12 @@ $(itemName).parent().find('.help-block').show();
         },
         onClose: function(selectedDate) {
           if (selectedDate.length == 0) {
-          	cflag=0;
+          	dflag=0;
           	$(pickdateclass).closest('.form-group').removeClass('has-success');
 		  	$(pickdateclass).closest('.form-group').addClass('has-error');
 			$(pickdateclass).parent().find('.help-block').show();
           }else{
-          	cflag=1;
+          	dflag=1;
 			$(pickdateclass).parent().find('.help-block').hide();
 			$(pickdateclass).closest('.form-group').removeClass('has-error');
 			$(pickdateclass).closest('.form-group').addClass('has-success');
@@ -109,6 +115,25 @@ $(itemName).parent().find('.help-block').show();
       });
   /**--End of datepick--**/
 	/**--End of datepick--**/
+	$(invoiceId).devbridgeAutocomplete({
+	    	serviceUrl:'/listInvoiceLike?invoicetype=PURCHASE',
+	    	minChars:1,
+	    	noCache:true,
+	    	onSearchStart: function(query){
+	    	cflag=0;
+	    	$(invoiceId).parent().find('.help-block').show();
+	    	$(faultDate).val('');
+			$(customerName).val('');
+			$(customerId).val('');
+	    	},
+	    	onSelect: function (suggestion){
+	    	cflag=1;
+			$(invoiceId).parent().find('.help-block').hide();
+			$(faultDate).val(suggestion.data[0].invoiceDate);
+			$(customerName).val(suggestion.data[0].invoiceCustomerName);
+			$(customerId).val(suggestion.data[0].invoiceCustomerId);
+	    	}
+	    });
   $(customerName).devbridgeAutocomplete({
 	    	serviceUrl:'/listCustomersLike',
 	    	minChars:1,
@@ -136,7 +161,7 @@ $(itemName).parent().find('.help-block').show();
 	    	iflag =0;
 	    	$(this).closest('.form-group').removeClass('has-success');
 			$(this).closest('.form-group').addClass('has-error');
-	    	$(this).parent().find('#f_faultitemid').val('');
+	    	$('#f_faultitemid').val('');
 	    	$('#f_faultcost').val('');
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>Invalid Item</small>');
@@ -145,15 +170,37 @@ $(itemName).parent().find('.help-block').show();
 	    	iflag =1;
 			$(this).closest('.form-group').removeClass('has-error');
 			$(this).closest('.form-group').addClass('has-success');
-	    	$(this).parent().find('#f_faultitemid').val(suggestion.data[0].itemId);
+	    	$('#f_faultitemid').val(suggestion.data[0].itemId);
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+'</small>');
 		    $('#f_faultcost').val(suggestion.data[0].cost);
 	    	}
 	    });
+	$('#transaction').on('blur','#f_faultpieces',function(event){
+	  var faultPieces = parseFloat($('#f_faultpieces').val());
+	  var faultCost = parseFloat($('#f_faultcost').val());
+		var taxRate =  parseFloat($('#f_faulttaxrate').val())
+		var total = faultPieces * faultCost;
+		var tax = (total*taxRate)/100;
+		var totalwttax = total+tax;
+		$('#f_faultamount').val(total);
+		$('#f_faulttax').val(tax);
+		$('#f_faulttotal').val(totalwttax);
+	  });
+	$('#transaction').on('blur','#f_faultcost',function(event){
+	  var faultPieces = parseFloat($('#f_faultpieces').val());
+	  var faultCost = parseFloat($('#f_faultcost').val());
+		var taxRate =  parseFloat($('#f_faulttaxrate').val())
+		var total = faultPieces * faultCost;
+		var tax = (total*taxRate)/100;
+		var totalwttax = total+tax;
+		$('#f_faultamount').val(total);
+		$('#f_faulttax').val(tax);
+		$('#f_faulttotal').val(totalwttax);
+	  }); 
 	$('#editfault').submit(function(event){
 		
-		if(iflag==0||cflag==0)
+		if(iflag==0||cflag==0||dflag==0)
 			{
 			event.preventDefault()
 			}
@@ -163,8 +210,8 @@ $(itemName).parent().find('.help-block').show();
 });
 </script>
 </head>
-<body id="fault">
-#include("mainnavigation.vm")
+<body id="transaction">
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
@@ -176,9 +223,31 @@ $(itemName).parent().find('.help-block').show();
       </div>
     </div>
     <div id="content" class="col-sm-9">
+    <div class="row">
+    	#if($error)
+		    <div class="alert alert-danger">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Error!</strong> $error
+		    </div>
+	    #end
+	    #if($info)
+		    <div class="alert alert-info">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Note!</strong> $info
+		    </div>
+	    #end
+    	</div>
     	<form class="form-horizontal" id="editfault" name="editfault" action="/editFault" method="post">
     <fieldset>
 	<legend>Purchase Information</legend>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_invoiceid">Invoice Id</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Invoice Id" id="f_invoiceid" name="invoiceId" value="${record.invoiceId}" autocomplete="off" required="true"/>
+		<a href="/editInvoice?invoiceid=${record.invoiceId}">Goto Invoice</a>
+		<span class="help-block"><small>Please enter valid Invoice Id or Invoice Id does not exists</small></span>
+	</div>
+	</div>
 	<div class="form-group">
 	<label class="control-label col-sm-2" for="f_faultrecordid">Id</label>
 	<div class="col-sm-10">
@@ -218,6 +287,25 @@ $(itemName).parent().find('.help-block').show();
 	<label class="control-label col-sm-2" for="f_faultcost">Cost</label>
 	<div class="col-sm-10">
 		<input type="number" step="any" class="form-control" placeholder="Cost" id="f_faultcost" name="faultCost" value="${record.faultCost}" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_faulttotal">Amount</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Amount" id="f_faultamount" name="faultAmount" value="${record.faultAmount}" readonly="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_faultpieces">Pieces</label>
+	<div class="col-sm-10">
+		<input type="hidden" class="form-control" id="f_faulttaxrate" name="faultTaxRate" value="${record.faultTaxRate}" />
+		<input type="text" class="form-control" placeholder="Tax" id="f_faulttax" name="faultTax" value="${record.faultTax}" readonly="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_faultcost">Cost</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Total" id="f_faulttotal" name="faultTotal" value="${record.faultTotal}" readonly="true"/>
 	</div>
 	</div>
 	<div class="form-group">

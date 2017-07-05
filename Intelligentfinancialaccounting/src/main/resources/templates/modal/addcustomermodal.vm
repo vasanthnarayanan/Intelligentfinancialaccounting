@@ -1,0 +1,185 @@
+<div class="modal fade" id="addCustomerModal" tabindex="-1" role="dialog"  aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="addCustomerModalLabel">Quick Add Customer</h4>
+           </div>
+         <div class="modal-body">
+               <form class="form-horizontal" name="addcustomer" id="addcustmodal" action="/addCustomerAsync" method="post">
+    <fieldset>
+	<legend>Customer Information</legend>
+	<div class="form-group">
+	<label id="namelabel" class="control-label col-sm-2" for="f_modal_customername">Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Customer Name" id="f_modal_customername" name="name" value="" autocomplete="off" required="true"/>
+		<span class="help-block"><small>Please enter valid Customer Name or Customer Name already exists</small></span>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_modal_initialbalance">Initial Balance</label>
+	<div class="col-sm-10">
+		<input type="number" class="form-control" placeholder="Initial Balance" id="f_modal_initialbalance" name="initialBalance" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	</fieldset>
+	<fieldset>
+	<legend>Additional details</legend>
+	<div class="form-group">
+	<label for="f_modal_customeraddress" class="control-label col-sm-2">Address</label>
+	<div class="col-sm-10">
+		<textarea rows="3"class="form-control" placeholder="Customer Address" id="f_modal_customeraddress" name="customerAddress"></textarea>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_modal_customerstate" class="control-label col-sm-2">State</label>
+	<div class="col-sm-10">
+	<select class="form-control" id="f_modal_customerstate" name="customerState">
+		<option value="">------------Select State------------</option>
+		<!-- <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+		<option value="Andhra Pradesh">Andhra Pradesh</option>
+		<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+		<option value="Assam">Assam</option>
+		<option value="Bihar">Bihar</option>
+		<option value="Chandigarh">Chandigarh</option>
+		<option value="Chhattisgarh">Chhattisgarh</option>
+		<option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+		<option value="Daman and Diu">Daman and Diu</option>
+		<option value="Delhi">Delhi</option>
+		<option value="Goa">Goa</option>
+		<option value="Gujarat">Gujarat</option>
+		<option value="Haryana">Haryana</option>
+		<option value="Himachal Pradesh">Himachal Pradesh</option>
+		<option value="Jammu and Kashmir">Jammu and Kashmir</option>
+		<option value="Jharkhand">Jharkhand</option>
+		<option value="Karnataka">Karnataka</option>
+		<option value="Kerala">Kerala</option>
+		<option value="Lakshadweep">Lakshadweep</option>
+		<option value="Madhya Pradesh">Madhya Pradesh</option>
+		<option value="Maharashtra">Maharashtra</option>
+		<option value="Manipur">Manipur</option>
+		<option value="Meghalaya">Meghalaya</option>
+		<option value="Mizoram">Mizoram</option>
+		<option value="Nagaland">Nagaland</option>
+		<option value="Orissa">Orissa</option>
+		<option value="Pondicherry">Pondicherry</option>
+		<option value="Punjab">Punjab</option>
+		<option value="Rajasthan">Rajasthan</option>
+		<option value="Sikkim">Sikkim</option>
+		<option value="Tamil Nadu">Tamil Nadu</option>
+		<option value="Telangana">Telangana</option>
+		<option value="Tripura">Tripura</option>
+		<option value="Uttaranchal">Uttaranchal</option>
+		<option value="Uttar Pradesh">Uttar Pradesh</option>
+		<option value="West Bengal">West Bengal</option> -->
+	</select>
+	</div>
+	</div>
+	<script>
+		$(function(){
+			$.ajax({
+				type: "POST",
+				url: "/listState",
+				dataType: 'json',
+				success: function(responseData)
+				{
+					var selBox = $('#f_modal_customerstate');
+					$(responseData).each(function(i, item) {
+						selBox.append($("<option>").attr('value',item.stateCode).text(item.stateName));
+					});
+				}
+				/*-- End of success --*/
+			});
+			/*-- End of ajax --*/
+		});
+		</script>
+	<div class="form-group">
+	<label for="f_modal_customerphonenumber" class="control-label col-sm-2" >Phone number</label>
+	<div class="col-sm-10">
+		<input type="number" id="f_modal_customerphonenumber" class="form-control" placeholder="Customer Phone" name="customerPhoneNumber"/>
+	</div>	
+	</div>
+	<div class="form-group">
+	<label for="f_modal_taxuniqueid" class="control-label col-sm-2" >Tax Unique Id</label>
+	<div class="col-sm-10">
+		<input type="text" id="f_modal_taxuniqueid" class="form-control" placeholder="Tax Id" name="taxUniqueId"/>
+	</div>	
+	</div>
+	#if($role=="ROLE_ADMIN")
+	<div class="form-group">
+	<div class="checkbox">
+		<label id="f_modal_priveleged_label" class="control-label col-sm-offset-2 col-sm-2"><input id="f_modal_priveleged" name="priveleged" type="checkbox" value="1"> Priveleged</label>
+	</div>
+	</div>
+	#end
+	</fieldset>
+	<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+	<input type="submit" name="submit" class="btn btn-primary" value="Add customer" />
+	</div>
+	</div>
+	</form>
+         </div><!-- /.modal-body -->
+        </div><!-- /.modal-content -->
+     </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+<script type="text/javascript">
+$(function(){
+	$('.help-block').hide();
+	var customerNameModal=$('#f_modal_customername');
+	$(customerNameModal).focus();
+	var customermodalflag=0;
+	$(customerNameModal).blur(function(){
+		setTimeout(function(){
+		$.ajax({
+			type: "POST",
+			url: "/checkCustomerName",
+			data: {customername:customerNameModal.val()},
+			success: function(responseData)
+			{
+				if(responseData.trim()=="available")
+					{
+					$(customerNameModal).parent().find('.help-block').hide();
+					$(customerNameModal).closest('.form-group').removeClass('has-error');
+					$(customerNameModal).closest('.form-group').addClass('has-success');
+					customermodalflag=1;
+					}
+				else if(responseData.trim()=="unavailable")
+					{
+						$(customerNameModal).closest('.form-group').removeClass('has-success');
+						$(customerNameModal).closest('.form-group').addClass('has-error');
+						$(customerNameModal).parent().find('.help-block').show();
+						customermodalflag=0;
+					}
+			}
+			/*---End of ajax call---*/
+		});
+	},500);
+});
+	
+	$('#addcustmodal').submit(function(event){
+		if(customermodalflag==1)
+			{
+				$.ajax({
+     			type: "POST",
+     			url: '/addCustomerAsync',
+     			data: $("#addcustmodal").serialize(),
+     			success: function(data) {
+     				if(data=="Success"){
+     					alert("Customer added successfully!");
+     					$('#addCustomerModal').modal('hide');
+     				}else{
+     					alert(data);
+     				}
+     			}
+				});
+				
+			}else{
+				alert("Please check entry!");
+			}
+			event.preventDefault();
+	});
+	
+});
+</script>
+  

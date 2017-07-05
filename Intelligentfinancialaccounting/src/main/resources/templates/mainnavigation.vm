@@ -26,3 +26,8 @@
     </ul>
   </div>
 </nav>
+<script src="/js/jquery.hotkeys.js"></script>
+<script src="/js/ifas/hotkeys.js"></script>
+#parse("modal/addcustomermodal.vm")
+#parse("modal/additemmodal.vm")
+#parse("modal/addbankmodal.vm")

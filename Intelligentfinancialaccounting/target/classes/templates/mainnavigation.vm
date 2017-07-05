@@ -18,7 +18,16 @@
       <li id="navAccounts"><a href="/showSalesSheet">Accounts</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="#">Login</a></li>
+    #if($authenticated)
+    	<li id="navLogin"><a href="/logout">Logout</a></li>
+    #else
+		<li id="navLogin"><a href="/login">Login</a></li>    	
+    #end
     </ul>
   </div>
 </nav>
+<script src="/js/jquery.hotkeys.js"></script>
+<script src="/js/ifas/hotkeys.js"></script>
+#parse("modal/addcustomermodal.vm")
+#parse("modal/additemmodal.vm")
+#parse("modal/addbankmodal.vm")

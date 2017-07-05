@@ -35,7 +35,9 @@ public class FaultDAOImpl implements FaultDAO {
 				QueryConstants.ADD_FAULT,
 				new Object[] { record.getFaultDate(),record.getFaultCustomerId(),
 						record.getFaultItemId(), record.getFaultPieces(),
-						record.getFaultCost(),record.getFaultRemarks(),Constants.ACTIVE });
+						record.getFaultCost(),record.getFaultRemarks(),
+						record.getFaultTax(),record.getFaultTaxRate(),
+						record.getInvoiceId(),Constants.ACTIVE });
 		if(flag>0){
 			return true;
 		}else{
@@ -50,7 +52,9 @@ public class FaultDAOImpl implements FaultDAO {
 				QueryConstants.UPDATE_FAULT,
 				new Object[] { record.getFaultDate(),record.getFaultCustomerId(),
 						record.getFaultItemId(), record.getFaultPieces(),
-						record.getFaultCost(),record.getFaultRemarks(),record.getFaultRecordId() });
+						record.getFaultCost(),record.getFaultRemarks(),
+						record.getFaultTax(),record.getFaultTaxRate(),
+						record.getInvoiceId(),record.getFaultRecordId() });
 		if(flag>0){
 			return true;
 		}else{
@@ -100,4 +104,40 @@ public class FaultDAOImpl implements FaultDAO {
 	public long getCurrentFaultId() {
 		return jdbcTemplate.queryForObject(QueryConstants.GET_FAULT_CURR_SEQ, Long.class);
 	}
+
+
+	@Override
+	public List<Content> listAllFaultInclPriveleged(int strtRow, int endRow,
+			int isActive) {
+		List<Content> faultList = null;
+		try{
+			faultList = jdbcTemplate.query(QueryConstants.LIST_ALL_FAULT_INCL_PRIV,new FaultRowMapper(),new Object[]{isActive,endRow,strtRow});
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return faultList;
+	}
+	
+	@Override
+	public Long getActiveFaultRowCount() throws Exception {
+		return jdbcTemplate.queryForObject(QueryConstants.COUNT_ACTIVE_FAULT,Long.class,new Object[]{Constants.ACTIVE});
+	}
+
+	@Override
+	public Long getActiveFaultRowCountInclPriveleged() throws Exception {
+		return jdbcTemplate.queryForObject(QueryConstants.COUNT_ACTIVE_FAULT_INCL_PRIV,Long.class,new Object[]{Constants.ACTIVE});
+	}
+
+
+	@Override
+	public List<Fault> listFaultByInvoiceId(long invoiceId) {
+		List<Fault> faultList = null;
+		try{
+			faultList = jdbcTemplate.query(QueryConstants.LIST_FAULT_BY_INVOICE_ID, new BeanPropertyRowMapper<Fault>(Fault.class),new Object[]{Constants.ACTIVE,invoiceId});
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return faultList;
+	}
+
 }

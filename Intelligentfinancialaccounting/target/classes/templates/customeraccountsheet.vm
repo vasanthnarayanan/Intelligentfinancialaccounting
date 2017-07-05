@@ -88,7 +88,15 @@ var casTable = $('#customeraccountsheet').DataTable( {
             		}else{
             		return '';
             		}
-            	} },	
+            	} },
+           	{ "data":"tax",
+               	"render": function(data,type,row,meta){
+               		if(0== row.tax){
+               			return '';
+               		}else{
+               			return row.tax;
+               		}
+               	} },
             { "data":"remarks",
             	"render": function(data,type,row,meta){
             		if(null == row.remarks){
@@ -120,29 +128,29 @@ var casTable = $('#customeraccountsheet').DataTable( {
         if(currentPage==0){
         	var initialBalance = ${initialBalance};
 	        if(initialBalance>0){
-	        $('#customeraccountsheet').find('thead').append('<tr class="nobottomborder prevBalanceWrap"><td colspan=4>Previous Balance</td><td class="prevbalance">' + initialBalance + '</td></tr>');
+	        $('#customeraccountsheet').find('thead').append('<tr class="nobottomborder prevBalanceWrap"><td colspan=5>Previous Balance</td><td class="prevbalance">' + initialBalance + '</td></tr>');
 	        }else{
-	        $('#customeraccountsheet').find('thead').append('<tr class="nobottomborder prevBalanceWrap"><td colspan=3>Previous Balance</td><td class="prevbalance">' + initialBalance + '</td><td></td></tr>');
+	        $('#customeraccountsheet').find('thead').append('<tr class="nobottomborder prevBalanceWrap"><td colspan=4>Previous Balance</td><td class="prevbalance">' + initialBalance + '</td><td></td></tr>');
 	        }
         }
         if(pages>1)
         {
 	        if(json.prevBalance>0){
-	        $('#customeraccountsheet').find('thead').append('<tr class="nobottomborder prevPageBalanceWrap"><td colspan=4>Previous Page Balance</td><td class="prevPagebalance">' + json.prevBalance + '</td></tr>');
+	        $('#customeraccountsheet').find('thead').append('<tr class="nobottomborder prevPageBalanceWrap"><td colspan=5>Previous Page Balance</td><td class="prevPagebalance">' + json.prevBalance + '</td></tr>');
 	        }else{
-	        $('#customeraccountsheet').find('thead').append('<tr class="nobottomborder prevPageBalanceWrap"><td colspan=3>Previous Page Balance</td><td class="prevPagebalance">' + json.prevBalance + '</td><td></td></tr>');
+	        $('#customeraccountsheet').find('thead').append('<tr class="nobottomborder prevPageBalanceWrap"><td colspan=4>Previous Page Balance</td><td class="prevPagebalance">' + json.prevBalance + '</td><td></td></tr>');
 	        }
 	        if(currentPage==0){
 					      $('.prevPageBalanceWrap').hide();  
 	        }
         }
         
-      $('#customeraccountsheet').find('tfoot').append('<tr class="notopborder"><td colspan=4>Sales</td><td class="totalsales">' + json.totalSales + '</td></tr>').append('<tr class="notopborder"><td colspan=3>Purchase</td><td class="totalpurchase">' + json.totalExpenditure + '</td><td></td></tr>');
+      $('#customeraccountsheet').find('tfoot').append('<tr class="notopborder"><td colspan=5>Sales</td><td class="totalsales">' + json.totalSales + '</td></tr>').append('<tr class="notopborder"><td colspan=4>Purchase</td><td class="totalpurchase">' + json.totalExpenditure + '</td><td></td></tr>');
       
       if(json.total>0){
-      	$('#customeraccountsheet').find('tfoot').append('<tr class="notopborder"><td colspan=4>Page total</td><td class="total">' + json.total + '</td></tr>');
+      	$('#customeraccountsheet').find('tfoot').append('<tr class="notopborder"><td colspan=5>Page total</td><td class="total">' + json.total + '</td></tr>');
       }else{
-      	$('#customeraccountsheet').find('tfoot').append('<tr class="notopborder"><td colspan=3>Page total</td><td class="total">' + json.total + '</td><td></td></tr>');
+      	$('#customeraccountsheet').find('tfoot').append('<tr class="notopborder"><td colspan=4>Page total</td><td class="total">' + json.total + '</td><td></td></tr>');
       }
       
       initialized = true;
@@ -165,9 +173,9 @@ var casTable = $('#customeraccountsheet').DataTable( {
       	//alert('fix page as balance are not displayed properly because data object only contains row data');
       	var prevPageBalance = $('#customeraccountsheet').find('.prevPagebalance');
       	if(jsonData.prevBalance>0){
-      		$(prevPageBalance).parent().html('<td colspan=4>Previous Page Balance</td><td class="prevPagebalance">' + jsonData.prevBalance + '</td>');
+      		$(prevPageBalance).parent().html('<td colspan=5>Previous Page Balance</td><td class="prevPagebalance">' + jsonData.prevBalance + '</td>');
       	}else{
-      		$(prevPageBalance).parent().html('<td colspan=3>Previous Page Balance</td><td class="prevPagebalance">' + jsonData.prevBalance + '</td><td></td>');
+      		$(prevPageBalance).parent().html('<td colspan=4>Previous Page Balance</td><td class="prevPagebalance">' + jsonData.prevBalance + '</td><td></td>');
       	}
       }
 
@@ -179,9 +187,9 @@ var casTable = $('#customeraccountsheet').DataTable( {
 		$('#customeraccountsheet').find('.totalpurchase').text(jsonData.totalExpenditure);
         
 	      if(jsonData.total>0){
-	      	$(total).parent().html('<td colspan=4>Page total</td><td class="total">' + jsonData.total + '</td>');
+	      	$(total).parent().html('<td colspan=5>Page total</td><td class="total">' + jsonData.total + '</td>');
 	      }else{
-	      	$(total).parent().html('<td colspan=3>Page total</td><td class="total">' + jsonData.total + '</td><td></td>');
+	      	$(total).parent().html('<td colspan=4>Page total</td><td class="total">' + jsonData.total + '</td><td></td>');
 	      }
 	      
         lastPage = currentPage;
@@ -195,7 +203,7 @@ var casTable = $('#customeraccountsheet').DataTable( {
             api.column(0, {page:'current'} ).data().each( function ( group, i ) {
                 if ( last !== group ) {
                     $(rows).eq( i ).before(
-                        '<tr class="group"><td colspan="5">'+group+'</td></tr>'
+                        '<tr class="group"><td colspan="6">'+group+'</td></tr>'
                     );
  
                     last = group;
@@ -213,9 +221,9 @@ var casTable = $('#customeraccountsheet').DataTable( {
 				$('#customeraccountsheet').find('.totalpurchase').text(jsonData.totalExpenditure);
 		        
 			      if(jsonData.total>0){
-			      	$(total).parent().html('<td colspan=4>Page total</td><td class="total">' + jsonData.total + '</td>');
+			      	$(total).parent().html('<td colspan=5>Page total</td><td class="total">' + jsonData.total + '</td>');
 			      }else{
-			      	$(total).parent().html('<td colspan=3>Page total</td><td class="total">' + jsonData.total + '</td><td></td>');
+			      	$(total).parent().html('<td colspan=4>Page total</td><td class="total">' + jsonData.total + '</td><td></td>');
 			      }
 			      
 		      }
@@ -229,7 +237,7 @@ var casTable = $('#customeraccountsheet').DataTable( {
 </script>
 </head>
 <body id="transaction">
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
@@ -251,6 +259,7 @@ var casTable = $('#customeraccountsheet').DataTable( {
             	<th>Date</th>
                 <th>Sales</th>
                 <th>Purchase/Fault</th>
+                <th>Tax</th>
                 <th>Remarks</th>
                 <th>Purchase Gross</th>
                 <th>Sales Gross</th>

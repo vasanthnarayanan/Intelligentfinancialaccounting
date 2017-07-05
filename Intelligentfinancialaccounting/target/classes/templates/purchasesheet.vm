@@ -239,7 +239,7 @@ $('#purchasesheet').DataTable( {
 </script>
 </head>
 <body id="transaction">
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
@@ -251,7 +251,20 @@ $('#purchasesheet').DataTable( {
       </div>
     </div>
     <div id="content" class="col-sm-9">
-
+		<div class="row">
+    	#if($error)
+		    <div class="alert alert-danger">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Error!</strong> $error
+		    </div>
+	    #end
+	    #if($info)
+		    <div class="alert alert-info">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Note!</strong> $info
+		    </div>
+	    #end
+    	</div>
       <div id="quickaddform" class="collapse">
         <div class="panel panel-default">
           <div class="panel-heading">
@@ -306,7 +319,7 @@ $('#purchasesheet').DataTable( {
                 <div class="form-group">
 
                   <div class="col-sm-12">
-                  <!-- unhide when direct transaction implemented --!>
+                  <!-- unhide when direct transaction implemented -->
                     <div class="checkbox pull-left hide">
                       <label>
                         <input type="checkbox"> Cash</label>

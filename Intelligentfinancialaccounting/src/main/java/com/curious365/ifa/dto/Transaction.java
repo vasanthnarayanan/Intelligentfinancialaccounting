@@ -4,19 +4,46 @@ import org.springframework.util.StringUtils;
 
 
 public class Transaction {
-private long transactionRecordId;
+private Long transactionRecordId;
 private String transactionDate;
 private String transactionDateAlt;
 private String transactionCustomerName;
-private long transactionCustomerId;
-private double transactionAmount;
+private Long transactionCustomerId;
+private Double transactionAmount;
 private String isIncome;
 private int activeFlag;
 private String transactionRemarks;
-public long getTransactionRecordId() {
+private String dueDate;
+private String modeOfPayment;
+private String transactionStatus;
+private String chequeNumber;
+private Long chequeBankId;
+private Long refCustomerId;
+private String refCustomerName;
+private Long bankId;
+
+public String getChequeNumber() {
+	return chequeNumber;
+}
+public void setChequeNumber(String chequeNumber) {
+	this.chequeNumber = chequeNumber;
+}
+public Long getRefCustomerId() {
+	return refCustomerId;
+}
+public void setRefCustomerId(Long refCustomerId) {
+	this.refCustomerId = refCustomerId;
+}
+public Long getBankId() {
+	return bankId;
+}
+public void setBankId(Long bankId) {
+	this.bankId = bankId;
+}
+public Long getTransactionRecordId() {
 	return transactionRecordId;
 }
-public void setTransactionRecordId(long transactionRecordId) {
+public void setTransactionRecordId(Long transactionRecordId) {
 	this.transactionRecordId = transactionRecordId;
 }
 public String getTransactionDate() {
@@ -34,10 +61,10 @@ public String getTransactionCustomerName() {
 public void setTransactionCustomerName(String transactionCustomerName) {
 	this.transactionCustomerName = transactionCustomerName;
 }
-public double getTransactionAmount() {
+public Double getTransactionAmount() {
 	return transactionAmount;
 }
-public void setTransactionAmount(double transactionAmount) {
+public void setTransactionAmount(Double transactionAmount) {
 	this.transactionAmount = transactionAmount;
 }
 public String getIsIncome() {
@@ -67,10 +94,10 @@ public String getTransactionDateAlt() {
 public void setTransactionDateAlt(String transactionDateAlt) {
 	this.transactionDateAlt = transactionDateAlt;
 }
-public long getTransactionCustomerId() {
+public Long getTransactionCustomerId() {
 	return transactionCustomerId;
 }
-public void setTransactionCustomerId(long transactionCustomerId) {
+public void setTransactionCustomerId(Long transactionCustomerId) {
 	this.transactionCustomerId = transactionCustomerId;
 }
 public String getTransactionRemarks() {
@@ -81,6 +108,37 @@ public String getTransactionRemarks() {
 }
 public void setTransactionRemarks(String transactionRemarks) {
 	this.transactionRemarks = transactionRemarks;
+}
+
+public String getDueDate() {
+	return dueDate;
+}
+public void setDueDate(String dueDate) {
+	this.dueDate = dueDate;
+}
+public String getTransactionStatus() {
+	return transactionStatus;
+}
+public void setTransactionStatus(String transactionStatus) {
+	this.transactionStatus = transactionStatus;
+}
+public Long getChequeBankId() {
+	return chequeBankId;
+}
+public void setChequeBankId(Long chequeBankId) {
+	this.chequeBankId = chequeBankId;
+}
+public String getRefCustomerName() {
+	return refCustomerName;
+}
+public void setRefCustomerName(String refCustomerName) {
+	this.refCustomerName = refCustomerName;
+}
+public String getModeOfPayment() {
+	return modeOfPayment;
+}
+public void setModeOfPayment(String modeOfPayment) {
+	this.modeOfPayment = modeOfPayment;
 }
 
 }

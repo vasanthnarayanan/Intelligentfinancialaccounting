@@ -1,0 +1,83 @@
+<div class="modal fade" id="addBankModal" tabindex="-1" role="dialog"  aria-labelledby="addBankModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="addBankModalLabel">Quick Add Bank</h4>
+           </div>
+         <div class="modal-body">
+               <form class="form-horizontal" name="addbank" id="addbankmodal" action="/addBankAsync" method="post">
+    <fieldset>
+	<legend>Bank Information</legend>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_modal_name">Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Name" id="f_modal_name" name="bankName" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_modal_address">Address</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Address" id="f_modal_address" name="bankAddress" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	</fieldset>
+	<fieldset>
+	<legend>Additional details</legend>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_modal_accountnumber">Account Number</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Account Number" id="f_modal_accountnumber" name="bankAccountNumber" autocomplete="off"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_modal_ifsccode" class="control-label col-sm-2" >IFSC Code</label>
+	<div class="col-sm-10">
+		<input type="text" id="f_modal_ifsccode" class="form-control" placeholder="IFSC Code" name="bankIfscCode" autocomplete="off"/>
+	</div>	
+	</div>
+	<div class="form-group">
+	<label for="f_modal_accounttype" class="control-label col-sm-2" >Account Type</label>
+	<div class="col-sm-10">
+		<select id="f_modal_accounttype" class="form-control" name="bankAccountType">
+			<option value="">--Type--</option>
+			<option value="CURRENT">Current</option>
+			<option value="SAVINGS">Savings</option>
+			<option value="OD">OD</option>
+		</select>
+	</div>	
+	</div>
+	</fieldset>
+	<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+	<input type="submit" name="submit" class="btn btn-primary" value="Add bank" />
+	</div>
+	</div>
+	</form>
+         </div><!-- /.modal-body -->
+        </div><!-- /.modal-content -->
+     </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+<script type="text/javascript">
+$(function(){
+	$('#addbankmodal').submit(function(event){
+				$.ajax({
+     			type: "POST",
+     			url: '/addBankAsync',
+     			data: $("#addbankmodal").serialize(),
+     			success: function(data) {
+     				if(data=="Success"){
+     					alert("Bank added successfully!");
+     					$('#addBankModal').modal('hide');
+     				}else{
+     					alert(data);
+     				}
+     			}
+				});
+				
+			event.preventDefault();
+	});
+	
+});
+</script>
+  

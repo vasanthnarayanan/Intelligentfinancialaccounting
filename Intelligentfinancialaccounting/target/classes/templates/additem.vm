@@ -21,7 +21,7 @@ $(function(){
 </script>
 </head>
 <body id="item">
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
@@ -46,12 +46,15 @@ $(function(){
 	<div class="col-sm-10">
 		<select id="f_itemquantity" class="form-control" name="quantityId" required="true">
 			<option value="">--Quantity--</option>
-			<option value="1000">5 kg</option>
+			#foreach($quantity in $quantities)
+				<option value="$quantity.quantityId">$quantity.quantity kg</option>
+			#end
+			<!-- <option value="1000">5 kg</option>
 			<option value="1001">10 kg</option>
 			<option value="1002">25 kg</option>
 			<option value="1003">50 kg</option>
 			<option value="1004">75 kg</option>
-			<option value="1005">100 kg</option>
+			<option value="1005">100 kg</option> -->
 		</select>
 	</div>
 	</div>
@@ -60,10 +63,13 @@ $(function(){
 	<div class="col-sm-10">
 		<select id="f_itemtype" class="form-control" name="typeId" required="true">
 			<option value="">--Type--</option>
-			<option value="1000">Jute bags</option>
+			#foreach($type in $types)
+				<option value="$type.typeId">$type.type</option>
+			#end
+			<!-- <option value="1000">Jute bags</option>
 			<option value="1001">Non-woven plastic bags</option>
 			<option value="1002">Woven plastic bags</option>
-			<option value="1003">Plastic bags</option>
+			<option value="1003">Plastic bags</option> -->
 		</select>
 	</div>	
 	</div>

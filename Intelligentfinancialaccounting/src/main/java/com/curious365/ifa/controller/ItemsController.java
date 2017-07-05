@@ -45,6 +45,8 @@ public class ItemsController {
 	public ModelAndView addItemDisplay(){
 		log.debug("entering..");
 		ModelAndView mav = new ModelAndView();
+		mav.addObject("quantities", itemService.listItemQuantities());
+		mav.addObject("types", itemService.listItemTypes());
 		mav.setViewName("additem");
 		return mav;
 	}
@@ -83,6 +85,8 @@ public class ItemsController {
 			mav.addObject("redirect",false);
 		}
 		mav.addObject("item", item);
+		mav.addObject("quantities", itemService.listItemQuantities());
+		mav.addObject("types", itemService.listItemTypes());
 		mav.setViewName("edititem");
 		return mav;
 	}

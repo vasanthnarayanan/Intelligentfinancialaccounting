@@ -9,7 +9,7 @@
 <link href="/css/bootstrap.min.css" rel="stylesheet">
 <link href="/css/ifas/ifas.css" rel="stylesheet">
 <style type="text/css">
-.otherdateclass,.help-block {
+#f_cashpaid,.otherdateclass,.help-block {
   display: none;
 }
 .autocomplete-suggestions {
@@ -51,6 +51,7 @@ var cflag=0;
 var iflag=0;
 var customerName;
 var customerId;
+var showTax = false;
 $(function(){
 customerName = $('#customernameid');
 customerId = $('#customeridid');
@@ -62,7 +63,33 @@ var max_rows = 10; // maximum record rows allowed
   $(add_button).click(function(e) { //on add input button click
     e.preventDefault();
     if (initial < max_rows) { //max input box allowed
-      $(wrapper).append('<div class="form-group">' + '<div class="col-sm-2 seldatewrapper">' + '<select class="form-control seldateclass" name="records[' + initial + '].faultDate">' + '<option value="today">Today</option>' + '<option value="yesterday">Yesterday</option>' + '<option value="others">Others</option>' + '</select>' + '</div>' + '<div class="col-sm-2 otherdateclass"><input type="text" class="form-control pickdateclass" name="records[' + initial + '].faultDate" disabled="disabled" /></div>' + '<div class="col-sm-3">' + '<input type="text" class="form-control itemnameclass" name="itemname" placeholder="Item Name" required="true" size="30" />'+'<input type="hidden" class="itemidclass" name="records[' + initial + '].faultItemId" />' + '<span class="help-block text-uppercase"><small>Item information placeholder</small></span>'+'</div>' + '<div class="col-sm-2">' + '<input type="number" class="form-control piecesclass" name="records[' + initial + '].faultPieces" placeholder="Pieces" required="true" size="30"/>' + '</div>' + '<div class="col-sm-2">' + '<input type="number" step="any" class="form-control costclass" name="records[' + initial + '].faultCost" placeholder="Cost" required="true" size="30"/>' + '</div>'+ '<div class="col-sm-2">' + '<input type="text" class="form-control remarksclass" name="records[' + initial + '].faultRemarks" placeholder="Remarks" size="30"/>' + '</div>' + '<div class="col-sm-1">' + '<a href="#" class="glyphicon glyphicon-minus remove_row"></a>' + '</div>' + '</div>'); //add input box
+    	$(wrapper).append('<div class="form-group">' 
+      		  + '<div class="col-sm-2">' 
+      		  + '<input type="text" class="form-control itemnameclass" name="itemname" placeholder="Item Name" required="true" size="30" />'
+      		  +'<input type="hidden" class="itemidclass" name="records[' + initial + '].faultItemId" />' 
+      		  + '<span class="help-block text-uppercase"><small>Item information placeholder</small></span>'
+      		  +'</div>' 
+      		  + '<div class="col-sm-5">'
+      		  +'<div class="col-sm-3">' 
+    		  + '<input type="number" class="form-control piecesclass" name="records[' + initial + '].faultPieces" placeholder="Pieces" required="true" size="30"/>' 
+    		  + '</div>' 
+    		  +'<div class="col-sm-3">' 
+    		  + '<input type="number" step="any" class="form-control costclass" name="records[' + initial + '].faultCost" placeholder="Cost" required="true" size="30"/>' 
+    		  + '</div>'
+    		  + '<div class="col-sm-3">' 
+    		  + '<input type="text" class="form-control totalclass" name="records[' + initial + '].faultTotal" placeholder="Amount" readonly="readonly" size="30"/>' 
+    		  + '</div>'
+    		  + '<div class="col-sm-3">' 
+    		  +'<input type="hidden" class="form-control faulttaxrateclass" name="records[' + initial + '].faultTaxRate" value="0.0" />'
+    		  +'<input type="hidden" class="form-control taxrateclass" name="taxrate" />'
+              +'<input type="text" class="form-control taxclass" name="records[' + initial + '].faultTax" placeholder="tax" readonly="readonly" size="10" value="0" />'
+    		  + '</div>'
+      		  +'</div>'
+      		  + '<div class="col-sm-2">' 
+      		  + '<input type="text" class="form-control remarksclass" name="records[' + initial + '].faultRemarks" placeholder="Remarks" size="30"/>' 
+      		  + '</div>' 
+      		  + '<div class="col-sm-1">' 
+      		  + '<a href="#" class="glyphicon glyphicon-minus remove_row"></a>' + '</div>'); //add input box
       initial++; //row increment
       initiateactions();
     } else {
@@ -169,6 +196,7 @@ function initiateactions(){
 			$(this).closest('.form-group').addClass('has-error');
 	    	$(this).parent().find('.itemidclass').val('');
 	    	$(this).closest('.form-group').find('.costclass').val('');
+	    	$(this).closest('.form-group').find('.taxrateclass').val('');
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>Invalid Item</small>');
 	    	},
@@ -180,8 +208,145 @@ function initiateactions(){
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+'</small>');
 		    $(this).closest('.form-group').find('.costclass').val(suggestion.data[0].cost);
+		    $(this).closest('.form-group').find('.taxrateclass').val(suggestion.data[0].taxRate);
 	    	}
 	    });
+	    
+	    $('.piecesclass').on('blur',function(event){
+		  	var faultPieces = parseInt($(this).val());
+			var faultPieces = parseInt($(this).closest('.form-group').find('.piecesclass').val());
+			var cost = parseFloat($(this).closest('.form-group').find('.costclass').val());
+			var taxRate = parseFloat($(this).closest('.form-group').find('.taxrateclass').val());
+			var total = faultPieces*cost;
+			var tax = (total*taxRate)/100;
+			var totalWtTax = total+tax;
+			if(showTax){
+				$(this).closest('.form-group').find('.taxclass').val(tax);
+				$(this).closest('.form-group').find('.totalclass').val(total);
+				var totalamountwotax = 0;
+				  var taxamount = 0;
+				  var totalamountwttax = 0;
+				$('.totalclass').each(function(){
+					var tax = parseFloat($(this).closest('.form-group').find('.taxclass').val());
+					var total = parseFloat(this.value);
+					var totalWtTax = total+tax;
+					
+					totalamountwotax += parseFloat(total);
+					taxamount += parseFloat(tax);
+					totalamountwttax += parseFloat(totalWtTax);
+				});
+				 $('#faulttotalamountwotax').html(totalamountwotax);
+				  $('#faulttaxamount').html(taxamount);
+				  $('#faulttotalamountwttax').html(totalamountwttax);
+			}else{
+				$(this).closest('.form-group').find('.taxclass').val(0);
+				$(this).closest('.form-group').find('.totalclass').val(total);
+				var totalamount = 0;
+				$('.totalclass').each(function(){
+					var total = parseFloat(this.value);
+					
+					totalamount += parseFloat(total);
+				});
+				$('#faulttotalamountwotax').html(totalamount);
+				  $('#faulttaxamount').html(0.0);
+				  $('#faulttotalamountwttax').html(totalamount);		  
+			}
+		  });
+		    
+		  $('.costclass').on('blur',function(event){
+			  	var faultPieces = parseInt($(this).closest('.form-group').find('.piecesclass').val());
+			var cost = parseFloat($(this).closest('.form-group').find('.costclass').val());
+			var taxRate = parseFloat($(this).closest('.form-group').find('.taxrateclass').val());
+			var total = faultPieces*cost;
+			var tax = (total*taxRate)/100;
+			var totalWtTax = total+tax;
+			if(showTax){
+				$(this).closest('.form-group').find('.taxclass').val(tax);
+				$(this).closest('.form-group').find('.totalclass').val(total);
+				var totalamountwotax = 0;
+				  var taxamount = 0;
+				  var totalamountwttax = 0;
+				$('.totalclass').each(function(){
+					var tax = parseFloat($(this).closest('.form-group').find('.taxclass').val());
+					var total = parseFloat(this.value);
+					var totalWtTax = total+tax;
+					
+					totalamountwotax += parseFloat(total);
+					taxamount += parseFloat(tax);
+					totalamountwttax += parseFloat(totalWtTax);
+				});
+				 $('#faulttotalamountwotax').html(totalamountwotax);
+				  $('#faulttaxamount').html(taxamount);
+				  $('#faulttotalamountwttax').html(totalamountwttax);
+			}else{
+				$(this).closest('.form-group').find('.taxclass').val(0);
+				$(this).closest('.form-group').find('.totalclass').val(total);
+				var totalamount = 0;
+				$('.totalclass').each(function(){
+					var total = parseFloat(this.value);
+					
+					totalamount += parseFloat(total);
+				});
+				$('#faulttotalamountwotax').html(totalamount);
+				  $('#faulttaxamount').html(0.0);
+				  $('#faulttotalamountwttax').html(totalamount);		  
+			}
+			  });
+			  
+		$('#f_explicittax').on('click',function(event){
+		  showTax = $(this).prop('checked');
+		  if(showTax){
+			  var totalamountwotax = 0;
+			  var taxamount = 0;
+			  var totalamountwttax = 0;
+			  $('.totalclass').each(function(){
+				  var faultPieces = parseInt($(this).closest('.form-group').find('.piecesclass').val());
+					var cost = parseFloat($(this).closest('.form-group').find('.costclass').val());
+					var taxRate = parseFloat($(this).closest('.form-group').find('.taxrateclass').val());
+					var total = faultPieces*cost;
+					var tax = (total*taxRate)/100;
+					var totalWtTax = total+tax;
+					$(this).closest('.form-group').find('.faulttaxrateclass').val(taxRate);
+					$(this).closest('.form-group').find('.taxclass').val(tax);
+					$(this).closest('.form-group').find('.totalclass').val(total);
+					totalamountwotax += parseFloat(total);
+					taxamount += parseFloat(tax);
+					totalamountwttax += parseFloat(totalWtTax);
+			  });
+			  $('#faulttotalamountwotax').html(totalamountwotax);
+			  $('#faulttaxamount').html(taxamount);
+			  $('#faulttotalamountwttax').html(totalamountwttax);
+		  }else{
+			  var totalamount = 0;
+			  $('.totalclass').each(function(){
+				  var faultPieces = parseInt($(this).closest('.form-group').find('.piecesclass').val());
+					var cost = parseFloat($(this).closest('.form-group').find('.costclass').val());
+					var taxRate = parseFloat($(this).closest('.form-group').find('.taxrateclass').val());
+					var total = faultPieces*cost;
+					var tax = (total*taxRate)/100;
+					var totalWtTax = total+tax;
+					$(this).closest('.form-group').find('.faulttaxrateclass').val(0);
+					$(this).closest('.form-group').find('.taxclass').val(0);
+					$(this).closest('.form-group').find('.totalclass').val(total);
+
+					totalamount += parseFloat(total);
+			  });
+			  $('#faulttotalamountwotax').html(totalamount);
+			  $('#faulttaxamount').html(0.0);
+			  $('#faulttotalamountwttax').html(totalamount);		  
+		  }
+	  });
+		
+		 $('#f_instantpay').on('click',function(event){
+			  var enableInstantPay = $(this).prop('checked');
+			  
+			  if(enableInstantPay){
+				  $('#f_cashpaid').show();
+				  $('#f_cashpaid').val($('#faulttotalamountwttax').html());
+			  }else{
+				  $('#f_cashpaid').hide();
+			  }
+		  });
 	    
 	    $('#addfault').submit(function(event){
 		if(iflag==0||cflag==0)
@@ -193,7 +358,7 @@ function initiateactions(){
 </script>
 </head>
 <body id="transaction">
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
@@ -205,11 +370,24 @@ function initiateactions(){
       </div>
     </div>
     <div id="content" class="col-sm-9">
-
+	<div class="row">
+    	#if($error)
+		    <div class="alert alert-danger">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Error!</strong> $error
+		    </div>
+	    #end
+	    #if($info)
+		    <div class="alert alert-info">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Note!</strong> $info
+		    </div>
+	    #end
+    	</div>
       <form id="addfault" class="form-horizontal" action="/addMultiFault" method="post">
 
         <fieldset>
-          <legend>Fault Information</legend>
+          <legend>Invoice Information</legend>
           <div class="form-group">
             <div class='col-sm-10'>
               <label id="customernamelabel" class="control-label" for="customername">Customer name</label>
@@ -219,15 +397,36 @@ function initiateactions(){
             </div>
           </div>
           <div class="form-group">
-            <label class="col-sm-2">Date</label>
-            <label class="col-sm-3">Item Name</label>
-            <label class="col-sm-2">Pieces</label>
-            <label class="col-sm-2">Cost</label>
+          <div class="col-sm-10 seldatewrapper">
+          	<label for="invoicedate" class="control-label" >Invoice Date</label>
+                <select id="invoicedate" class="form-control seldateclass" name="faultDate">
+                  <option value="today">Today</option>
+                  <option value="yesterday">Yesterday</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+              <div class="col-sm-10 otherdateclass">
+                <input type="text" class="form-control pickdateclass" name="faultDate" disabled="disabled" />
+              </div>
+           </div>
+		</fieldset>
+        <fieldset>
+          <legend>Fault Information</legend>
+          
+          <div class="form-group">
+            <!-- <label class="col-sm-2">Date</label> -->
+            <label class="col-sm-2">Item Name</label>
+            <div class="col-sm-5">
+	            <label class="col-sm-3">Pieces</label>
+	            <label class="col-sm-3">Cost</label>
+	            <label class="col-sm-3">Amount</label>
+	            <label class="col-sm-3">Tax</label>
+            </div>
             <label class="col-sm-2">Remarks</label>
           </div>
           <div id="multirowwrapper">
             <div class="form-group">
-              <div class="col-sm-2 seldatewrapper">
+              <!-- <div class="col-sm-2 seldatewrapper">
                 <select class="form-control seldateclass" name="records[0].faultDate">
                   <option value="today">Today</option>
                   <option value="yesterday">Yesterday</option>
@@ -236,17 +435,27 @@ function initiateactions(){
               </div>
               <div class="col-sm-2 otherdateclass">
                 <input type="text" class="form-control pickdateclass" name="records[0].faultDate" disabled="disabled" />
-              </div>
-              <div class="col-sm-3">
+              </div> -->
+              <div class="col-sm-2">
                 <input type="text" class="form-control itemnameclass" name="itemname" placeholder="Item Name" required="true" size="30" />
                 <input type="hidden" class="itemidclass" name="records[0].faultItemId" />
                  <span class="help-block text-uppercase"><small>Item information placeholder</small></span>
               </div>
-              <div class="col-sm-2">
-                <input type="number" class="form-control piecesclass" name="records[0].faultPieces" placeholder="Pieces" required="true" size="30" />
-              </div>
-              <div class="col-sm-2">
-                <input type="number" step="any" class="form-control costclass" name="records[0].faultCost" placeholder="Cost" required="true" size="30" />
+              <div class="col-sm-5">
+	              <div class="col-sm-3">
+	                <input type="number" class="form-control piecesclass" name="records[0].faultPieces" placeholder="Pieces" required="true" size="30" />
+	              </div>
+	              <div class="col-sm-3">
+	                <input type="number" step="any" class="form-control costclass" name="records[0].faultCost" placeholder="Cost" required="true" size="10" />
+	              </div>
+	              <div class="col-sm-3">
+	                <input type="text" class="form-control totalclass" name="records[0].faultTotal" placeholder="Amount" readonly="readonly" size="10" />
+	              </div>
+	              <div class="col-sm-3">
+	              	<input type="hidden" class="form-control faulttaxrateclass" name="records[0].faultTaxRate" value="0.0" />
+	              	<input type="hidden" class="form-control taxrateclass" name="taxrate" />
+	                <input type="text" class="form-control taxclass" name="records[0].faultTax" placeholder="tax" readonly="readonly" size="10" value="0" />
+	              </div>
               </div>
               <div class="col-sm-2">
                 <input type="text" class="form-control remarksclass" name="records[0].faultRemarks" placeholder="Remarks" size="30" />
@@ -254,10 +463,31 @@ function initiateactions(){
               <div class="col-sm-1">
                 <a href="#" id="addMoreRow" class="glyphicon glyphicon-plus"></a>
               </div>
-            </div>
+            </div><!-- /.form-group -->
+          </div><!-- /.multirow wrapper -->
+          <div class="form-group">
+          	<label class="col-sm-2"><input id="f_explicittax" name="explicitTax" type="checkbox" value="1">Show Tax</label>
           </div>
           <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
+          	<label class="col-sm-2"><input id="f_instantpay" name="instantPay" type="checkbox" value="1">Instant Pay</label>
+          	<div class="col-sm-2">
+          	<input type="number" step="any" id="f_cashpaid" class="form-control cashPaid" name="cashPaid" placeholder="Cash Paid" value="0.0"/>
+          	</div>
+          </div>
+          <div class="form-group">
+          	<label class="col-sm-offset-5 col-sm-2">Total Amount Before Tax</label>
+          	<label id="faulttotalamountwotax" class="col-sm-1">0.0</label>
+          </div>
+          <div class="form-group">
+          	<label class="col-sm-offset-5 col-sm-2">Tax Amount</label>
+          	<label id="faulttaxamount" class="col-sm-1">0.0</label>
+          </div>
+          <div class="form-group">
+          	<label class="col-sm-offset-5 col-sm-2">Total Amount After Tax</label>
+          	<label id="faulttotalamountwttax" class="col-sm-1">0.0</label>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-3">
               <input type="submit" class="btn btn-primary" value="Submit">
               <input type="reset" class="btn btn-default" value="Reset">
             </div>

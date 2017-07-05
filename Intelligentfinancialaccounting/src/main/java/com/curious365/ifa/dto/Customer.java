@@ -17,8 +17,24 @@ public class Customer implements Serializable {
 	private String name;
 	private String customerAddress;
 	private String customerPhoneNumber;
+	public String getCustomerState() {
+		return customerState;
+	}
+	public void setCustomerState(String customerState) {
+		this.customerState = customerState;
+	}
+	public String getTaxUniqueId() {
+		return taxUniqueId;
+	}
+	public void setTaxUniqueId(String taxUniqueId) {
+		this.taxUniqueId = taxUniqueId;
+	}
+	private String customerState;
+	private String taxUniqueId;
 	private int activeFlag;
 	private double initialBalance;
+	private double currentBalance;
+	private int priveleged = 0;
 	public String getCustomerId() {
 		return customerId;
 	}
@@ -60,6 +76,18 @@ public class Customer implements Serializable {
 	}
 	public void setInitialBalance(double initialBalance) {
 		this.initialBalance = initialBalance;
+	}
+	public int getPriveleged() {
+		return priveleged;
+	}
+	public void setPriveleged(int priveleged) {
+		this.priveleged = priveleged;
+	}
+	public double getCurrentBalance() {
+		return currentBalance;
+	}
+	public void setCurrentBalance(double currentBalance) {
+		this.currentBalance = currentBalance;
 	}
 
 }

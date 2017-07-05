@@ -18,6 +18,42 @@ public class Purchase implements Serializable {
 	private String purchaseItemName;
 	private String purchaseItemQuantity;
 	private String purchaseItemType;
+	private double purchaseTotal;
+	private double purchaseAmount;
+	private double purchaseTaxRate;
+	private double purchaseTax;
+	public double getPurchaseTaxRate() {
+		return purchaseTaxRate;
+	}
+	public void setPurchaseTaxRate(double purchaseTaxRate) {
+		this.purchaseTaxRate = purchaseTaxRate;
+	}
+	public double getPurchaseTax() {
+		return purchaseTax;
+	}
+	public void setPurchaseTax(double purchaseTax) {
+		this.purchaseTax = purchaseTax;
+	}
+	public long getInvoiceId() {
+		return invoiceId;
+	}
+	public void setInvoiceId(long invoiceId) {
+		this.invoiceId = invoiceId;
+	}
+	public long getPurchaseStock() {
+		return purchaseStock;
+	}
+	public void setPurchaseStock(long purchaseStock) {
+		this.purchaseStock = purchaseStock;
+	}
+	public double getPurchaseTotal() {
+		return getPurchaseAmount()+getPurchaseTax();
+	}
+	public double getPurchaseAmount() {
+		return purchasePieces*purchaseCost;
+	}
+	private long invoiceId;
+	private long purchaseStock;
 	public String getPurchaseItemQuantity() {
 		return purchaseItemQuantity;
 	}

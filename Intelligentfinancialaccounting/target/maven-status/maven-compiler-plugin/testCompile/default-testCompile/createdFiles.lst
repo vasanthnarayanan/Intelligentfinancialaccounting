@@ -1,3 +1,5 @@
+com\curious365\ifa\service\SalesServiceTest.class
 com\curious365\ifa\dao\AccountDAOTest.class
-com\curious365\ifa\IntelligentFinancialAccountingApplicationTests.class
+com\curious365\ifa\dao\DummyTes.class
 com\curious365\ifa\util\JacksonConversion.class
+com\curious365\ifa\IntelligentFinancialAccountingApplicationTests.class

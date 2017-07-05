@@ -12,6 +12,8 @@ import com.curious365.ifa.common.Constants;
 import com.curious365.ifa.common.QueryConstants;
 import com.curious365.ifa.dao.ItemDAO;
 import com.curious365.ifa.dto.Item;
+import com.curious365.ifa.dto.ItemQuantity;
+import com.curious365.ifa.dto.ItemType;
 
 @Repository
 public class ItemDAOImpl implements ItemDAO {
@@ -110,8 +112,8 @@ public class ItemDAOImpl implements ItemDAO {
 
 
 	@Override
-	public boolean addNewItemType(String itemType) {
-		int flag = jdbcTemplate.update(QueryConstants.INSERT_ITEM_TYPE, new Object[]{itemType});
+	public boolean addNewItemType(ItemType itemType) {
+		int flag = jdbcTemplate.update(QueryConstants.INSERT_ITEM_TYPE, new Object[]{itemType.getType(),itemType.getTaxRate(),itemType.getHsnCode()});
 		if(flag>0){
 		return true;
 		}else{
@@ -120,7 +122,7 @@ public class ItemDAOImpl implements ItemDAO {
 	}
 
 	@Override
-	public boolean removeItemType(long itemTypeId) {
+	public boolean removeItemType(String itemTypeId) {
 		int flag = jdbcTemplate.update(QueryConstants.DELETE_ITEM_TYPE, new Object[]{itemTypeId});
 		if(flag>0){
 			return true;
@@ -140,7 +142,7 @@ public class ItemDAOImpl implements ItemDAO {
 	}
 	
 	@Override
-	public boolean removeItemQuantity(long itemQuantityId) {
+	public boolean removeItemQuantity(String itemQuantityId) {
 		int flag = jdbcTemplate.update(QueryConstants.DELETE_ITEM_QUANTITY, new Object[]{itemQuantityId});
 		if(flag>0){
 			return true;
@@ -165,6 +167,51 @@ public class ItemDAOImpl implements ItemDAO {
 	@Override
 	public long getCurrentItemQuantityId() {
 		return jdbcTemplate.queryForObject(QueryConstants.GET_ITEM_QUANTITY_CURR_SEQ, Long.class);
+	}
+
+
+	@Override
+	public boolean increaseStock(Item item) {
+		int flag = jdbcTemplate.update(QueryConstants.INCREASE_STOCK, new Object[]{item.getStock(),item.getItemId()});
+		if(flag>0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+	@Override
+	public boolean decreaseStock(Item item) {
+		int flag = jdbcTemplate.update(QueryConstants.DECREASE_STOCK, new Object[]{item.getStock(),item.getItemId()});
+		if(flag>0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+	@Override
+	public boolean verifyStock(Item item) {
+		Double stockInHand = jdbcTemplate.queryForObject(QueryConstants.VERIFY_STOCK, Double.class, new Object[]{item.getStock(),item.getItemId()});
+		if(stockInHand>=0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+	@Override
+	public List<ItemType> listItemTypes() {
+		return jdbcTemplate.query(QueryConstants.LIST_ITEM_TYPE, new BeanPropertyRowMapper<ItemType>(ItemType.class));
+	}
+
+
+	@Override
+	public List<ItemQuantity> listItemQuantities() {
+		return jdbcTemplate.query(QueryConstants.LIST_ITEM_QUANTITY, new BeanPropertyRowMapper<ItemQuantity>(ItemQuantity.class));
 	}
 
 }

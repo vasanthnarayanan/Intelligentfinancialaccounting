@@ -6,8 +6,62 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>IFAS Home</title>
 <link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/jquery.dataTables.min.css" rel="stylesheet">
 <link href="/css/ifas/ifas.css" rel="stylesheet">
 <script src="/js/jquery.latest.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	var transactionHistoryTable = $('#transactionhistory').DataTable( {
+		"processing": true,
+        "serverSide": true,
+        "ordering": false,
+        "searching": false,
+        "ajax": "/listPendingTransactions?rowCount="+${rowCount},
+        "columns": [
+			{ "data": "transactionRecordId", "visible": false },
+            { "data": "transactionCustomerName" },
+            { "data": "transactionAmount" },
+            { "data": "modeOfPayment" },
+            { "data": "dueDate" },
+            { "data": "transactionStatus",
+            	"render": function(data,type,row,meta){
+            		var selectBox = selectBox = '<select name="transactionStatus" class="transactionstatus"> <option value="">--Status--</option> <option value="COMPLETE">Complete</option> <option value="PENDING">Pending</option> <option value="REJECTED">Rejected</option> </select>';
+            		if(row.transactionStatus == "COMPLETE"){
+            			selectBox = '<select name="transactionStatus" class="transactionstatus"> <option value="">--Status--</option> <option value="COMPLETE" selected>Complete</option> <option value="PENDING">Pending</option> <option value="REJECTED">Rejected</option> </select>'
+            		}else if(row.transactionStatus == "PENDING"){
+            			selectBox = '<select name="transactionStatus" class="transactionstatus"> <option value="">--Status--</option> <option value="COMPLETE">Complete</option> <option value="PENDING" selected>Pending</option> <option value="REJECTED">Rejected</option> </select>'
+            		}else if(row.transactionStatus == "REJECTED"){
+            			selectBox = '<select name="transactionStatus" class="transactionstatus"> <option value="">--Status--</option> <option value="COMPLETE">Complete</option> <option value="PENDING">Pending</option> <option value="REJECTED" selected>Rejected</option> </select>'
+            		}
+            		return selectBox;
+            	} }
+        ]
+    } );
+	
+	$('#transactionhistory tbody').on('change','.transactionstatus',function(){
+		var tr = $(this).closest('tr');
+		var tdata = transactionHistoryTable.row(tr).data();
+		var transactionStatus = $(this).val(); 
+		var transactionRecordId = tdata.transactionRecordId;
+		if(transactionStatus !=tdata.transactionStatus){
+			$.ajax({
+     			type: "POST",
+     			url: '/editTransactionAsync?transactionRecordId='+transactionRecordId+'&transactionStatus='+transactionStatus,
+     			success: function(data) {
+     				if(data=="Success"){
+     					alert("Transaction updated successfully!");
+     					transactionHistoryTable.ajax.reload();
+     				}else{
+     					alert(data);
+     				}
+     			}
+				});
+		}
+	});
+});
+</script>
 </head>
 <body id="index">
 #parse("mainnavigation.vm")
@@ -15,15 +69,25 @@
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
       <div class="list-group">
-        <a href="/logout" class="list-group-item">Backup</a>
-        <a href="/FinancialAccounting/jsp/Restore.jsp" class="list-group-item">Restore</a>
+        <a href="/backup" class="list-group-item">Backup</a>
+        <a href="/restore" class="list-group-item">Restore</a>
       </div>
     </div>
     <div id="content" class="col-sm-9">
     	<div class="row">
-    		<div class="col-sm-offset-3 col-sm-9">
-    			<p id="welcomenote">Welcome to Intelligent Financial Management System !!!</p>
-    		</div>
+			<table id="transactionhistory" class="display" width="100%" cellspacing="0">
+			<caption>Transaction History</caption>
+	        <thead>
+	            <tr>
+	            	<th>Record Id</th>
+	                <th>Customer Name</th>
+	                <th>Amount</th>
+	                <th>Type</th>
+	                <th>Due Date</th>
+	                <th>Status</th>
+	            </tr>
+	        </thead>
+    		</table>    	
     	</div>
     </div>
   </div>

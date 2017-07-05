@@ -45,6 +45,7 @@ public class CustomerController {
 	public ModelAndView addCustomerDisplay(){
 		log.debug("entering..");
 		ModelAndView mav = new ModelAndView();
+		mav.addObject("states", customerService.listState());
 		mav.setViewName("addcustomer");
 		return mav;
 	}
@@ -73,14 +74,15 @@ public class CustomerController {
 			customer.setActiveFlag(Constants.ONE);
 		}else{
 			customer = new Customer();
-			customer.setName(Constants.EMPTY_STRING);
-			customer.setCustomerId(Constants.EMPTY_STRING);
+			/*customer.setName(Constants.EMPTY_STRING);
+			customer.setCustomerId(Constants.EMPTY_STRING); 
 			customer.setInitialBalance(Constants.ZERO);
 			customer.setCustomerAddress(Constants.EMPTY_STRING);
-			customer.setCustomerPhoneNumber(Constants.EMPTY_STRING);
+			customer.setCustomerPhoneNumber(Constants.EMPTY_STRING);*/
 			customer.setActiveFlag(Constants.ZERO);
 		}
 		mav.addObject("customer", customer);
+		mav.addObject("states", customerService.listState());
 		mav.setViewName("editcustomer");
 		return mav;
 	}
@@ -89,7 +91,10 @@ public class CustomerController {
 	public ModelAndView editCustomer(@ModelAttribute Customer customer){
 		log.debug("entering..");
 		ModelAndView mav = new ModelAndView();
-		customerService.editCustomer(customer);
+		try {
+			customerService.editCustomer(customer);
+		} catch (Exception e) {
+		}
 		mav.addObject("pageno", 1);
 		mav.addObject("sorttype", "normal");
 		mav.setViewName("customerindex");

@@ -10,6 +10,10 @@ public interface SalesDAO {
 	public boolean edit(Sales record);
 	public boolean softDelete(long salesId);
 	public Sales getRecordById(long salesId);
+	public List<Sales> listSalesByInvoiceId(long invoiceId);
+	public Long getActiveSalesRowCount() throws Exception;
+	public Long getActiveSalesRowCountInclPriveleged() throws Exception;
 	public List<Content> listAllSales(int strtRow,int endRow,int isActive);
+	public List<Content> listAllSalesInclPriveleged(int strtRow,int endRow,int isActive);
 	public long getCurrentSalesId();
 }

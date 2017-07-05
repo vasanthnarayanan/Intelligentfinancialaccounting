@@ -18,6 +18,43 @@ public class Fault implements Serializable {
 	private String faultItemName;
 	private String faultItemQuantity;
 	private String faultItemType;
+	private double faultTotal;
+	private double cashPaid;
+	public double getFaultTaxRate() {
+		return faultTaxRate;
+	}
+	public void setFaultTaxRate(double faultTaxRate) {
+		this.faultTaxRate = faultTaxRate;
+	}
+	public double getFaultTax() {
+		return faultTax;
+	}
+	public void setFaultTax(double faultTax) {
+		this.faultTax = faultTax;
+	}
+	public long getInvoiceId() {
+		return invoiceId;
+	}
+	public void setInvoiceId(long invoiceId) {
+		this.invoiceId = invoiceId;
+	}
+	public long getFaultStock() {
+		return faultStock;
+	}
+	public void setFaultStock(long faultStock) {
+		this.faultStock = faultStock;
+	}
+	public double getFaultTotal() {
+		return getFaultAmount()+getFaultTax();
+	}
+	public double getFaultAmount() {
+		return faultPieces*faultCost;
+	}
+	private double faultAmount;
+	private double faultTaxRate;
+	private double faultTax;
+	private long invoiceId;
+	private long faultStock;
 	public String getFaultItemQuantity() {
 		return faultItemQuantity;
 	}
@@ -102,6 +139,12 @@ public class Fault implements Serializable {
 	}
 	public void setFaultRemarks(String faultRemarks) {
 		this.faultRemarks = faultRemarks;
+	}
+	public double getCashPaid() {
+		return cashPaid;
+	}
+	public void setCashPaid(double cashPaid) {
+		this.cashPaid = cashPaid;
 	}
 	
 }

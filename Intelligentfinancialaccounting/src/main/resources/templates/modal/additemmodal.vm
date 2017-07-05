@@ -1,0 +1,91 @@
+<div class="modal fade" id="addItemModal" tabindex="-1" role="dialog"  aria-labelledby="addItemModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+         <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="addItemModalLabel">Quick Add Item</h4>
+           </div>
+         <div class="modal-body">
+<form class="form-horizontal" name="additem" id="additemmodal" action="/addItemAsync" method="post">
+    <fieldset>
+	<legend>Item Information</legend>
+	<div class="form-group">
+	<label id="namelabel" class="control-label col-sm-2" for="f_modal_itemname">Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Item Name" id="f_modal_itemname" name="itemName" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_modal_itemquantity" class="control-label col-sm-2">Quantity</label>
+	<div class="col-sm-10">
+		<select id="f_modal_itemquantity" class="form-control" name="quantityId" required="true">
+			<option value="">--Quantity--</option>
+			<option value="1000">5 kg</option>
+			<option value="1001">10 kg</option>
+			<option value="1002">25 kg</option>
+			<option value="1003">50 kg</option>
+			<option value="1004">75 kg</option>
+			<option value="1005">100 kg</option>
+		</select>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_modal_itemtype" class="control-label col-sm-2" >Type</label>
+	<div class="col-sm-10">
+		<select id="f_modal_itemtype" class="form-control" name="typeId" required="true">
+			<option value="">--Type--</option>
+			<option value="1000">Jute bags</option>
+			<option value="1001">Non-woven plastic bags</option>
+			<option value="1002">3D Box bags</option>
+			<option value="1003">Plastic bags</option>
+			<option value="1004">Box bags</option>
+			<option value="1005">One Side bags</option>
+			<option value="1006">Natural bags</option>
+		</select>
+	</div>	
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_modal_itemcost">Cost</label>
+	<div class="col-sm-10">
+		<input type="number" step="any" class="form-control" placeholder="Cost" id="f_modal_itemcost" name="cost" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_modal_itemstock">Stock</label>
+	<div class="col-sm-10">
+		<input type="number" class="form-control" placeholder="Stock" id="f_modal_itemstock" name="stock" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	</fieldset>
+	<div class="form-group">
+	<div class="col-sm-offset-2 col-sm-10">
+	<input type="submit" name="submit" class="btn btn-primary" value="Add Item" />
+	</div>
+	</div>
+	</form>
+         </div><!-- /.modal-body -->
+        </div><!-- /.modal-content -->
+     </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  <script type="text/javascript">
+$(function(){
+	$('.help-block').hide();
+	$('#additemmodal').submit(function(event){
+				$.ajax({
+     			type: "POST",
+     			url: '/addItemAsync',
+     			data: $("#additemmodal").serialize(),
+     			success: function(data) {
+     				if(data=="Success"){
+     					alert("Item added successfully!");
+     					$('#addItemModal').modal('hide');
+     				}else{
+     					alert(data);
+     				}
+     			}
+				});
+				
+			event.preventDefault();
+	});
+});
+</script>

@@ -15,6 +15,23 @@ public class Sales implements Serializable {
 	private String salesCustomerName;
 	private long salesCustomerId;
 	private long salesItemId;
+	private double salesTotal;
+	private double salesAmount;
+	private double salesTaxRate;
+	private double salesTax;
+	public double getSalesTaxRate() {
+		return salesTaxRate;
+	}
+	public void setSalesTaxRate(double salesTaxRate) {
+		this.salesTaxRate = salesTaxRate;
+	}
+	public double getSalesTax() {
+		return salesTax;
+	}
+	public void setSalesTax(double salesTax) {
+		this.salesTax = salesTax;
+	}
+	private long invoiceId;
 	private String salesItemName;
 	private String salesItemQuantity;
 	private String salesItemType;
@@ -31,6 +48,7 @@ public class Sales implements Serializable {
 		this.salesItemType = salesItemType;
 	}
 	private long salesPieces;
+	private long salesStock;
 	private double salesCost;
 	private int activeFlag;
 	private String salesRemarks;
@@ -102,6 +120,24 @@ public class Sales implements Serializable {
 	}
 	public void setSalesRemarks(String salesRemarks) {
 		this.salesRemarks = salesRemarks;
+	}
+	public long getSalesStock() {
+		return salesStock;
+	}
+	public void setSalesStock(long salesStock) {
+		this.salesStock = salesStock;
+	}
+	public double getSalesTotal() {
+		return getSalesAmount()+getSalesTax();
+	}
+	public double getSalesAmount() {
+		return salesCost*salesPieces;
+	}
+	public long getInvoiceId() {
+		return invoiceId;
+	}
+	public void setInvoiceId(long invoiceId) {
+		this.invoiceId = invoiceId;
 	}
 	
 }

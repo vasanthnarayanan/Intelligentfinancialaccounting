@@ -72,11 +72,19 @@ public class Item implements Serializable {
 		this.quantityId = quantityId;
 	}
 
+	public double getTaxRate() {
+		return taxRate;
+	}
+	public void setTaxRate(double taxRate) {
+		this.taxRate = taxRate;
+	}
+
 	private long quantityId;
 	private long quantity;
 	private String type;
 	private long typeId;
 	private double cost;
+	private double taxRate;
 	private long stock;
 	private int activeFlag;
 }

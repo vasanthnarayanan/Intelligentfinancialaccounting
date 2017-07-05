@@ -58,7 +58,7 @@ $(function(){
 </script>
 </head>
 <body id="customer">
-#include("mainnavigation.vm")
+#parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
@@ -91,15 +91,75 @@ $(function(){
 	<div class="form-group">
 	<label for="f_customeraddress" class="control-label col-sm-2">Address</label>
 	<div class="col-sm-10">
-		<textarea rows="3"class="form-control" placeholder="Customer Address" id="f_customeraddress" name="customeraddress"></textarea>
+		<textarea rows="3"class="form-control" placeholder="Customer Address" id="f_customeraddress" name="customerAddress"></textarea>
+	</div>
+	</div>
+	<div class="form-group">
+	<label for="f_customerstate" class="control-label col-sm-2">State</label>
+	<div class="col-sm-10">
+	<select class="form-control" id="f_customerstate" name="customerState">
+		<option value="">------------Select State------------</option>
+			#foreach($state in $states)
+				<option value="$state.stateCode">$state.stateName</option>
+			#end
+		<!-- <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+		<option value="Andhra Pradesh">Andhra Pradesh</option>
+		<option value="Arunachal Pradesh">Arunachal Pradesh</option>
+		<option value="Assam">Assam</option>
+		<option value="Bihar">Bihar</option>
+		<option value="Chandigarh">Chandigarh</option>
+		<option value="Chhattisgarh">Chhattisgarh</option>
+		<option value="Dadra and Nagar Haveli">Dadra and Nagar Haveli</option>
+		<option value="Daman and Diu">Daman and Diu</option>
+		<option value="Delhi">Delhi</option>
+		<option value="Goa">Goa</option>
+		<option value="Gujarat">Gujarat</option>
+		<option value="Haryana">Haryana</option>
+		<option value="Himachal Pradesh">Himachal Pradesh</option>
+		<option value="Jammu and Kashmir">Jammu and Kashmir</option>
+		<option value="Jharkhand">Jharkhand</option>
+		<option value="Karnataka">Karnataka</option>
+		<option value="Kerala">Kerala</option>
+		<option value="Lakshadweep">Lakshadweep</option>
+		<option value="Madhya Pradesh">Madhya Pradesh</option>
+		<option value="Maharashtra">Maharashtra</option>
+		<option value="Manipur">Manipur</option>
+		<option value="Meghalaya">Meghalaya</option>
+		<option value="Mizoram">Mizoram</option>
+		<option value="Nagaland">Nagaland</option>
+		<option value="Orissa">Orissa</option>
+		<option value="Pondicherry">Pondicherry</option>
+		<option value="Punjab">Punjab</option>
+		<option value="Rajasthan">Rajasthan</option>
+		<option value="Sikkim">Sikkim</option>
+		<option value="Tamil Nadu">Tamil Nadu</option>
+		<option value="Telangana">Telangana</option>
+		<option value="Tripura">Tripura</option>
+		<option value="Uttaranchal">Uttaranchal</option>
+		<option value="Uttar Pradesh">Uttar Pradesh</option>
+		<option value="West Bengal">West Bengal</option> -->
+	</select>
 	</div>
 	</div>
 	<div class="form-group">
 	<label for="f_customerphonenumber" class="control-label col-sm-2" >Phone number</label>
 	<div class="col-sm-10">
-		<input type="phone" id="f_customerphonenumber" class="form-control" placeholder="Customer Phone" name="customerphonenumber"/>
+		<input type="number" id="f_customerphonenumber" class="form-control" placeholder="Customer Phone" name="customerPhoneNumber"/>
 	</div>	
 	</div>
+	<div class="form-group">
+	<label for="f_taxuniqueid" class="control-label col-sm-2" >Tax Unique Id</label>
+	<div class="col-sm-10">
+		<input type="text" id="f_taxuniqueid" class="form-control" placeholder="Tax Id" name="taxUniqueId"/>
+	</div>	
+	</div>
+	#if($role=="ROLE_ADMIN")
+	<div class="form-group">
+	<div class="checkbox">
+		<label id="f_priveleged_label" class="control-label col-sm-offset-1 col-sm-2"><input id="f_priveleged" name="priveleged" type="checkbox" value="1"> Priveleged</label>
+	</div>
+	</div>
+	#end
 	</fieldset>
 	<div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">

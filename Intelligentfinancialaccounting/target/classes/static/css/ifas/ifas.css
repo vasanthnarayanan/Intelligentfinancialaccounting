@@ -1,5 +1,18 @@
-#index #navHome,#customer #navCustomer,
+#login #navLogin,#index #navHome,#customer #navCustomer,
 #item #navItem,#transaction #navAccounts{
 	color:#555;
 	background-color:#e7e7e7;
 }
+
+/**--Customer--**/
+#f_priveleged_label{
+	padding-right: 0px !important;
+	margin-bottom: 5px !important;
+	font-weight: bold !important;
+}
+
+#f_modal_priveleged_label{
+	margin-bottom: 5px !important;
+	font-weight: bold !important;
+}
+

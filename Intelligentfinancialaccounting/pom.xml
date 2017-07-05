@@ -5,7 +5,7 @@
 
 	<groupId>com.curious365</groupId>
 	<artifactId>Intelligentfinancialaccounting</artifactId>
-	<version>0.0.4</version>
+	<version>0.0.5</version>
 	<packaging>jar</packaging>
 
 	<name>Intelligent financial accounting</name>

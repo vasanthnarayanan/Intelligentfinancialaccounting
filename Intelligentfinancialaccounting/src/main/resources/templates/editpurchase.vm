@@ -51,6 +51,8 @@
 var dflag=1;
 var cflag=1;
 var iflag=1;
+var purchaseDate;
+var invoiceId;
 var customerName;
 var customerId;
 var itemName;
@@ -58,6 +60,10 @@ $(document).ready(function(){
 customerName = $('#f_purchasecustomername');
 customerId = $('#f_purchasecustomerid');
 itemName = $('#f_purchaseitemname');
+invoiceId = $('#f_invoiceid');
+purchaseDate = $('#f_purchasedate');
+$(itemName).parent().find('.help-block').show();
+
 	/**--Start of datepick--**/
 	var pickdateclass = $('.pickdateclass');
 	$(pickdateclass).datepicker({
@@ -109,6 +115,25 @@ itemName = $('#f_purchaseitemname');
       });
   /**--End of datepick--**/
 	/**--End of datepick--**/
+	$(invoiceId).devbridgeAutocomplete({
+	    	serviceUrl:'/listInvoiceLike?invoicetype=PURCHASE',
+	    	minChars:1,
+	    	noCache:true,
+	    	onSearchStart: function(query){
+	    	cflag=0;
+	    	$(invoiceId).parent().find('.help-block').show();
+	    	$(purchaseDate).val('');
+			$(customerName).val('');
+			$(customerId).val('');
+	    	},
+	    	onSelect: function (suggestion){
+	    	cflag=1;
+			$(invoiceId).parent().find('.help-block').hide();
+			$(purchaseDate).val(suggestion.data[0].invoiceDate);
+			$(customerName).val(suggestion.data[0].invoiceCustomerName);
+			$(customerId).val(suggestion.data[0].invoiceCustomerId);
+	    	}
+	    });
   $(customerName).devbridgeAutocomplete({
 	    	serviceUrl:'/listCustomersLike',
 	    	minChars:1,
@@ -136,7 +161,7 @@ itemName = $('#f_purchaseitemname');
 	    	iflag =0;
 	    	$(this).closest('.form-group').removeClass('has-success');
 			$(this).closest('.form-group').addClass('has-error');
-	    	$(this).parent().find('#f_purchaseitemid').val('');
+	    	$('#f_purchaseitemid').val('');
 	    	$('#f_purchasecost').val('');
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>Invalid Item</small>');
@@ -145,12 +170,34 @@ itemName = $('#f_purchaseitemname');
 	    	iflag =1;
 			$(this).closest('.form-group').removeClass('has-error');
 			$(this).closest('.form-group').addClass('has-success');
-	    	$(this).parent().find('#f_purchaseitemid').val(suggestion.data[0].itemId);
+	    	$('#f_purchaseitemid').val(suggestion.data[0].itemId);
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+'</small>');
 		    $('#f_purchasecost').val(suggestion.data[0].cost);
 	    	}
 	    });
+	$('#transaction').on('blur','#f_purchasepieces',function(event){
+	  var purchasePieces = parseFloat($('#f_purchasepieces').val());
+	  var purchaseCost = parseFloat($('#f_purchasecost').val());
+		var taxRate =  parseFloat($('#f_purchasetaxrate').val())
+		var total = purchasePieces * purchaseCost;
+		var tax = (total*taxRate)/100;
+		var totalwttax = total+tax;
+		$('#f_purchaseamount').val(total);
+		$('#f_purchasetax').val(tax);
+		$('#f_purchasetotal').val(totalwttax);
+	  });
+	$('#transaction').on('blur','#f_purchasecost',function(event){
+	  var purchasePieces = parseFloat($('#f_purchasepieces').val());
+	  var purchaseCost = parseFloat($('#f_purchasecost').val());
+		var taxRate =  parseFloat($('#f_purchasetaxrate').val())
+		var total = purchasePieces * purchaseCost;
+		var tax = (total*taxRate)/100;
+		var totalwttax = total+tax;
+		$('#f_purchaseamount').val(total);
+		$('#f_purchasetax').val(tax);
+		$('#f_purchasetotal').val(totalwttax);
+	  }); 
 	$('#editpurchase').submit(function(event){
 		
 		if(iflag==0||cflag==0||dflag==0)
@@ -163,7 +210,7 @@ itemName = $('#f_purchaseitemname');
 });
 </script>
 </head>
-<body id="purchase">
+<body id="transaction">
 #parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
@@ -176,9 +223,31 @@ itemName = $('#f_purchaseitemname');
       </div>
     </div>
     <div id="content" class="col-sm-9">
+    <div class="row">
+    	#if($error)
+		    <div class="alert alert-danger">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Error!</strong> $error
+		    </div>
+	    #end
+	    #if($info)
+		    <div class="alert alert-info">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Note!</strong> $info
+		    </div>
+	    #end
+    	</div>
     	<form class="form-horizontal" id="editpurchase" name="editpurchase" action="/editPurchase" method="post">
     <fieldset>
 	<legend>Purchase Information</legend>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_invoiceid">Invoice Id</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Invoice Id" id="f_invoiceid" name="invoiceId" value="${record.invoiceId}" autocomplete="off" required="true"/>
+		<a href="/editInvoice?invoiceid=${record.invoiceId}">Goto Invoice</a>
+		<span class="help-block"><small>Please enter valid Invoice Id or Invoice Id does not exists</small></span>
+	</div>
+	</div>
 	<div class="form-group">
 	<label class="control-label col-sm-2" for="f_purchaserecordid">Id</label>
 	<div class="col-sm-10">
@@ -218,6 +287,25 @@ itemName = $('#f_purchaseitemname');
 	<label class="control-label col-sm-2" for="f_purchasecost">Cost</label>
 	<div class="col-sm-10">
 		<input type="number" step="any" class="form-control" placeholder="Cost" id="f_purchasecost" name="purchaseCost" value="${record.purchaseCost}" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_purchasetotal">Amount</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Amount" id="f_purchaseamount" name="purchaseAmount" value="${record.purchaseAmount}" readonly="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_purchasetax">Tax</label>
+	<div class="col-sm-10">
+		<input type="hidden" class="form-control" id="f_purchasetaxrate" name="purchaseTaxRate" value="${record.purchaseTaxRate}" />
+		<input type="text" class="form-control" placeholder="Tax" id="f_purchasetax" name="purchaseTax" value="${record.purchaseTax}" readonly="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label class="control-label col-sm-2" for="f_purchasetax">Total</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Total" id="f_purchasetotal" name="purchaseTotal" value="${record.purchaseTotal}" readonly="true"/>
 	</div>
 	</div>
 	<div class="form-group">

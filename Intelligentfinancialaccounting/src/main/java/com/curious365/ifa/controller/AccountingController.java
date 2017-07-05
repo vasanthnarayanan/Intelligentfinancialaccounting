@@ -61,6 +61,7 @@ public class AccountingController {
 	public ModelAndView addTransactionView(){
 		log.debug("entering..");
 		ModelAndView mav = new ModelAndView();
+		mav.addObject("banks", accountingService.listBankAccounts());
 		mav.setViewName("addtransaction");
 		return mav;
 	}
@@ -68,7 +69,8 @@ public class AccountingController {
 	@RequestMapping(value = "/addTransaction", method=RequestMethod.POST)
 	public ModelAndView createTransaction(@ModelAttribute Transaction record){
 		log.debug("entering.."+ record);
-		String dateString=null;
+		String transactionDateString=null;
+		String dueDateString=null;
 		/* current date */
 		Date date = new Date();
 		SimpleDateFormat formatter= 
@@ -77,29 +79,57 @@ public class AccountingController {
 		/* prev date */
 		int MILLIS_IN_DAY = 1000 * 60 * 60 * 24;
 		String datePrev = formatter.format(date.getTime() - MILLIS_IN_DAY);
-		
+		String dateNext = formatter.format(date.getTime() + MILLIS_IN_DAY);
 		if(record.getTransactionDate().equalsIgnoreCase("today"))
 		{
-			dateString=dateNow;
+			transactionDateString=dateNow;
 		}else if(record.getTransactionDate().equalsIgnoreCase("yesterday"))
 		{
-			dateString=datePrev;
+			transactionDateString=datePrev;
 		}else
 		{
 			DateFormat newformatter ; 
-			Date newdate = null ; 
+			Date transactionDate = null ; 
 			newformatter = new SimpleDateFormat("dd/MM/yyyy");
 			try {
-				newdate = (Date)newformatter.parse(record.getTransactionDate());
+				transactionDate = (Date)newformatter.parse(record.getTransactionDate());
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}
-			dateString=formatter.format(newdate);
+			transactionDateString=formatter.format(transactionDate);
 		}
-		record.setTransactionDate(dateString);
+		record.setTransactionDate(transactionDateString);
+		
+		if(record.getDueDate().equalsIgnoreCase("today"))
+		{
+			dueDateString=dateNow;
+		}else if(record.getDueDate().equalsIgnoreCase("tomorrow"))
+		{
+			dueDateString=dateNext;
+		}else
+		{
+			DateFormat newformatter ; 
+			Date dueDate = null ; 
+			newformatter = new SimpleDateFormat("dd/MM/yyyy");
+			try {
+				dueDate = (Date)newformatter.parse(record.getDueDate());
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			dueDateString=formatter.format(dueDate);
+		}
+		record.setDueDate(dueDateString);
 		ModelAndView mav = new ModelAndView();
 		log.info("printing "+record);
-		if(accountingService.createTransaction(record)){
+		
+		boolean isSuccess = false;
+		try {
+			isSuccess = accountingService.createTransaction(record);
+		} catch (Exception e) {
+		}
+		
+		
+		if(isSuccess){
 			mav.setViewName("redirect:/customerAccountSheet?pageno="
 					+ Constants.DEFAULT_PAGE_NO + "&customername="
 					+ record.getTransactionCustomerName()+"&customerid="+record.getTransactionCustomerId());
@@ -110,47 +140,12 @@ public class AccountingController {
 		return mav;
 	}
 	
-	@RequestMapping(value = "/showSalesSheet", method=RequestMethod.GET)
-	public ModelAndView showSalesSheet(){
-		log.debug("entering..");
-		long rowCount = accountingService.getActiveSalesRowCount();
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("transactionRecordId", 0);
-		mav.addObject("pageNo", 0);
-		mav.addObject("rowCount", rowCount);
-		mav.setViewName("salessheet");
-		return mav;
-	}
-	
-	@RequestMapping(value = "/showPurchaseSheet", method=RequestMethod.GET)
-	public ModelAndView showPurchaseSheet(){
-		log.debug("entering..");
-		long rowCount = accountingService.getActivePurchaseRowCount();
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("transactionRecordId", 0);
-		mav.addObject("pageNo", 0);
-		mav.addObject("rowCount", rowCount);
-		mav.setViewName("purchasesheet");
-		return mav;
-	}
-	
-	@RequestMapping(value = "/showFaultSheet", method=RequestMethod.GET)
-	public ModelAndView showFaultSheet(){
-		log.debug("entering..");
-		long rowCount = accountingService.getActiveFaultRowCount();
-		ModelAndView mav = new ModelAndView();
-		mav.addObject("transactionRecordId", 0);
-		mav.addObject("pageNo", 0);
-		mav.addObject("rowCount", rowCount);
-		mav.setViewName("faultsheet");
-		return mav;
-	}
-	
 	@RequestMapping(value="/editTransaction",method=RequestMethod.GET)
 	public ModelAndView editTransactionDisplay(@RequestParam long recordid){
 		log.debug("entering..");
 		ModelAndView mav = new ModelAndView();
 		Transaction transaction = accountingService.getRecordById(recordid);
+		mav.addObject("banks", accountingService.listBankAccounts());
 		mav.addObject("record", transaction);
 		mav.setViewName("edittransaction");
 		return mav;
@@ -164,16 +159,25 @@ public class AccountingController {
 		SimpleDateFormat formatter= 
 				new SimpleDateFormat("dd/MMM/yyyy");
 		DateFormat newformatter ; 
-		Date newdate = null ; 
+		Date transactionDate = null ;
+		Date dueDate = null ; 
 		newformatter = new SimpleDateFormat("dd/MM/yyyy");
 		try {
-			newdate = (Date)newformatter.parse(transaction.getTransactionDate());
+			transactionDate = (Date)newformatter.parse(transaction.getTransactionDate());
+			dueDate = (Date)newformatter.parse(transaction.getDueDate());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
-		String dateString=formatter.format(newdate);
-		transaction.setTransactionDate(dateString);
-		if(accountingService.editTransaction(transaction)){
+		String transactionDateString=formatter.format(transactionDate);
+		String dueDateString=formatter.format(dueDate);
+		transaction.setTransactionDate(transactionDateString);
+		transaction.setDueDate(dueDateString);
+		boolean isSuccess = false;
+		try {
+			isSuccess = accountingService.editTransaction(transaction);
+		} catch (Exception e) {
+		}
+		if(isSuccess){
 			mav.setViewName("redirect:/customerAccountSheet?pageno="
 					+ Constants.DEFAULT_PAGE_NO + "&customername="
 					+ transaction.getTransactionCustomerName()+"&customerid="+transaction.getTransactionCustomerId());
@@ -189,7 +193,12 @@ public class AccountingController {
 	public ModelAndView removeTransaction(@ModelAttribute Transaction transaction){
 		log.debug("entering..");
 		ModelAndView mav = new ModelAndView();
-		if(accountingService.removeTransaction(transaction.getTransactionRecordId())){
+		boolean isSuccess = false;
+		try {
+			isSuccess = accountingService.removeTransaction(transaction.getTransactionRecordId());
+		} catch (Exception e) {
+		}
+		if(isSuccess){
 			mav.setViewName("redirect:/customerAccountSheet?pageno="
 					+ Constants.DEFAULT_PAGE_NO + "&customername="
 					+ transaction.getTransactionCustomerName()+"&customerid="+transaction.getTransactionCustomerId());
