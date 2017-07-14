@@ -40,8 +40,8 @@ public class QueryConstants {
 	public static final String LIST_ITEMS_LIKE = "select item.*,type,taxrate,quantity from item,item_type,item_quantity  where activeflag=? and item.typeid=item_type.typeid and item.quantityid=item_quantity.quantityid and itemname||itemid like ?";	
 	public static final String LIST_ITEMS = "select item.*,type,taxrate,quantity from item,item_type,item_quantity where item.typeid=item_type.typeid and item.quantityid=item_quantity.quantityid and activeflag=?";
 	public static final String GET_ITEM_BY_ID = "select item.*,type,quantity from item,item_type,item_quantity where itemid=? and item.typeid=item_type.typeid and item.quantityid=item_quantity.quantityid and activeflag=?";
-	public static final String INSERT_ITEM= "insert into item(itemid,itemname,quantityid,typeid,cost,stock,activeflag) values(itemid_sequence.nextVal,?,?,?,?,?,?)";
-	public static final String UPDATE_ITEM= "update item set itemname=?,quantityid=?,typeid=?,cost=?,stock=? where itemid=?";
+	public static final String INSERT_ITEM= "insert into item(itemid,itemname,quantityid,typeid,cost,stock,vendor,activeflag) values(itemid_sequence.nextVal,?,?,?,?,?,?,?)";
+	public static final String UPDATE_ITEM= "update item set itemname=?,quantityid=?,typeid=?,cost=?,stock=?,vendor=? where itemid=?";
 	public static final String INCREASE_STOCK= "update item set stock=stock+? where itemid=?";
 	public static final String DECREASE_STOCK= "update item set stock=stock-? where itemid=?";
 	public static final String VERIFY_STOCK= "select stock-? from item where itemid=?";

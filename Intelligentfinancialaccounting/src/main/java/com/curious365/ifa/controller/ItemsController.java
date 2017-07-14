@@ -82,6 +82,7 @@ public class ItemsController {
 			item.setType(Constants.EMPTY_STRING);
 			item.setCost(Constants.ZERO);
 			item.setActiveFlag(Constants.ZERO);
+			item.setVendor(Constants.EMPTY_STRING);
 			mav.addObject("redirect",false);
 		}
 		mav.addObject("item", item);

@@ -55,7 +55,7 @@ public class SalesServiceImpl implements SalesService {
 		if(stockAvailable){
 			salesDAO.create(record);
 			itemDAO.decreaseStock(item);
-			customerDAO.increaseCurrentBalance(""+record.getSalesCustomerId(), record.getSalesPieces()*record.getSalesCost());
+			customerDAO.increaseCurrentBalance(""+record.getSalesCustomerId(), record.getSalesTotal());
 		}else{
 			throw new NoStockInHand("Requirement exceeds stock in hand.Please check!");
 		}
@@ -78,7 +78,7 @@ public class SalesServiceImpl implements SalesService {
 			if(stockAvailable){
 				salesDAO.create(salesCopy);
 				itemDAO.decreaseStock(item);
-				customerDAO.increaseCurrentBalance(""+salesCopy.getSalesCustomerId(), salesCopy.getSalesPieces()*salesCopy.getSalesCost());
+				customerDAO.increaseCurrentBalance(""+salesCopy.getSalesCustomerId(), salesCopy.getSalesTotal());
 			}else{
 				throw new NoStockInHand("Requirement exceeds stock in hand.Please check!");
 			}
@@ -102,8 +102,8 @@ public class SalesServiceImpl implements SalesService {
 	@Override
 	public void edit(Sales record) throws NoStockInHand,Exception {
 		Sales oldRecord = salesDAO.getRecordById(record.getSalesRecordId());
-		double oldtotal = oldRecord.getSalesCost()*oldRecord.getSalesPieces(); 
-		double newtotal = record.getSalesCost()*record.getSalesPieces();
+		double oldtotal = oldRecord.getSalesTotal(); 
+		double newtotal = record.getSalesTotal();
 		double totaldifference = newtotal-oldtotal;
 		if(record.getSalesItemId()==oldRecord.getSalesItemId()){
 			long change = record.getSalesPieces() - oldRecord.getSalesPieces();	
@@ -175,7 +175,7 @@ public class SalesServiceImpl implements SalesService {
 			item.setStock(record.getSalesPieces());
 			salesDAO.softDelete(salesId);
 			itemDAO.increaseStock(item);
-			customerDAO.decreaseCurrentBalance(""+record.getSalesCustomerId(), record.getSalesPieces()*record.getSalesCost());
+			customerDAO.decreaseCurrentBalance(""+record.getSalesCustomerId(), record.getSalesTotal());
 	}
 
 	@Override

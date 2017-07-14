@@ -25,6 +25,9 @@ $("document").ready(function(){
             { "data": "type" },
             { "data": "cost" },
             { "data": "stock" },
+            #if($role=="ROLE_ADMIN")
+            { "data": "vendor" },	
+            #end
             { "data": null,
             	"render": function(data,type,row,meta){
             		return '<a href="/editItem?itemid='+row.itemId+'" title="edit" class="edititem btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</a> <a href="'+row.itemId+'" title="delete" class="deleteitem btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span> Delete</a>';
@@ -75,6 +78,9 @@ $("document").ready(function(){
                 <th>Type</th>
                 <th>Cost</th>
                 <th>Stock</th>
+                #if($role=="ROLE_ADMIN")
+                <th>Vendor</th>
+                #end
                 <th>Action</th>
             </tr>
         </thead>

@@ -44,7 +44,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 		item.setStock(record.getPurchasePieces());
 		 purchaseDAO.create(record); 
 		 itemDAO.increaseStock(item);
-		 customerDAO.decreaseCurrentBalance(""+record.getPurchaseCustomerId(), record.getPurchasePieces()*record.getPurchaseCost());
+		 customerDAO.decreaseCurrentBalance(""+record.getPurchaseCustomerId(), record.getPurchaseTotal());
 	}
 	
 	@Transactional(readOnly = false , rollbackFor = Exception.class)
@@ -83,8 +83,8 @@ public class PurchaseServiceImpl implements PurchaseService {
 	@Override
 	public void edit(Purchase record) throws Exception {
 		Purchase oldRecord = purchaseDAO.getRecordById(record.getPurchaseRecordId());
-		double oldtotal = oldRecord.getPurchaseCost()*oldRecord.getPurchasePieces(); 
-		double newtotal = record.getPurchaseCost()*record.getPurchasePieces();
+		double oldtotal = oldRecord.getPurchaseTotal(); 
+		double newtotal = record.getPurchaseTotal();
 		double totaldifference = newtotal-oldtotal;
 		
 		if(record.getPurchaseItemId()==oldRecord.getPurchaseItemId()){
@@ -146,7 +146,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 		item.setStock(record.getPurchasePieces());
 		purchaseDAO.softDelete(purchaseId);
 		itemDAO.decreaseStock(item);
-		customerDAO.increaseCurrentBalance(""+record.getPurchaseCustomerId(), record.getPurchasePieces()*record.getPurchaseCost());
+		customerDAO.increaseCurrentBalance(""+record.getPurchaseCustomerId(), record.getPurchaseTotal());
 	}
 
 	@Override

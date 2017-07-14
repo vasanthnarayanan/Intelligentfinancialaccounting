@@ -59,7 +59,7 @@ public class ItemDAOImpl implements ItemDAO {
 	public boolean addNewItem(Item bean) {
 		int flag = jdbcTemplate.update(QueryConstants.INSERT_ITEM, new Object[]{bean.getItemName(),bean.getQuantityId(),
 																				bean.getTypeId(),bean.getCost(),
-																				bean.getStock(),Constants.ACTIVE});
+																				bean.getStock(),bean.getVendor(),Constants.ACTIVE});
 		if(flag>0){
 			return true;
 		}else{
@@ -85,7 +85,7 @@ public class ItemDAOImpl implements ItemDAO {
 	public boolean editItem(Item bean) {
 		int flag = jdbcTemplate.update(QueryConstants.UPDATE_ITEM, new Object[]{bean.getItemName(),bean.getQuantityId(),
 																				bean.getTypeId(),bean.getCost(),		
-																				bean.getStock(),bean.getItemId()});
+																				bean.getStock(),bean.getVendor(),bean.getItemId()});
 		if(flag>0){
 			return true;
 		}else{

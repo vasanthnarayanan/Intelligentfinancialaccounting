@@ -52,7 +52,7 @@ public class FaultServiceImpl implements FaultService {
 		item.setStock(record.getFaultPieces());
 		 faultDAO.create(record); 
 		 itemDAO.increaseStock(item);
-		 customerDAO.decreaseCurrentBalance(""+record.getFaultCustomerId(), record.getFaultPieces()*record.getFaultCost());
+		 customerDAO.decreaseCurrentBalance(""+record.getFaultCustomerId(), record.getFaultTotal());
 	}
 	
 	@Transactional(readOnly = false , rollbackFor = Exception.class)
@@ -69,7 +69,7 @@ public class FaultServiceImpl implements FaultService {
 			faultCopy.setInvoiceId(invoiceId);
 			faultDAO.create(faultCopy); 
 			itemDAO.increaseStock(item);
-			customerDAO.decreaseCurrentBalance(""+faultCopy.getFaultCustomerId(), faultCopy.getFaultPieces()*faultCopy.getFaultCost());
+			customerDAO.decreaseCurrentBalance(""+faultCopy.getFaultCustomerId(), faultCopy.getFaultTotal());
 		}
 		
 		if(invoice.getCashPaid()>0){
@@ -91,8 +91,8 @@ public class FaultServiceImpl implements FaultService {
 	@Override
 	public void edit(Fault record) throws Exception {
 		Fault oldRecord = faultDAO.getRecordById(record.getFaultRecordId());
-		double oldtotal = oldRecord.getFaultCost()*oldRecord.getFaultPieces(); 
-		double newtotal = record.getFaultCost()*record.getFaultPieces();
+		double oldtotal = oldRecord.getFaultTotal(); 
+		double newtotal = record.getFaultTotal();
 		double totaldifference = newtotal-oldtotal;
 		
 		if(record.getFaultItemId()==oldRecord.getFaultItemId()){
@@ -154,7 +154,7 @@ public class FaultServiceImpl implements FaultService {
 		item.setStock(record.getFaultPieces());
 		faultDAO.softDelete(faultId);
 		itemDAO.decreaseStock(item);
-		customerDAO.increaseCurrentBalance(""+record.getFaultCustomerId(), record.getFaultPieces()*record.getFaultCost());
+		customerDAO.increaseCurrentBalance(""+record.getFaultCustomerId(), record.getFaultTotal());
 	}
 
 	@Override

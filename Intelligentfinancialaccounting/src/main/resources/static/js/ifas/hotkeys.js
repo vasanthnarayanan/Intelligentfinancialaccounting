@@ -1,5 +1,7 @@
 $(document).on('keydown', null, 'c', launchAddCustomerModal)
+			.on('keydown', null, 'shift+c', redirectToCustomerIndex)
 			.on('keydown', null, 'i', launchAddItemModal)
+			.on('keydown', null, 'shift+i', redirectToItemIndex)
 			.on('keydown', null, 'b', launchAddBankModal)
 			.on('keydown', null, 'shift+s', redirectToSales)
 			.on('keydown', null, 's', redirectToAddMultiSales)
@@ -24,6 +26,14 @@ function launchAddItemModal(){
 function launchAddBankModal(){
 	$('.modal').modal('hide');
 	$('#addBankModal').modal('show');
+}
+
+function redirectToCustomerIndex(){
+	$(location).attr('href', '/listCustomers?pageno=1&sorttype=normal');
+}
+
+function redirectToItemIndex(){
+	$(location).attr('href', '/listItems?pageno=1&sorttype=normal');
 }
 
 function redirectToSales(){

@@ -79,6 +79,13 @@ public class Item implements Serializable {
 		this.taxRate = taxRate;
 	}
 
+	public String getVendor() {
+		return vendor;
+	}
+	public void setVendor(String vendor) {
+		this.vendor = vendor;
+	}
+
 	private long quantityId;
 	private long quantity;
 	private String type;
@@ -86,5 +93,6 @@ public class Item implements Serializable {
 	private double cost;
 	private double taxRate;
 	private long stock;
+	private String vendor;
 	private int activeFlag;
 }
