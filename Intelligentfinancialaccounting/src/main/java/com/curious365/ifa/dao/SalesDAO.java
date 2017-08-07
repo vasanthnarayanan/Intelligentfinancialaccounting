@@ -11,6 +11,7 @@ public interface SalesDAO {
 	public boolean softDelete(long salesId);
 	public Sales getRecordById(long salesId);
 	public List<Sales> listSalesByInvoiceId(long invoiceId);
+	public List<Sales> listSalesByMonthOfYear(String monthAndYear);
 	public Long getActiveSalesRowCount() throws Exception;
 	public Long getActiveSalesRowCountInclPriveleged() throws Exception;
 	public List<Content> listAllSales(int strtRow,int endRow,int isActive);

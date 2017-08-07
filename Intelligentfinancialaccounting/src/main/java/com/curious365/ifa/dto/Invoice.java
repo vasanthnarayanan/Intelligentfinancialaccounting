@@ -19,6 +19,27 @@ public class Invoice implements Serializable {
 	private double cashPaid;
 	private long orderId;
 	private String remarks;
+	private String deliveryNote;
+	private String termsOfPayment;
+	private String termsOfDelivery;
+	public String getDeliveryNote() {
+		return deliveryNote;
+	}
+	public void setDeliveryNote(String deliveryNote) {
+		this.deliveryNote = deliveryNote;
+	}
+	public String getTermsOfPayment() {
+		return termsOfPayment;
+	}
+	public void setTermsOfPayment(String termsOfPayment) {
+		this.termsOfPayment = termsOfPayment;
+	}
+	public String getTermsOfDelivery() {
+		return termsOfDelivery;
+	}
+	public void setTermsOfDelivery(String termsOfDelivery) {
+		this.termsOfDelivery = termsOfDelivery;
+	}
 	private List<?> records;
 	public long getInvoiceId() {
 		return invoiceId;

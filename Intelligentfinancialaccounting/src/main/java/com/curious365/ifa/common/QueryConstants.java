@@ -127,8 +127,7 @@ public class QueryConstants {
 	public static final String UPDATE_TRANSACTION = "update transaction set transactiondate=?,transactioncustomerid=?,transactionamount=?,is_income=?,transactionremarks=?,modeofpayment=?,duedate=?,transactionstatus=?,chequenumber=?,chequebankid=?,refcustomerid=?,bankid=? where transactionrecordid=?";
 	public static final String SOFT_DELETE_TRANSACTION  = "update transaction set activeflag=? where transactionrecordid=?";
 	
-	
-	/**Invoice
+	/**Estimate Invoice
 	 * 
 	 */
 	public static final String LIST_INVOICE_LIKE = "select invoiceid,to_char(invoicedate,'DD/MM/YYYY')\"invoicedate\",invoicetype,invoicecustomerid,invoice.remarks as remarks,name as invoicecustomername from invoice inner join customer on invoice.invoicecustomerid=customer.customerid where invoice.activeflag=? and  customer.priveleged=0 and invoicetype=? and invoiceid like ?";
@@ -137,6 +136,25 @@ public class QueryConstants {
 	public static final String CREATE_INVOICE = "insert into invoice(invoiceid,invoicedate,invoicetype,invoicecustomerid,invoicetransportid,orderid,remarks,activeflag) values(invoice_id_sequence.nextVal,?,?,?,?,?,?,?)";
 	public static final String UPDATE_INVOICE = "update invoice set invoicedate=?,invoicetype=?,invoicecustomerid=?,invoicetransportid=?,orderid=?,remarks=? where invoiceid=?";
 	public static final String SOFT_DELETE_INVOICE  = "update invoice set activeflag=? where invoiceid=?";
+	
+	/**Tax Invoice
+	 * 
+	 */
+	public static final String LIST_TAX_INVOICE_LIKE = "select taxinvoiceid,to_char(taxinvoicedate,'DD/MM/YYYY')\"taxinvoicedate\",taxinvoicetype,taxinvoicecustomerid,taxinvoice.remarks as remarks,name as taxinvoicecustomername from taxinvoice inner join customer on taxinvoice.taxinvoicecustomerid=customer.customerid where taxinvoice.activeflag=? and  customer.priveleged=0 and taxinvoicetype=? and taxinvoiceid like ?";
+	public static final String LIST_TAX_INVOICE_INCL_PRIV_LIKE = "select taxinvoiceid,to_char(taxinvoicedate,'DD/MM/YYYY')\"taxinvoicedate\",taxinvoicetype,taxinvoicecustomerid,taxinvoice.remarks as remarks,name as taxinvoicecustomername from taxinvoice inner join customer on taxinvoice.taxinvoicecustomerid=customer.customerid where taxinvoice.activeflag=? and taxinvoicetype=? and taxinvoiceid like ?";
+	public static final String GET_TAX_INVOICE_BY_ID = "select taxinvoiceid,to_char(taxinvoicedate,'DD/MM/YYYY')\"taxinvoicedate\",taxinvoicetype,taxinvoicecustomerid,taxinvoice.remarks as remarks,name as taxinvoicecustomername from taxinvoice inner join customer on taxinvoice.taxinvoicecustomerid=customer.customerid where taxinvoice.activeflag=? and taxinvoiceid=?";
+	public static final String CREATE_INSTANT_TAX_INVOICE = "insert into taxinvoice(taxinvoiceid,taxinvoicedate,taxinvoicetype,taxinvoicecustomerid,taxinvoicetransportid,orderid,remarks,activeflag) values(?,?,?,?,?,?,?,?)";
+	public static final String CREATE_TAX_INVOICE = "insert into taxinvoice(taxinvoiceid,taxinvoicedate,taxinvoicetype,taxinvoicecustomerid,taxinvoicetransportid,orderid,remarks,activeflag) values(taxinvoice_id_sequence.nextVal,?,?,?,?,?,?,?)";
+	public static final String UPDATE_TAX_INVOICE = "update taxinvoice set taxinvoicedate=?,taxinvoicetype=?,taxinvoicecustomerid=?,taxinvoicetransportid=?,orderid=?,remarks=? where taxinvoiceid=?";
+	public static final String SOFT_DELETE_TAX_INVOICE  = "update taxinvoice set activeflag=? where taxinvoiceid=?";
+	public static final String GET_LAST_INVOICE_ID = "select max(invoiceid) from invoice where invoicedate=? and activeflag=?";
+	public static final String GET_LAST_INVOICE_ID_BY_MONTH = "select max(invoiceid) from invoice where activeflag=?";
+	
+	/**
+	 * Audited Sales
+	 */
+	public static final String ADD_AUDITED_SALES = "insert into auditedsales(auditedsalesid,salesrecordid,salesdate,salescustomerid,salesitemid,salespieces,salescost,salesremarks,salestax,salestaxrate,invoiceid,taxinvoiceid,activeflag) values(auditedsalesid_sequence.nextVal,?,?,?,?,?,?,?,?,?,?,?,?)";
+	public static final String LIST_AUDITED_SALES_BY_MONTH_YEAR = "select auditedsalesid,salesrecordid,to_char(salesdate,'DD/MM/YYYY')\"salesdate\",salescustomerid,name as salescustomername,itemname as salesitemname,salesitemid,salespieces,salescost,salesremarks,quantity as salesitemquantity,type as salesitemtype,stock as salesstock,salestaxrate,salestax,invoiceid,taxinvoiceid from auditedsales,customer,item,item_type,item_quantity where salescustomerid=customerid and salesitemid=itemid and item.quantityid = item_quantity.quantityid and item.typeid = item_type.typeid and auditedsales.activeflag=? and auditedsales.salesdate like ?";
 	
 	/**
 	 * SalesSheet
@@ -151,6 +169,7 @@ public class QueryConstants {
 	public static final String UPDATE_SALES = "update sales set salesdate=?,salescustomerid=?,salesitemid=?,salespieces=?,salescost=?,salesremarks=?,salestax=?,salestaxrate=?,invoiceid=? where salesrecordid=?";
 	public static final String SOFT_DELETE_SALES = "update sales set activeflag=? where salesrecordid=?";
 	public static final String LIST_SALES_BY_INVOICE_ID = "select salesrecordid,to_char(salesdate,'DD/MM/YYYY')\"salesdate\",salescustomerid,name as salescustomername,itemname as salesitemname,salesitemid,salespieces,salescost,salesremarks,quantity as salesitemquantity,type as salesitemtype,stock as salesstock,salestaxrate,salestax,invoiceid from sales,customer,item,item_type,item_quantity where salescustomerid=customerid and salesitemid=itemid and item.quantityid = item_quantity.quantityid and item.typeid = item_type.typeid and sales.activeflag=? and invoiceid=?";
+	public static final String LIST_SALES_BY_MONTH_YEAR = "select salesrecordid,to_char(salesdate,'DD/MM/YYYY')\"salesdate\",salescustomerid,name as salescustomername,itemname as salesitemname,salesitemid,salespieces,salescost,salesremarks,quantity as salesitemquantity,type as salesitemtype,stock as salesstock,salestaxrate,salestax,invoiceid from sales,customer,item,item_type,item_quantity where salescustomerid=customerid and salesitemid=itemid and item.quantityid = item_quantity.quantityid and item.typeid = item_type.typeid and sales.activeflag=? and sales.salesdate like ?";
 	
 	/**
 	 * PurchaseSheet
@@ -196,5 +215,6 @@ public class QueryConstants {
 	public static final String GET_BANK_ACCOUNT_CURR_SEQ = "select bank_id_sequence.currval from DUAL";
 	public static final String GET_TRANSPORT_CURR_SEQ = "select transport_id_sequence.currval from DUAL";
 	public static final String GET_INVOICE_CURR_SEQ = "select invoice_id_sequence.currval from DUAL";
+	public static final String GET_TAX_INVOICE_CURR_SEQ = "select tax_invoice_id_sequence.currval from DUAL";
 	public static final String GET_INVOICE_ORDER_CURR_SEQ = "select order_id_sequence.currval from DUAL";
 }

@@ -32,12 +32,6 @@ public class Fault implements Serializable {
 	public void setFaultTax(double faultTax) {
 		this.faultTax = faultTax;
 	}
-	public long getInvoiceId() {
-		return invoiceId;
-	}
-	public void setInvoiceId(long invoiceId) {
-		this.invoiceId = invoiceId;
-	}
 	public long getFaultStock() {
 		return faultStock;
 	}
@@ -145,6 +139,12 @@ public class Fault implements Serializable {
 	}
 	public void setCashPaid(double cashPaid) {
 		this.cashPaid = cashPaid;
+	}
+	public long getInvoiceId() {
+		return invoiceId;
+	}
+	public void setInvoiceId(long invoiceId) {
+		this.invoiceId = invoiceId;
 	}
 	
 }

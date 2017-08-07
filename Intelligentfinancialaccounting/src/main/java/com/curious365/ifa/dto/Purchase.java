@@ -34,12 +34,6 @@ public class Purchase implements Serializable {
 	public void setPurchaseTax(double purchaseTax) {
 		this.purchaseTax = purchaseTax;
 	}
-	public long getInvoiceId() {
-		return invoiceId;
-	}
-	public void setInvoiceId(long invoiceId) {
-		this.invoiceId = invoiceId;
-	}
 	public long getPurchaseStock() {
 		return purchaseStock;
 	}
@@ -138,6 +132,12 @@ public class Purchase implements Serializable {
 	}
 	public void setPurchaseRemarks(String purchaseRemarks) {
 		this.purchaseRemarks = purchaseRemarks;
+	}
+	public long getInvoiceId() {
+		return invoiceId;
+	}
+	public void setInvoiceId(long invoiceId) {
+		this.invoiceId = invoiceId;
 	}
 	
 }

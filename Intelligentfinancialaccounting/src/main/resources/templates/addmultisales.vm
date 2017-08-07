@@ -423,7 +423,7 @@ function initiateactions(){
     	</div>
       <form id="addsales" class="form-horizontal" action="/addMultiSales" method="post">
 		<fieldset>
-			<legend>Invoice Information</legend>
+			<legend>Estimate Information</legend>
 			<div class="form-group">
             <div class='col-sm-10'>
               <label id="customernamelabel" class="control-label" for="customername">Customer name</label>
@@ -434,7 +434,7 @@ function initiateactions(){
           </div>
           <div class="form-group">
           <div class="col-sm-10 seldatewrapper">
-          	<label for="invoicedate" class="control-label" >Invoice Date</label>
+          	<label for="invoicedate" class="control-label" >Estimate Date</label>
                 <select id="invoicedate" class="form-control seldateclass" name="salesDate">
                   <option value="today">Today</option>
                   <option value="yesterday">Yesterday</option>
@@ -447,7 +447,7 @@ function initiateactions(){
            </div>
            <div class="form-group">
             <div class='col-sm-10'>
-              <label class="control-label" for="invoiceremarks">Invoice Remarks</label>
+              <label class="control-label" for="invoiceremarks">Estimate Remarks</label>
               <input class="form-control" id="invoiceremarks" name="invoiceRemarks" placeholder="Remarks" size="30" type="text" />
             </div>
           </div>

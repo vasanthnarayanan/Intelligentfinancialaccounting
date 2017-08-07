@@ -209,11 +209,11 @@ invoiceDate = $('#f_invoicedate');
     	<div class="row">
     	<form class="form-horizontal" id="editinvoice" name="editinvoice" action="/editInvoice" method="post">
     <fieldset>
-	<legend>Invoice Information</legend>
+	<legend>Estimate Information</legend>
 	<div class="form-group">
-	<label class="control-label col-sm-2" for="f_invoiceid">Invoice Id</label>
+	<label class="control-label col-sm-2" for="f_invoiceid">Estimate Id</label>
 	<div class="col-sm-10">
-		<input type="text" class="form-control" placeholder="Invoice Id" id="f_invoiceid" name="invoiceId" value="${invoice.invoiceId}" readonly="true"/>
+		<input type="text" class="form-control" placeholder="Estimate Id" id="f_invoiceid" name="invoiceId" value="${invoice.invoiceId}" readonly="true"/>
 		<input type="hidden" id="f_invoicetype" name="invoiceType" value="$!{invoice.invoiceType}"/>
 	</div>
 	</div>
@@ -241,7 +241,7 @@ invoiceDate = $('#f_invoicedate');
 	</fieldset>
 	<div class="form-group">
 	<div class="col-sm-offset-2 col-sm-10">
-	<input type="submit" name="upddateinvoice" class="btn btn-primary" value="Update Invoice" />
+	<input type="submit" name="upddateinvoice" class="btn btn-primary" value="Update Estimate" />
 	<input type="reset" name="reset" class="btn btn-default" value="Reset" />
 	</div>
 	</div>

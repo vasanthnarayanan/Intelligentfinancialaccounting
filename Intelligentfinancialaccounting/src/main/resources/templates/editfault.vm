@@ -241,11 +241,11 @@ $(itemName).parent().find('.help-block').show();
     <fieldset>
 	<legend>Purchase Information</legend>
 	<div class="form-group">
-	<label class="control-label col-sm-2" for="f_invoiceid">Invoice Id</label>
+	<label class="control-label col-sm-2" for="f_invoiceid">Estimate Id</label>
 	<div class="col-sm-10">
-		<input type="text" class="form-control" placeholder="Invoice Id" id="f_invoiceid" name="invoiceId" value="${record.invoiceId}" autocomplete="off" required="true"/>
-		<a href="/editInvoice?invoiceid=${record.invoiceId}">Goto Invoice</a>
-		<span class="help-block"><small>Please enter valid Invoice Id or Invoice Id does not exists</small></span>
+		<input type="text" class="form-control" placeholder="Estimate Id" id="f_invoiceid" name="invoiceId" value="${record.invoiceId}" autocomplete="off" required="true"/>
+		<a href="/editInvoice?invoiceid=${record.invoiceId}">Goto Estimate</a>
+		<span class="help-block"><small>Please enter valid Estimate Id or Estimate Id does not exists</small></span>
 	</div>
 	</div>
 	<div class="form-group">

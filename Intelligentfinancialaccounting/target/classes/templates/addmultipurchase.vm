@@ -56,7 +56,7 @@ var enableInstantPay = false;
 $(function(){
 customerName = $('#customernameid');
 customerId = $('#customeridid');
-var max_rows = 10; // maximum record rows allowed
+var max_rows = 20; // maximum record rows allowed
   var initial = 1; // initial rows
   var wrapper = $('#multirowwrapper');
   var add_button = $('#addMoreRow');

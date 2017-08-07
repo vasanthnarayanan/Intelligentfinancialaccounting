@@ -138,4 +138,15 @@ public class SalesDAOImpl implements SalesDAO {
 		}
 		return salesList;
 	}
+	
+	@Override
+	public List<Sales> listSalesByMonthOfYear(String monthOfYear) {
+		List<Sales> salesList = null;
+		try{
+			salesList = jdbcTemplate.query(QueryConstants.LIST_SALES_BY_MONTH_YEAR, new BeanPropertyRowMapper<Sales>(Sales.class),new Object[]{Constants.ACTIVE,monthOfYear});
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return salesList;
+	}
 }

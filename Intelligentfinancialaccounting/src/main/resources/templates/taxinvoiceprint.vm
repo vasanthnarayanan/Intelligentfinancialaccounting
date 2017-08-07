@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tax Invoice</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="/css/ifas/ifas.css" rel="stylesheet">
+<style>
+td{
+	padding:2px;
+}
+tr.noBorder td{
+	border: 0;
+}
+</style>
+<script src="/js/jquery.latest.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
+<script src="/js/jQuery.print.min.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	$('#printBtn').on('click',function(){
+		$('#invoiceprint').print();
+	});
+});
+</script>
+</head>
+<body id="index">
+#parse("mainnavigation.vm")
+<div id="contentcontainer" class="container-fluid">
+  <div class="row">
+    <div id="sidenavigation" class="col-sm-3">
+      <div class="list-group">
+        <a href="/backup" class="list-group-item">Backup</a>
+        <a href="/restore" class="list-group-item">Restore</a>
+      </div>
+    </div>
+    <div id="content" class="col-sm-9">
+    <div  id="invoiceprint" class="col-sm-9">
+    <div class="row">
+    <h3 class="text-center"><b>Tax Invoice</b></h3>
+    </div>
+    	<div class="row">
+			<table id="taxinvoice" width="100%" border=1>
+			<tr>
+			<td rowspan=3 colspan=5>
+			<b><u>Consignee</u></b><br />
+			Name: Dharmalakshmi Traders<br />
+			Address: GNT Road Redhills<br />
+			State: <br />
+			State Code: <br />
+			GSTIN:</td>
+			<td>Invoice No:</td><td>Dated:</td>
+	        </tr>
+	        <tr><td>Delivery Note:</td><td>Mode of Payment:</td></tr>
+	        <tr><td>Despatched through:</td><td>Destination:</td></tr>
+	        <tr>
+			<td rowspan=3 colspan=5>
+			<b><u>Consignor</u></b><br />
+			Name: D&K Corp<br />
+			Address: Redhills <br />
+			State: <br />
+			State Code: <br />
+			GSTIN:</td>
+			<td rowspan=2 colspan=2>Terms Of Delivery: <br/>
+			Bike</td>
+	        </tr>
+	        <tr></tr>
+	        <tr></tr>
+	        <tr><td colspan=7><center><b>Sales Details</b></center></td></tr>
+	        <tr>
+	        <th>S.NO.</th>
+	        <th>Description</th>
+	        <th>HSN/SAC</th>
+	        <th>Quantity</th>
+	        <th>Unit</th>
+	        <th>Rate</th>
+	        <th>Amount</th>
+	        </tr>
+	        <tr class="noBorder">
+	        <td>1</td>
+	        <td>Jodipura 25KG Non Woven Bags</td>
+	        <td>63053900</td>
+	        <td>1000</td>
+	        <td>BG</td>
+	        <td>19</td>
+	        <td>19000</td>
+	        </tr>
+	        <tr class="noBorder">
+	        <td>2</td>
+	        <td>Krishna 25KG Non Woven Bags</td>
+	        <td>63053900</td>
+	        <td>1000</td>
+	        <td>BG</td>
+	        <td>19</td>
+	        <td>19000</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td colspan=7>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td colspan=7>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td colspan=7>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td colspan=7>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td colspan=7>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td colspan=7>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td colspan=7>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td colspan=7>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td colspan=7>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder" >
+	        <td>&nbsp;</td><td>CGST</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>475</td>
+	       	</tr>
+	       	<tr class="noBorder" >
+	       	<td>&nbsp;</td><td>SGST</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>475</td>
+	       	</tr>
+	       	<tr class="noBorder" > 
+	        <td>&nbsp;</td><td>Round Off</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>(-)0</td>
+	        </tr>
+	        <tr> 
+	        <td>&nbsp;</td><td>Total</td><td>&nbsp;</td><td>2000</td><td>&nbsp;</td><td>&nbsp;</td><td>19950</td>
+	        </tr>
+	        <tr>
+	        <td colspan=7><b>Amount Chargeable(in words)</b><br />
+	        Indian Rupees Thirty Eight Thousand Only
+	        </td>
+	        </tr>
+	        <tr><td colspan=7><center><b>Tax Details</b></center></td></tr>
+	        <tr>
+	        <th rowspan=2>S.No.</th>
+	        <th rowspan=2>HSN/SAC</th>
+	        <th rowspan=2>Taxable Value</th>
+	        <th colspan=2>Central Tax</th>
+	        <th colspan=2>State Tax</th>
+	        </tr>
+	        <tr>
+	        <th>Rate</th>
+	        <th>Amount</th>
+	        <th>Rate</th>
+	        <th>Amount</th>
+	        </tr>
+	        <tr class="noBorder">
+	        <td>1</td>
+	        <td>63053900</td>
+	        <td>38000</td>
+	        <td>2.5%</td>
+	        <td>900</td>
+	        <td>2.5%</td>
+	        <td>900</td>
+	        </tr>
+	        <tr class="noBorder">
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder">
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        <td>&nbsp;</td>
+	        </tr>
+	        <tr class="noBorder">
+	        <td>&nbsp;</td>
+	        <td>Total</td>
+	        <td>38000</td>
+	        <td>&nbsp;</td>
+	        <td>1800</td>
+	        <td>&nbsp;</td>
+	        <td>1800</td>
+	        </tr>
+			<tr>
+	        <td colspan=7><b>Tax Amount(in words)</b><br />
+	        Indian Rupees Thousand Eight Hundred Only
+	        </td>
+	        </tr>
+	        <tr></tr>
+	        <tr>
+	        <td colspan=4>
+	        Company's Bank Details <br />
+	        Bank Name: <b>TamilNadu Mercantile Bank</b> <br />
+	        A/C No: <b>228150310875005</b> <br />
+	        Branch: <b>Redhills</b> <br />
+	        IFSC Code: <b>TMBL000228</b> <br />
+	        <u>Declaration</u>
+	        We declare that this invoice shows the actual price of the <br />
+	        goods described and that all particulars are true and correct
+	        </td>
+	        <td colspan=3>
+	        For Dharmalakshmi Traders,Chennai<br />
+	        <br/>
+	        <br/>
+	        Authorised Signatory
+	        </td>
+	        </tr>
+    		</table>    
+    		<h5 class="text-center">SUBJECT TO CHENNAI JURISDICTION</h5>
+    		<p class="text-center">This is a Computer Generated Invoice</p>	
+    	</div>
+    	</div>
+    	<div class="row col-sm-9">
+    	<button id="printBtn">Print</button>
+    	</div>
+    </div>
+  </div>
+  </div>
+</body>
+</html>

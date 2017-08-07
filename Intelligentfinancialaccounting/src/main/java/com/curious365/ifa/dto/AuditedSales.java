@@ -4,12 +4,13 @@ import java.io.Serializable;
 
 import org.springframework.util.StringUtils;
 
-public class Sales implements Serializable,Comparable {
+public class AuditedSales implements Serializable,Comparable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4471571304940948851L;
+	private long auditedSalesId;
 	private long salesRecordId;
 	private String salesDate;
 	private String salesCustomerName;
@@ -32,6 +33,7 @@ public class Sales implements Serializable,Comparable {
 		this.salesTax = salesTax;
 	}
 	private long invoiceId;
+	private long taxInvoiceId;
 	private String salesItemName;
 	private String salesItemQuantity;
 	private String salesItemType;
@@ -139,6 +141,19 @@ public class Sales implements Serializable,Comparable {
 	public void setInvoiceId(long invoiceId) {
 		this.invoiceId = invoiceId;
 	}
+	public long getTaxInvoiceId() {
+		return taxInvoiceId;
+	}
+	public void setTaxInvoiceId(long taxInvoiceId) {
+		this.taxInvoiceId = taxInvoiceId;
+	}
+	public long getAuditedSalesId() {
+		return auditedSalesId;
+	}
+	public void setAuditedSalesId(long auditedSalesId) {
+		this.auditedSalesId = auditedSalesId;
+	}
+	
 	@Override
 	public int compareTo(Object sales) {
 		if(this.salesDate.equalsIgnoreCase(((Sales)sales).getSalesDate())){
@@ -147,5 +162,27 @@ public class Sales implements Serializable,Comparable {
 			return -1;
 		}
 	}
+	
+	@Override
+	public boolean equals(Object object){
+		boolean result = false;
+		if (object == null || object.getClass() != getClass()) {
+		      result = false;
+		    } else {
+		      AuditedSales method = (AuditedSales) object;
+		      if (this.salesRecordId == method.getSalesRecordId()
+		          ) {
+		        result = true;
+		      }
+		    }
+		    return result;
+	}
+	
+	@Override
+    public int hashCode() {
+    int hash = 3;
+    hash = (int) (7 * hash + this.salesRecordId);
+    return hash;
+   }
 	
 }
