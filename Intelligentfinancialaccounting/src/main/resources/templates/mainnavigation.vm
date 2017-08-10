@@ -16,6 +16,7 @@
       <li id="navCustomer"><a href="/listCustomers?pageno=1&sorttype=normal">Customer</a></li>
       <li id="navItem"><a href="/listItems?pageno=1&sorttype=normal">Item</a></li>
       <li id="navAccounts"><a href="/showSalesSheet">Accounts</a></li>
+      <li id="navInvoices"><a href="/listEstimates">Invoices</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
     #if($authenticated)

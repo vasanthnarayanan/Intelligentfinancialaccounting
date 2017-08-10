@@ -12,7 +12,6 @@ import com.curious365.ifa.common.Constants;
 import com.curious365.ifa.common.InvoiceType;
 import com.curious365.ifa.common.QueryConstants;
 import com.curious365.ifa.dao.InvoiceDAO;
-import com.curious365.ifa.dto.Content;
 import com.curious365.ifa.dto.Invoice;
 
 @Repository
@@ -30,6 +29,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 						invoice.getInvoiceTransportId(),
 						invoice.getOrderId(),
 						invoice.getRemarks(),
+						invoice.getTaxInvoiceId(),
 						Constants.ACTIVE });
 		if(flag>0){
 			return true;
@@ -67,7 +67,7 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 			return false;
 		}
 	}
-
+	
 	@Override
 	public Invoice getRecordById(long invoiceId) {
 		Invoice invoice = null;
@@ -77,12 +77,6 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 			
 		}
 		return invoice;
-	}
-
-	@Override
-	public List<Content> listAllInvoice() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -117,5 +111,42 @@ public class InvoiceDAOImpl implements InvoiceDAO {
 			
 		}
 		return invoices;
+	}
+
+	@Override
+	public List<Invoice> listInvoiceByMonth(String monthOfYear) {
+		List<Invoice> invoices = new ArrayList<Invoice>();
+		try{
+			invoices = jdbcTemplate.query(QueryConstants.LIST_INVOICE_BY_MONTH, new BeanPropertyRowMapper<Invoice>(Invoice.class),new Object[]{Constants.ACTIVE,monthOfYear});			
+		}catch(Exception e){
+			
+		}
+		return invoices;
+	}
+
+	@Override
+	public List<Invoice> listInvoiceInclPrivelegedByMonth(String monthOfYear) {
+		List<Invoice> invoices = new ArrayList<Invoice>();
+		try{
+			invoices = jdbcTemplate.query(QueryConstants.LIST_INVOICE_INCL_PRIV_BY_MONTH, new BeanPropertyRowMapper<Invoice>(Invoice.class),new Object[]{Constants.ACTIVE,monthOfYear});			
+		}catch(Exception e){
+			
+		}
+		return invoices;
+	}
+
+	@Override
+	public boolean updateInvoiceWtTaxInvoice(Invoice invoice) {
+		int flag = jdbcTemplate.update(
+				QueryConstants.UPDATE_INVOICE_WT_TAX_INVOICE,
+				new Object[] {
+						invoice.getTaxInvoiceId(),
+						invoice.getInvoiceId()
+						});
+		if(flag>0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

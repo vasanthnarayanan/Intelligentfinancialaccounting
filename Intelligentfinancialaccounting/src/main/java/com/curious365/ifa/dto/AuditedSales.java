@@ -14,6 +14,7 @@ public class AuditedSales implements Serializable,Comparable {
 	private long salesRecordId;
 	private String salesDate;
 	private String salesCustomerName;
+	private String hsnCode;
 	private long salesCustomerId;
 	private long salesItemId;
 	private double salesTotal;
@@ -133,7 +134,8 @@ public class AuditedSales implements Serializable,Comparable {
 		return getSalesAmount()+getSalesTax();
 	}
 	public double getSalesAmount() {
-		return salesCost*salesPieces;
+		// round to two decimal points
+		return Math.round(salesCost*salesPieces*100)/100;
 	}
 	public long getInvoiceId() {
 		return invoiceId;
@@ -184,5 +186,11 @@ public class AuditedSales implements Serializable,Comparable {
     hash = (int) (7 * hash + this.salesRecordId);
     return hash;
    }
+	public String getHsnCode() {
+		return hsnCode;
+	}
+	public void setHsnCode(String hsnCode) {
+		this.hsnCode = hsnCode;
+	}
 	
 }

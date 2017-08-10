@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.curious365.ifa.dto.Purchase;
+import com.curious365.ifa.util.NumberToWord;
 
 public class DummyTest {
 
 	public static void main(String[] args) {
-		Map<String,Long> bagsByCategory = new HashMap<String,Long>();
+		/*Map<String,Long> bagsByCategory = new HashMap<String,Long>();
 		List<Purchase> purchases = new ArrayList<Purchase>();
 		Purchase one = new Purchase();
 		one.setPurchaseItemQuantity("25");
@@ -61,7 +62,11 @@ public class DummyTest {
 		}
 		
 		
-		System.out.println(bagsByCategory+""+bagsByCatPerDay);
+		System.out.println(bagsByCategory+""+bagsByCatPerDay);*/
+		
+		NumberToWord numberToWord = new NumberToWord();
+		String numberToWords = numberToWord.convertNumberToWords(145657);
+		System.out.println(numberToWords);
 	}
 
 }

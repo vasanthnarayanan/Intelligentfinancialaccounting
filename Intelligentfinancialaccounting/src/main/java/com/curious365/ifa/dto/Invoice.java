@@ -11,6 +11,7 @@ public class Invoice implements Serializable {
 	private static final long serialVersionUID = -1970073294829181782L;
 	
 	private long invoiceId;
+	private long taxInvoiceId;
 	private String invoiceDate;
 	private String invoiceType;
 	private String invoiceCustomerName;
@@ -100,6 +101,12 @@ public class Invoice implements Serializable {
 	}
 	public void setCashPaid(double cashPaid) {
 		this.cashPaid = cashPaid;
+	}
+	public long getTaxInvoiceId() {
+		return taxInvoiceId;
+	}
+	public void setTaxInvoiceId(long taxInvoiceId) {
+		this.taxInvoiceId = taxInvoiceId;
 	}
 
 }

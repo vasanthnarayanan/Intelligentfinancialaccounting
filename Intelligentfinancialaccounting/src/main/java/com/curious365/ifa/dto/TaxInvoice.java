@@ -22,6 +22,126 @@ public class TaxInvoice implements Serializable {
 	private String deliveryNote;
 	private String termsOfPayment;
 	private String termsOfDelivery;
+	
+	// consignee details
+	private String consigneeName;
+	private String consigneeAddress;
+	private String consigneeState;
+	private String consigneeStateCode;
+	private String consigneeTaxUniqueId;
+	
+	// consignor details
+	private String consignorAddress;
+	private String consignorState;
+	private String consignorStateCode;
+	private String consignorTaxUniqueId;
+	
+	// sales summary
+	private double totalCgst;
+	private double totalSgst;
+	private double totalIgst;
+	private double roundOff;
+	private double invoiceValue;
+	private String invoiceValueInWords;
+	private long totalQuantity;
+		
+	// tax summary
+	private double totalTaxableValue;
+	private double totalTax;
+	private String totalTaxInWords;
+	
+	public double getTotalTaxableValue() {
+		return totalTaxableValue;
+	}
+	public void setTotalTaxableValue(double totalTaxableValue) {
+		this.totalTaxableValue = totalTaxableValue;
+	}
+	public double getTotalCgst() {
+		return totalCgst;
+	}
+	public void setTotalCgst(double totalCgst) {
+		this.totalCgst = totalCgst;
+	}
+	public double getTotalSgst() {
+		return totalSgst;
+	}
+	public void setTotalSgst(double totalSgst) {
+		this.totalSgst = totalSgst;
+	}
+	public double getTotalIgst() {
+		return totalIgst;
+	}
+	public void setTotalIgst(double totalIgst) {
+		this.totalIgst = totalIgst;
+	}
+	
+	public String getConsigneeName() {
+		return consigneeName;
+	}
+	public void setConsigneeName(String consigneeName) {
+		this.consigneeName = consigneeName;
+	}
+	public String getConsigneeAddress() {
+		return consigneeAddress;
+	}
+	public void setConsigneeAddress(String consigneeAddress) {
+		this.consigneeAddress = consigneeAddress;
+	}
+	public String getConsigneeState() {
+		return consigneeState;
+	}
+	public void setConsigneeState(String consigneeState) {
+		this.consigneeState = consigneeState;
+	}
+	public String getConsigneeStateCode() {
+		return consigneeStateCode;
+	}
+	public void setConsigneeStateCode(String consigneeStateCode) {
+		this.consigneeStateCode = consigneeStateCode;
+	}
+	public String getConsigneeTaxUniqueId() {
+		return consigneeTaxUniqueId;
+	}
+	public void setConsigneeTaxUniqueId(String consigneeTaxUniqueId) {
+		this.consigneeTaxUniqueId = consigneeTaxUniqueId;
+	}
+	public String getConsignorAddress() {
+		return consignorAddress;
+	}
+	public void setConsignorAddress(String consignorAddress) {
+		this.consignorAddress = consignorAddress;
+	}
+	public String getConsignorState() {
+		return consignorState;
+	}
+	public void setConsignorState(String consignorState) {
+		this.consignorState = consignorState;
+	}
+	public String getConsignorStateCode() {
+		return consignorStateCode;
+	}
+	public void setConsignorStateCode(String consignorStateCode) {
+		this.consignorStateCode = consignorStateCode;
+	}
+	public String getConsignorTaxUniqueId() {
+		return consignorTaxUniqueId;
+	}
+	public void setConsignorTaxUniqueId(String consignorTaxUniqueId) {
+		this.consignorTaxUniqueId = consignorTaxUniqueId;
+	}
+	public double getRoundOff() {
+		return roundOff;
+	}
+	public void setRoundOff(double roundOff) {
+		this.roundOff = roundOff;
+	}
+	public double getInvoiceValue() {
+		return invoiceValue;
+	}
+	public void setInvoiceValue(double invoiceValue) {
+		this.invoiceValue = invoiceValue;
+	}
+
 	public long getTaxInvoiceId() {
 		return taxInvoiceId;
 	}
@@ -99,6 +219,30 @@ public class TaxInvoice implements Serializable {
 	}
 	public void setRecords(List<?> records) {
 		this.records = records;
+	}
+	public long getTotalQuantity() {
+		return totalQuantity;
+	}
+	public void setTotalQuantity(long totalQuantity) {
+		this.totalQuantity = totalQuantity;
+	}
+	public double getTotalTax() {
+		return totalTax;
+	}
+	public void setTotalTax(double totalTax) {
+		this.totalTax = totalTax;
+	}
+	public String getInvoiceValueInWords() {
+		return invoiceValueInWords;
+	}
+	public void setInvoiceValueInWords(String string) {
+		this.invoiceValueInWords = string;
+	}
+	public String getTotalTaxInWords() {
+		return totalTaxInWords;
+	}
+	public void setTotalTaxInWords(String totalTaxInWords) {
+		this.totalTaxInWords = totalTaxInWords;
 	}
 	private List<?> records;
 

@@ -17,22 +17,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.curious365.ifa.dto.Invoice;
+import com.curious365.ifa.dto.AuditedSales;
 import com.curious365.ifa.exceptions.NoStockInHand;
-import com.curious365.ifa.service.InvoiceService;
+import com.curious365.ifa.service.AuditedSalesService;
 
 @Controller
-public class InvoiceController {
-	private Log log = LogFactory.getLog(InvoiceController.class);
+public class AuditedSaleController {
+	private Log log = LogFactory.getLog(AuditedSaleController.class);
 	
 	@Autowired
-	private InvoiceService invoiceService;
+	private AuditedSalesService auditedSalesService;
 	
-	@RequestMapping(value="/listEstimates",method=RequestMethod.GET)
-	public ModelAndView showEstimatesByMonth(){
+	@RequestMapping(value="/listAuditedSales",method=RequestMethod.GET)
+	public ModelAndView showAuditedSalesByMonth(){
 		log.debug("entering..");
 		ModelAndView mav = new ModelAndView();
-		/** set default invoice month view **/
+		/** set default sales month view **/
 		Calendar cal = Calendar.getInstance();
 		
 		DateFormat month = new SimpleDateFormat("MMM"); // month, like JUN digits
@@ -44,32 +44,27 @@ public class InvoiceController {
 		sb.append(year.format(cal.getTime()));
 		
 		mav.addObject("monthOfYear", sb.toString());
-		mav.setViewName("listestimates");
+		mav.setViewName("listauditedsales");
 		return mav;
 	}
 	
-	@RequestMapping(value="/editInvoice",method=RequestMethod.GET)
-	public ModelAndView editInvoiceDisplay(@RequestParam(value = "error", required = false) String error,
-	@RequestParam(value = "info", required = false) String info,@RequestParam long invoiceid){
+	@RequestMapping(value="/editAuditedSales",method=RequestMethod.GET)
+	public ModelAndView editSalesDisplay(@RequestParam(value = "error", required = false) String error,
+	@RequestParam(value = "info", required = false) String info,@RequestParam long recordid){
 		log.debug("entering..");
 		ModelAndView mav = new ModelAndView();
-		Invoice invoice = null;
-		try {
-			invoice = invoiceService.getInvoiceWtDetails(invoiceid);
-		} catch (Exception e) {
-		}
-		mav.addObject("invoice", invoice);
-		mav.addObject("records", invoice.getRecords());
+		AuditedSales auditedSales = auditedSalesService.getRecordById(recordid);
+		mav.addObject("record", auditedSales);
 		mav.addObject("error", error);
 		mav.addObject("info", info);
-		mav.setViewName("editinvoice");
+		mav.setViewName("editauditedsales");
 		return mav;
 	}
 	
-	@RequestMapping(value="/editInvoice",method=RequestMethod.POST)
-	public ModelAndView editInvoice(@ModelAttribute Invoice invoice){
+	@RequestMapping(value="/editAuditedSales",method=RequestMethod.POST)
+	public ModelAndView editSales(@ModelAttribute AuditedSales auditedSales){
 		boolean hasError= false;
-		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromPath("redirect:/showSalesSheet");
+		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromPath("redirect:/listAuditedSales");
 		log.debug("entering..");
 		ModelAndView mav = new ModelAndView();
 		// converting to db supported date format
@@ -79,32 +74,32 @@ public class InvoiceController {
 		Date newdate = null ; 
 		newformatter = new SimpleDateFormat("dd/MM/yyyy");
 		try {
-			newdate = (Date)newformatter.parse(invoice.getInvoiceDate());
+			newdate = (Date)newformatter.parse(auditedSales.getSalesDate());
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
+		
 		String dateString=formatter.format(newdate);
-		invoice.setInvoiceDate(dateString);
+		auditedSales.setSalesDate(dateString);
 		try{
-			invoiceService.edit(invoice);	
+			auditedSalesService.editAuditedSales(auditedSales);	
 		}catch (NoStockInHand e) {
 			hasError= true;
 			urlBuilder.queryParam("error", e.getMessage());
 		} catch (Exception e) {
 			hasError= true;
-			urlBuilder.queryParam("error", "Unable to update invoice. Please try with valid data");
+			urlBuilder.queryParam("error", "Unable to update auditedSales. Please try with valid data");
 		}finally{
 			if(hasError){
-				urlBuilder.replacePath("redirect:/editInvoice");
-				urlBuilder.queryParam("invoiceid", invoice.getInvoiceId());
+				urlBuilder.replacePath("redirect:/editAuditedSales");
+				urlBuilder.queryParam("recordid", auditedSales.getSalesRecordId());
 			}else{
-				urlBuilder.queryParam("info", "Invoice successfully updated");
+				urlBuilder.queryParam("info", "Audited Sales successfully updated");
 			}
 		}
 
 		mav.setViewName(urlBuilder.build().encode().toUriString());
 		return mav;
 	}
-	
-	
+
 }

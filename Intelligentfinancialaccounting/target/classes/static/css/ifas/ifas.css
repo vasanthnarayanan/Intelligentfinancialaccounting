@@ -1,5 +1,5 @@
 #login #navLogin,#index #navHome,#customer #navCustomer,
-#item #navItem,#transaction #navAccounts{
+#item #navItem,#transaction #navAccounts,,#invoice #navInvoices{
 	color:#555;
 	background-color:#e7e7e7;
 }

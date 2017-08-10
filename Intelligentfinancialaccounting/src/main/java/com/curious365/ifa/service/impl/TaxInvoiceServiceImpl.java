@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.curious365.ifa.dao.AuditedSalesDAO;
+import com.curious365.ifa.dao.InvoiceDAO;
 import com.curious365.ifa.dao.SalesDAO;
 import com.curious365.ifa.dao.TaxInvoiceDAO;
 import com.curious365.ifa.dto.AuditedSales;
@@ -23,6 +24,7 @@ import com.curious365.ifa.dto.Invoice;
 import com.curious365.ifa.dto.Purchase;
 import com.curious365.ifa.dto.Sales;
 import com.curious365.ifa.dto.TaxInvoice;
+import com.curious365.ifa.exceptions.InvoiceLimitExceeded;
 import com.curious365.ifa.service.TaxInvoiceService;
 
 @Service
@@ -31,40 +33,52 @@ public class TaxInvoiceServiceImpl implements TaxInvoiceService {
 	@Autowired
 	private TaxInvoiceDAO taxInvoiceDAO;
 	@Autowired
+	private InvoiceDAO invoiceDAO;
+	@Autowired
 	private AuditedSalesDAO auditedSalesDAO;
 	@Autowired
 	private SalesDAO salesDAO;
 
 	@Transactional(readOnly = false , rollbackFor = Exception.class)
 	@Override
-	public void createInstantTaxInvoice(Invoice invoice) throws ParseException {
+	public long createInstantTaxInvoice(Invoice invoice) throws ParseException,InvoiceLimitExceeded {
 		int invoicesPerDay = 10;
+		
+		// if tax invoice already present for the estimate, skip estimate
+		if(null != invoice && invoice.getTaxInvoiceId()>0){
+			return invoice.getTaxInvoiceId();
+		}
+		
 		SimpleDateFormat formatter= 
+				new SimpleDateFormat("dd/MM/yyyy");
+		SimpleDateFormat newFormat= 
 				new SimpleDateFormat("dd/MMM/yyyy");
 		
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(formatter.parse(invoice.getInvoiceDate()));
+		// converting to database 
+		String invoiceDate = newFormat.format(cal.getTime());
+		invoice.setInvoiceDate(invoiceDate);
 		int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
 		// check last used invoice id for the day of month
+		Long countInvoice = taxInvoiceDAO.countInvoiceByMonth(invoice);
+		if(countInvoice>invoicesPerDay){
+			throw new InvoiceLimitExceeded("Invoice Limit Exceeded for the day!");
+		}
 		Long lastInvoiceId = taxInvoiceDAO.getLastTaxInvoiceByMonth(invoice);
+		
 		long currentInvoiceId = 0;
 		if(null==lastInvoiceId){
-			currentInvoiceId = 0;
+			currentInvoiceId = -1;
 		}else{
 			currentInvoiceId = lastInvoiceId;
 		}
 		long newInvoiceId = 0;
 		if(currentInvoiceId>-1){
-			newInvoiceId = currentInvoiceId+1;
+			// if same day invoice are present increment invoice by 1
+				newInvoiceId = currentInvoiceId+1;				
 		}else{
-			// for this to work as expected last month invoices should be generated
-			lastInvoiceId = taxInvoiceDAO.getLastTaxInvoice();
-			if(null==lastInvoiceId){
-				currentInvoiceId = 0;
-			}else{
-				currentInvoiceId = lastInvoiceId;
-			}
-			newInvoiceId = currentInvoiceId+((dayOfMonth-1)*invoicesPerDay)+1;
+			newInvoiceId = ((dayOfMonth-1)*invoicesPerDay)+1;
 		}
 		
 		// loop until finding a suitable invoice number
@@ -77,19 +91,22 @@ public class TaxInvoiceServiceImpl implements TaxInvoiceService {
 			}
 		}while(true);
 		
-		invoice.setInvoiceId(newInvoiceId);
-		
 		List<Sales> records = salesDAO.listSalesByInvoiceId(invoice.getInvoiceId());
 		
 		for (Sales sales : records) {
 			AuditedSales auditedSales = new AuditedSales();
 			BeanUtils.copyProperties(sales, auditedSales);
 			auditedSales.setTaxInvoiceId(newInvoiceId);
+			Calendar salescal = Calendar.getInstance();
+			salescal.setTime(formatter.parse(sales.getSalesDate()));
+			auditedSales.setSalesDate(newFormat.format(salescal.getTime()));
 			auditedSalesDAO.create(auditedSales);
 		}
 		
+		invoice.setTaxInvoiceId(newInvoiceId);
 		taxInvoiceDAO.instantCreate(invoice);
-		
+		invoiceDAO.updateInvoiceWtTaxInvoice(invoice);
+		return newInvoiceId;
 	}
 
 	@Override
@@ -175,6 +192,30 @@ public class TaxInvoiceServiceImpl implements TaxInvoiceService {
 			}
 			
 		}
+	}
+
+	@Override
+	public List<TaxInvoice> listTaxInvoicesInclPrivilegedForMonth(
+			String monthOfYear) {
+		StringBuffer sb = new StringBuffer("%-");
+		sb.append(monthOfYear);
+		return taxInvoiceDAO.listInvoiceInclPrivelegedByMonth(sb.toString());
+	}
+
+	@Override
+	public List<TaxInvoice> listTaxInvoicesForMonth(String monthOfYear) {
+		StringBuffer sb = new StringBuffer("%-");
+		sb.append(monthOfYear);
+		return taxInvoiceDAO.listInvoiceByMonth(sb.toString());
+	}
+
+	@Override
+	public TaxInvoice getTaxInvoiceWtDetails(long taxInvoiceId)
+			throws Exception {
+		TaxInvoice taxInvoice = taxInvoiceDAO.getTaxInvoiceById(taxInvoiceId);
+		List<AuditedSales> auditedSalesList = auditedSalesDAO.listAuditedSalesByTaxInvoiceId(taxInvoiceId);
+		taxInvoice.setRecords(auditedSalesList);
+		return taxInvoice;
 	}
 
 }

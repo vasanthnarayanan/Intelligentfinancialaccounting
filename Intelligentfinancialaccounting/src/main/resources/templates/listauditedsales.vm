@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IFAS Audited Sales</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="/css/ifas/ifas.css" rel="stylesheet">
+<script src="/js/jquery.latest.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+$("document").ready(function(){
+	var listAuditedSalesTable = $('#listauditedsales').DataTable( {
+        "ajax": "/listAuditedSalesForMonth?monthOfYear=${monthOfYear}",
+        "columns": [
+			{ "data": "auditedSalesId", "visible": false  },
+            { "data": "salesDate" },
+            { "data": "salesCustomerName" },
+            { "data": "salesItemName" },
+            { "data": "salesPieces" },
+            { "data": "salesCost" },
+            { "data": "salesTax" },
+            { "data": null,
+            	"render": function(data,type,row,meta){
+            			return '<a href="/editAuditedSales?recordid='+row.auditedSalesId+'" title="edit" class="editcustomer btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</a>';	
+            		
+            	}
+            }
+        ]
+    } );
+	
+	$('#showAuditedSales').on('click',function(){
+		var year = $('#f_auditedsalesyear').val();
+		var month = $('#f_auditedsalesmonth').val();
+		var monthOfYear = month+'-'+year;
+		listAuditedSalesTable.ajax.url('/listAuditedSalesForMonth?monthOfYear='+monthOfYear).load();
+	});
+	
+});
+</script>
+</head>
+<body id="invoice">
+#parse("mainnavigation.vm")
+<div id="contentcontainer" class="container-fluid">
+  <div class="row">
+    <div id="sidenavigation" class="col-sm-3">
+      <div class="list-group">
+      	<a href="/listTaxInvoices" class="list-group-item">Tax Invoices</a>
+      	<a href="/listAuditedSales" class="list-group-item">Audited Sales</a>
+        <a href="#" class="list-group-item">Reports</a>
+      </div>
+    </div>
+    <div id="content" class="col-sm-9">
+    	<div class="row">
+    	<form>
+    	<fieldset>
+		<legend>Audit Sales By Month</legend>
+    	<div class="form-group">
+    	<label for="f_auditedsalesyear" class="control-label col-sm-2">Year</label>
+		<div class="col-sm-10">
+		<select class="form-control" id="f_auditedsalesyear" name="auditedsalesYear">
+		<option value="17">2017</option>
+		<option value="18">2018</option>
+		<option value="19">2019</option>
+		</select>
+		</div>
+    	</div>
+    	<div class="form-group">
+    	<label for="f_auditedsalesmonth" class="control-label col-sm-2">Month</label>
+		<div class="col-sm-10">
+		<select class="form-control" id="f_auditedsalesmonth" name="auditedsalesMonth">
+		<option value="JAN">January</option>
+		<option value="FEB">Febraury</option>
+		<option value="MAR">March</option>
+		<option value="APR">April</option>
+		<option value="MAY">May</option>
+		<option value="JUN">June</option>
+		<option value="JUL">July</option>
+		<option value="AUG">August</option>
+		<option value="SEP">September</option>
+		<option value="OCT">October</option>
+		<option value="NOV">November</option>
+		<option value="DEC">December</option>
+		</select>
+		</div>
+    	</div>
+    	</fieldset>
+    	<div class="form-group">
+		<div class="col-sm-offset-2 col-sm-10">
+		<input type="button" name="button" id="showAuditedSales" class="btn btn-primary" value="Show Audited Sales" />
+		</div>
+		</div>
+    	</form>
+    	</div>
+    	<div class="row">
+			<table id="listauditedsales" class="display" width="100%" cellspacing="0">
+			<caption>Audited Sales</caption>
+	        <thead>
+	            <tr>
+	            	<th>Audit Sales Id</th>
+	            	<th>Date</th>
+	            	<th>Customer Name</th>
+	                <th>Item Name</th>
+	                <th>Pieces</th>
+	                <th>Cost</th>
+	                <th>Tax</th>
+	                <th>Action</th>
+	            </tr>
+	        </thead>
+    		</table>    	
+    	</div>
+    </div>
+  </div>
+  </div>
+</body>
+</html>

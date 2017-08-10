@@ -1,5 +1,8 @@
 package com.curious365.ifa.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -28,8 +31,8 @@ public class TaxInvoiceDAOImpl implements TaxInvoiceDAO {
 	@Override
 	public boolean instantCreate(Invoice invoice) {
 		int flag = jdbcTemplate.update(
-				QueryConstants.CREATE_INVOICE,
-				new Object[] { invoice.getInvoiceId(),
+				QueryConstants.CREATE_INSTANT_TAX_INVOICE,
+				new Object[] { invoice.getTaxInvoiceId(),
 						invoice.getInvoiceDate(),
 						invoice.getInvoiceType(),
 						invoice.getInvoiceCustomerId(),
@@ -47,7 +50,7 @@ public class TaxInvoiceDAOImpl implements TaxInvoiceDAO {
 
 	@Override
 	public Long getLastTaxInvoiceByMonth(Invoice invoice) {
-		return jdbcTemplate.queryForObject(QueryConstants.GET_LAST_INVOICE_ID_BY_MONTH,Long.class,new Object[]{invoice.getInvoiceDate(),Constants.ACTIVE});
+		return jdbcTemplate.queryForObject(QueryConstants.GET_LAST_INVOICE_ID_BY_DATE,Long.class,new Object[]{invoice.getInvoiceDate(),Constants.ACTIVE});
 	}
 
 
@@ -60,7 +63,7 @@ public class TaxInvoiceDAOImpl implements TaxInvoiceDAO {
 	public TaxInvoice getTaxInvoiceById(long taxInvoiceId) {
 		TaxInvoice taxInvoice = null;
 		try{
-			taxInvoice = jdbcTemplate.queryForObject(QueryConstants.GET_TAX_INVOICE_BY_ID,  new BeanPropertyRowMapper<TaxInvoice>(TaxInvoice.class),new Object[]{taxInvoiceId,Constants.ACTIVE});
+			taxInvoice = jdbcTemplate.queryForObject(QueryConstants.GET_TAX_INVOICE_BY_ID,  new BeanPropertyRowMapper<TaxInvoice>(TaxInvoice.class),new Object[]{Constants.ACTIVE,taxInvoiceId});
 		}catch(Exception e){
 			
 		}
@@ -70,6 +73,36 @@ public class TaxInvoiceDAOImpl implements TaxInvoiceDAO {
 	@Override
 	public Long getLastTaxInvoice() {
 		return jdbcTemplate.queryForObject(QueryConstants.GET_LAST_INVOICE_ID,Long.class,new Object[]{Constants.ACTIVE});
+	}
+
+
+	@Override
+	public List<TaxInvoice> listInvoiceByMonth(String monthOfYear) {
+		List<TaxInvoice> invoices = new ArrayList<TaxInvoice>();
+		try{
+			invoices = jdbcTemplate.query(QueryConstants.LIST_TAX_INVOICE_BY_MONTH, new BeanPropertyRowMapper<TaxInvoice>(TaxInvoice.class),new Object[]{Constants.ACTIVE,monthOfYear});			
+		}catch(Exception e){
+			
+		}
+		return invoices;
+	}
+
+
+	@Override
+	public List<TaxInvoice> listInvoiceInclPrivelegedByMonth(String monthOfYear) {
+		List<TaxInvoice> invoices = new ArrayList<TaxInvoice>();
+		try{
+			invoices = jdbcTemplate.query(QueryConstants.LIST_TAX_INVOICE_INCL_PRIV_BY_MONTH, new BeanPropertyRowMapper<TaxInvoice>(TaxInvoice.class),new Object[]{Constants.ACTIVE,monthOfYear});			
+		}catch(Exception e){
+			
+		}
+		return invoices;
+	}
+
+
+	@Override
+	public Long countInvoiceByMonth(Invoice invoice) {
+		return jdbcTemplate.queryForObject(QueryConstants.COUNT_TAX_INVOICE_BY_DATE,Long.class,new Object[]{invoice.getInvoiceDate(),Constants.ACTIVE});
 	}
 	
 	

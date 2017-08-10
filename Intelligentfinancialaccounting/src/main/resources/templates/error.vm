@@ -1,6 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<body>
-Something went wrong: ${status} ${error}
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IFAS Home</title>
+<link href="/css/bootstrap.min.css" rel="stylesheet">
+<link href="/css/jquery.dataTables.min.css" rel="stylesheet">
+<link href="/css/ifas/ifas.css" rel="stylesheet">
+</head>
+<body id="index">
+#parse("mainnavigation.vm")
+<div id="contentcontainer" class="container-fluid">
+  <div class="row">
+    <div id="sidenavigation" class="col-sm-3">
+      <div class="list-group">
+      	<a href="/taxInvoicePrint" class="list-group-item">Tax Invoice Print</a>
+        <a href="/backup" class="list-group-item">Backup</a>
+        <a href="/restore" class="list-group-item">Restore</a>
+      </div>
+    </div>
+    <div id="content" class="col-sm-9">
+    	<div class="row">
+			Something went wrong: ${status}: ${error} : ${custommessage}
+    	</div>
+    </div>
+  </div>
+  </div>
 </body>
 </html>

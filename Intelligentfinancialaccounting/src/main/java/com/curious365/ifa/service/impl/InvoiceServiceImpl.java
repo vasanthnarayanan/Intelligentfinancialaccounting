@@ -126,4 +126,18 @@ public class InvoiceServiceImpl implements InvoiceService{
 		return invoice;
 	}
 
+	@Override
+	public List<Invoice> listEstimatesInclPrivilegedForMonth(String monthOfYear) {
+		StringBuffer sb = new StringBuffer("%-");
+		sb.append(monthOfYear);
+		return invoiceDAO.listInvoiceInclPrivelegedByMonth(sb.toString());
+	}
+
+	@Override
+	public List<Invoice> listEstimatesForMonth(String monthOfYear) {
+		StringBuffer sb = new StringBuffer("%-");
+		sb.append(monthOfYear);
+		return invoiceDAO.listInvoiceByMonth(sb.toString());
+	}
+
 }

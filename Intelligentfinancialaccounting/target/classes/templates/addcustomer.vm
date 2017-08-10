@@ -165,8 +165,8 @@ $(function(){
 	<div class="col-sm-offset-2 col-sm-10">
 	<input type="submit" name="submit" class="btn btn-primary" value="Add customer" />
 	</div>
+	</div>
 	</form>
-    </div>
  </div>
 </body>
 </html>

@@ -28,14 +28,15 @@ $("document").ready(function(){
 });
 </script>
 </head>
-<body id="index">
+<body id="invoice">
 #parse("mainnavigation.vm")
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
       <div class="list-group">
-        <a href="/backup" class="list-group-item">Backup</a>
-        <a href="/restore" class="list-group-item">Restore</a>
+      	<a href="/listTaxInvoices" class="list-group-item">Tax Invoices</a>
+      	<a href="/listAuditedSales" class="list-group-item">Audited Sales</a>
+        <a href="#" class="list-group-item">Reports</a>
       </div>
     </div>
     <div id="content" class="col-sm-9">
@@ -48,25 +49,25 @@ $("document").ready(function(){
 			<tr>
 			<td rowspan=3 colspan=5>
 			<b><u>Consignee</u></b><br />
-			Name: Dharmalakshmi Traders<br />
-			Address: GNT Road Redhills<br />
-			State: <br />
-			State Code: <br />
-			GSTIN:</td>
-			<td>Invoice No:</td><td>Dated:</td>
+			Name: ${taxinvoice.consigneeName}<br />
+			Address: ${taxinvoice.consigneeAddress}<br />
+			State: ${taxinvoice.consigneeState}<br />
+			State Code: ${taxinvoice.consigneeStateCode}<br />
+			GSTIN: ${taxinvoice.consigneeTaxUniqueId}</td>
+			<td>Invoice No: ${taxinvoice.taxInvoiceId}</td><td>Dated: ${taxinvoice.taxInvoiceDate}</td>
 	        </tr>
 	        <tr><td>Delivery Note:</td><td>Mode of Payment:</td></tr>
 	        <tr><td>Despatched through:</td><td>Destination:</td></tr>
 	        <tr>
 			<td rowspan=3 colspan=5>
 			<b><u>Consignor</u></b><br />
-			Name: D&K Corp<br />
-			Address: Redhills <br />
-			State: <br />
-			State Code: <br />
-			GSTIN:</td>
+			Name: ${taxinvoice.taxInvoiceCustomerName}<br />
+			Address: ${taxinvoice.consignorAddress}<br />
+			State: ${taxinvoice.consignorState}<br />
+			State Code: ${taxinvoice.consignorStateCode}<br />
+			GSTIN: ${taxinvoice.consignorTaxUniqueId}</td>
 			<td rowspan=2 colspan=2>Terms Of Delivery: <br/>
-			Bike</td>
+			&nbsp;</td>
 	        </tr>
 	        <tr></tr>
 	        <tr></tr>
@@ -80,7 +81,18 @@ $("document").ready(function(){
 	        <th>Rate</th>
 	        <th>Amount</th>
 	        </tr>
+	        #foreach($record in $records)
 	        <tr class="noBorder">
+	        <td>$velocityCount</td>
+	        <td>$record.salesItemName $record.salesItemQuantity KG $record.salesItemType</td>
+	        <td>$record.hsnCode</td>
+	        <td>$record.salesPieces</td>
+	        <td>BG</td>
+	        <td>$record.salesCost</td>
+	        <td>$record.salesAmount</td>
+	        </tr>
+	        #end
+	        <!-- <tr class="noBorder">
 	        <td>1</td>
 	        <td>Jodipura 25KG Non Woven Bags</td>
 	        <td>63053900</td>
@@ -124,25 +136,43 @@ $("document").ready(function(){
 	        </tr>
 	        <tr class="noBorder" >
 	        <td colspan=7>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td>&nbsp;</td><td>CGST</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>475</td>
+	        </tr> -->
+	        #if(${taxinvoice.totalIgst}>0)
+	        <tr class="invoiceIGST noBorder" >
+	        <td>&nbsp;</td><td>IGST</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>${taxinvoice.totalIgst}</td>
 	       	</tr>
-	       	<tr class="noBorder" >
-	       	<td>&nbsp;</td><td>SGST</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>475</td>
+	        #else
+	        <tr class="invoiceCGST noBorder" >
+	        <td>&nbsp;</td><td>CGST</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>${taxinvoice.totalCgst}</td>
 	       	</tr>
-	       	<tr class="noBorder" > 
-	        <td>&nbsp;</td><td>Round Off</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>(-)0</td>
+	       	<tr class="invoiceSGST noBorder" >
+	       	<td>&nbsp;</td><td>SGST</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>${taxinvoice.totalSgst}</td>
+	       	</tr>
+	        #end
+	       	<tr class="invoiceRoundOff noBorder" > 
+	        <td>&nbsp;</td><td>Round Off</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>${taxinvoice.roundOff}</td>
 	        </tr>
-	        <tr> 
-	        <td>&nbsp;</td><td>Total</td><td>&nbsp;</td><td>2000</td><td>&nbsp;</td><td>&nbsp;</td><td>19950</td>
+	        <tr class="invoiceSummary"> 
+	        <td>&nbsp;</td><td>Total</td><td>&nbsp;</td><td>${taxinvoice.totalQuantity}</td><td>&nbsp;</td><td>&nbsp;</td><td>${taxinvoice.invoiceValue}</td>
 	        </tr>
 	        <tr>
 	        <td colspan=7><b>Amount Chargeable(in words)</b><br />
-	        Indian Rupees Thirty Eight Thousand Only
+	        Indian Rupees ${taxinvoice.invoiceValueInWords} Only
 	        </td>
 	        </tr>
 	        <tr><td colspan=7><center><b>Tax Details</b></center></td></tr>
+	        #if(${taxinvoice.totalIgst}>0)
+	        <tr>
+	        <th rowspan=2>S.No.</th>
+	        <th rowspan=2>HSN/SAC</th>
+	        <th rowspan=2>Taxable Value</th>
+	        <th colspan=4>Integrated Tax</th>
+	        </tr>
+	        <tr>
+	        <th colspan=2>Rate</th>
+	        <th colspan=2>Amount</th>
+	        </tr>
+	        #else
 	        <tr>
 	        <th rowspan=2>S.No.</th>
 	        <th rowspan=2>HSN/SAC</th>
@@ -156,7 +186,29 @@ $("document").ready(function(){
 	        <th>Rate</th>
 	        <th>Amount</th>
 	        </tr>
+	        #end
+	        #foreach($taxrecord in $taxrecords)
+	        #if(${taxinvoice.totalIgst}>0)
 	        <tr class="noBorder">
+	        <td>$velocityCount</td>
+	        <td>$taxrecord.hsnCode</td>
+	        <td>$taxrecord.taxableValue</td>
+	        <td colspan=2>$!taxrecord.igst</td>
+	        <td colspan=2>$!taxrecord.igstamount</td>
+	        </tr>
+	        #else
+	        <tr class="noBorder">
+	        <td>$taxrecord.serialNo</td>
+	        <td>$taxrecord.hsnCode</td>
+	        <td>$taxrecord.taxableValue</td>
+	        <td>$!taxrecord.cgst</td>
+	        <td>$!taxrecord.cgstamount</td>
+	        <td>$!taxrecord.sgst</td>
+	        <td>$!taxrecord.sgstamount</td>
+	        </tr>
+	        #end
+	        #end
+	        <!-- <tr class="noBorder">
 	        <td>1</td>
 	        <td>63053900</td>
 	        <td>38000</td>
@@ -182,29 +234,41 @@ $("document").ready(function(){
 	        <td>&nbsp;</td>
 	        <td>&nbsp;</td>
 	        <td>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder">
+	        </tr> -->
+	        #if(${taxinvoice.totalIgst}>0)
+	        <tr class="taxSummary noBorder">
 	        <td>&nbsp;</td>
 	        <td>Total</td>
-	        <td>38000</td>
-	        <td>&nbsp;</td>
-	        <td>1800</td>
-	        <td>&nbsp;</td>
-	        <td>1800</td>
+	        <td>${taxinvoice.totalTaxableValue}</td>
+	        <td colspan=2>&nbsp;</td>
+	        <td>${taxinvoice.totalIgst}</td>
 	        </tr>
+	        #else
+	        <tr class="taxSummary noBorder">
+	        <td>&nbsp;</td>
+	        <td>Total</td>
+	        <td>${taxinvoice.totalTaxableValue}</td>
+	        <td>&nbsp;</td>
+	        <td>${taxinvoice.totalCgst}</td>
+	        <td>&nbsp;</td>
+	        <td>${taxinvoice.totalSgst}</td>
+	        </tr>
+	        #end
+	        
 			<tr>
 	        <td colspan=7><b>Tax Amount(in words)</b><br />
-	        Indian Rupees Thousand Eight Hundred Only
+	        Indian Rupees ${taxinvoice.totalTaxInWords} Only
 	        </td>
 	        </tr>
 	        <tr></tr>
 	        <tr>
 	        <td colspan=4>
 	        Company's Bank Details <br />
-	        Bank Name: <b>TamilNadu Mercantile Bank</b> <br />
-	        A/C No: <b>228150310875005</b> <br />
-	        Branch: <b>Redhills</b> <br />
-	        IFSC Code: <b>TMBL000228</b> <br />
+	        Bank Name: <b>Canara Bank</b> <br />
+	        Account Name: <b>Dharmalakshmi Traders</b> <br />
+	        A/C No: <b>3261201000110</b> <br />
+	        Branch: <b>Padianallur, Redhills</b> <br />
+	        IFSC Code: <b>CNRB0003261</b> <br />
 	        <u>Declaration</u>
 	        We declare that this invoice shows the actual price of the <br />
 	        goods described and that all particulars are true and correct
