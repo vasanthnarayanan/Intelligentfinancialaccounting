@@ -49,8 +49,13 @@ public class TaxInvoiceDAOImpl implements TaxInvoiceDAO {
 
 
 	@Override
-	public Long getLastTaxInvoiceByMonth(Invoice invoice) {
+	public Long getLastTaxInvoiceByDate(Invoice invoice) {
 		return jdbcTemplate.queryForObject(QueryConstants.GET_LAST_INVOICE_ID_BY_DATE,Long.class,new Object[]{invoice.getInvoiceDate(),Constants.ACTIVE});
+	}
+	
+	@Override
+	public Long getFirstTaxInvoiceByDate(Invoice invoice) {
+		return jdbcTemplate.queryForObject(QueryConstants.GET_FIRST_INVOICE_ID_BY_DATE,Long.class,new Object[]{invoice.getInvoiceDate(),Constants.ACTIVE});
 	}
 
 
@@ -101,7 +106,7 @@ public class TaxInvoiceDAOImpl implements TaxInvoiceDAO {
 
 
 	@Override
-	public Long countInvoiceByMonth(Invoice invoice) {
+	public Long countInvoiceByDate(Invoice invoice) {
 		return jdbcTemplate.queryForObject(QueryConstants.COUNT_TAX_INVOICE_BY_DATE,Long.class,new Object[]{invoice.getInvoiceDate(),Constants.ACTIVE});
 	}
 	

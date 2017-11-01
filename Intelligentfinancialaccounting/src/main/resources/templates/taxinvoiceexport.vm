@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Tax Invoice</title>
-<link href="/css/bootstrap.min.css" rel="stylesheet">
-<link href="/css/jquery.dataTables.min.css" rel="stylesheet">
-<link href="/css/ifas/ifas.css" rel="stylesheet">
 <style>
 td{
 	padding:2px;
@@ -15,31 +12,15 @@ td{
 tr.noBorder td{
 	border: 0;
 }
+#taxinvoice{
+	font-size: 8pt!important;
+}
 </style>
-<script src="/js/jquery.latest.min.js"></script>
-<script src="/js/bootstrap.min.js"></script>
-<script src="/js/jquery.dataTables.min.js"></script>
-<script src="/js/jQuery.print.min.js"></script>
-<script type="text/javascript">
-$("document").ready(function(){
-	$('#printBtn').on('click',function(){
-		$('#invoiceprint').print();
-	});
-});
-</script>
 </head>
-<body id="invoice">
-#parse("mainnavigation.vm")
+<body id="exportinvoice">
 <div id="contentcontainer" class="container-fluid">
   <div class="row">
-    <div id="sidenavigation" class="col-sm-3">
-      <div class="list-group">
-      	<a href="/listTaxInvoices" class="list-group-item">Tax Invoices</a>
-      	<a href="/listAuditedSales" class="list-group-item">Audited Sales</a>
-        <a href="#" class="list-group-item">Reports</a>
-      </div>
-    </div>
-    <div id="content" class="col-sm-9">
+    <div id="content" class="col-sm-offset-3 col-sm-9">
     <div  id="invoiceprint" class="col-sm-9">
     <div class="row">
     <h3 class="text-center"><b>Tax Invoice</b></h3>
@@ -47,7 +28,7 @@ $("document").ready(function(){
     	<div class="row">
 			<table id="taxinvoice" width="100%" border=1>
 			<tr>
-			<td rowspan=3 colspan=5>
+			<td rowspan="3" colspan="5">
 			<b><u>Consignee</u></b><br />
 			Name: ${taxinvoice.consigneeName}<br />
 			Address: ${taxinvoice.consigneeAddress}<br />
@@ -59,19 +40,19 @@ $("document").ready(function(){
 	        <tr><td>Delivery Note:</td><td>Mode of Payment:</td></tr>
 	        <tr><td>Despatched through:</td><td>Destination:</td></tr>
 	        <tr>
-			<td rowspan=3 colspan=5>
+			<td rowspan="3" colspan="5">
 			<b><u>Consignor</u></b><br />
 			Name: ${taxinvoice.consignorName}<br />
 			Address: $!{taxinvoice.consignorAddress}<br />
 			State: $!{taxinvoice.consignorState}<br />
 			State Code: $!{taxinvoice.consignorStateCode}<br />
 			GSTIN: $!{taxinvoice.consignorTaxUniqueId}</td>
-			<td rowspan=2 colspan=2>Terms Of Delivery: <br/>
+			<td rowspan="2" colspan="2">Terms Of Delivery: <br/>
 			&nbsp;</td>
 	        </tr>
 	        <tr></tr>
 	        <tr></tr>
-	        <tr><td colspan=7><center><b>Sales Details</b></center></td></tr>
+	        <tr><td colspan="7"><center><b>Sales Details</b></center></td></tr>
 	        <tr>
 	        <th>S.NO.</th>
 	        <th>Description</th>
@@ -92,51 +73,6 @@ $("document").ready(function(){
 	        <td>$record.salesAmount</td>
 	        </tr>
 	        #end
-	        <!-- <tr class="noBorder">
-	        <td>1</td>
-	        <td>Jodipura 25KG Non Woven Bags</td>
-	        <td>63053900</td>
-	        <td>1000</td>
-	        <td>BG</td>
-	        <td>19</td>
-	        <td>19000</td>
-	        </tr>
-	        <tr class="noBorder">
-	        <td>2</td>
-	        <td>Krishna 25KG Non Woven Bags</td>
-	        <td>63053900</td>
-	        <td>1000</td>
-	        <td>BG</td>
-	        <td>19</td>
-	        <td>19000</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td colspan=7>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td colspan=7>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td colspan=7>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td colspan=7>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td colspan=7>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td colspan=7>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td colspan=7>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td colspan=7>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder" >
-	        <td colspan=7>&nbsp;</td>
-	        </tr> -->
 	        #if(${taxinvoice.totalIgst}>0)
 	        <tr class="invoiceIGST noBorder" >
 	        <td>&nbsp;</td><td>IGST</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>${taxinvoice.totalIgst}</td>
@@ -156,29 +92,29 @@ $("document").ready(function(){
 	        <td>&nbsp;</td><td>Total</td><td>&nbsp;</td><td>${taxinvoice.totalQuantity}</td><td>&nbsp;</td><td>&nbsp;</td><td>${taxinvoice.invoiceValue}</td>
 	        </tr>
 	        <tr>
-	        <td colspan=7><b>Amount Chargeable(in words)</b><br />
+	        <td colspan="7"><b>Amount Chargeable(in words)</b><br />
 	        Indian Rupees ${taxinvoice.invoiceValueInWords} Only
 	        </td>
 	        </tr>
-	        <tr><td colspan=7><center><b>Tax Details</b></center></td></tr>
+	        <tr><td colspan="7"><center><b>Tax Details</b></center></td></tr>
 	        #if(${taxinvoice.totalIgst}>0)
 	        <tr>
-	        <th rowspan=2>S.No.</th>
-	        <th rowspan=2>HSN/SAC</th>
-	        <th rowspan=2>Taxable Value</th>
-	        <th colspan=4>Integrated Tax</th>
+	        <th rowspan="2">S.No.</th>
+	        <th rowspan="2">HSN/SAC</th>
+	        <th rowspan="2">Taxable Value</th>
+	        <th colspan="4">Integrated Tax</th>
 	        </tr>
 	        <tr>
-	        <th colspan=2>Rate</th>
-	        <th colspan=2>Amount</th>
+	        <th colspan="2">Rate</th>
+	        <th colspan="2">Amount</th>
 	        </tr>
 	        #else
 	        <tr>
-	        <th rowspan=2>S.No.</th>
-	        <th rowspan=2>HSN/SAC</th>
-	        <th rowspan=2>Taxable Value</th>
-	        <th colspan=2>Central Tax</th>
-	        <th colspan=2>State Tax</th>
+	        <th rowspan="2">S.No.</th>
+	        <th rowspan="2">HSN/SAC</th>
+	        <th rowspan="2">Taxable Value</th>
+	        <th colspan="2">Central Tax</th>
+	        <th colspan="2">State Tax</th>
 	        </tr>
 	        <tr>
 	        <th>Rate</th>
@@ -208,39 +144,13 @@ $("document").ready(function(){
 	        </tr>
 	        #end
 	        #end
-	        <!-- <tr class="noBorder">
-	        <td>1</td>
-	        <td>63053900</td>
-	        <td>38000</td>
-	        <td>2.5%</td>
-	        <td>900</td>
-	        <td>2.5%</td>
-	        <td>900</td>
-	        </tr>
-	        <tr class="noBorder">
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        </tr>
-	        <tr class="noBorder">
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        <td>&nbsp;</td>
-	        </tr> -->
+	        
 	        #if(${taxinvoice.totalIgst}>0)
 	        <tr class="taxSummary noBorder">
 	        <td>&nbsp;</td>
 	        <td>Total</td>
 	        <td>${taxinvoice.totalTaxableValue}</td>
-	        <td colspan=2>&nbsp;</td>
+	        <td colspan="2">&nbsp;</td>
 	        <td>${taxinvoice.totalIgst}</td>
 	        </tr>
 	        #else
@@ -256,13 +166,13 @@ $("document").ready(function(){
 	        #end
 	        
 			<tr>
-	        <td colspan=7><b>Tax Amount(in words)</b><br />
+	        <td colspan="7"><b>Tax Amount(in words)</b><br />
 	        Indian Rupees ${taxinvoice.totalTaxInWords} Only
 	        </td>
 	        </tr>
 	        <tr></tr>
 	        <tr>
-	        <td colspan=4>
+	        <td colspan="4">
 	        Company's Bank Details <br />
 	        Bank Name: <b>Canara Bank</b> <br />
 	        Account Name: <b>Dharmalakshmi Traders</b> <br />
@@ -273,7 +183,7 @@ $("document").ready(function(){
 	        We declare that this invoice shows the actual price of the <br />
 	        goods described and that all particulars are true and correct
 	        </td>
-	        <td colspan=3>
+	        <td colspan="3">
 	        For Dharmalakshmi Traders,Chennai<br />
 	        <br/>
 	        <br/>
@@ -284,9 +194,6 @@ $("document").ready(function(){
     		<h5 class="text-center">SUBJECT TO CHENNAI JURISDICTION</h5>
     		<p class="text-center">This is a Computer Generated Invoice</p>	
     	</div>
-    	</div>
-    	<div class="row col-sm-9">
-    	<button id="printBtn">Print</button>
     	</div>
     </div>
   </div>

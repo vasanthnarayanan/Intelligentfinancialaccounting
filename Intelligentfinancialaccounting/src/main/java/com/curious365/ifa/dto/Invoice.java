@@ -15,6 +15,7 @@ public class Invoice implements Serializable {
 	private String invoiceDate;
 	private String invoiceType;
 	private String invoiceCustomerName;
+	private String tradeName;
 	private long invoiceCustomerId;
 	private long invoiceTransportId;
 	private double cashPaid;
@@ -107,6 +108,12 @@ public class Invoice implements Serializable {
 	}
 	public void setTaxInvoiceId(long taxInvoiceId) {
 		this.taxInvoiceId = taxInvoiceId;
+	}
+	public String getTradeName() {
+		return tradeName;
+	}
+	public void setTradeName(String tradeName) {
+		this.tradeName = tradeName;
 	}
 
 }

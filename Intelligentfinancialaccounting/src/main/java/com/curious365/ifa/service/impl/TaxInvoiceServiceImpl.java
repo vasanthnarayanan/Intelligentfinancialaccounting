@@ -43,6 +43,7 @@ public class TaxInvoiceServiceImpl implements TaxInvoiceService {
 	@Override
 	public long createInstantTaxInvoice(Invoice invoice) throws ParseException,InvoiceLimitExceeded {
 		int invoicesPerDay = 10;
+		String[] monthArr = {"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"};
 		
 		// if tax invoice already present for the estimate, skip estimate
 		if(null != invoice && invoice.getTaxInvoiceId()>0){
@@ -60,12 +61,24 @@ public class TaxInvoiceServiceImpl implements TaxInvoiceService {
 		String invoiceDate = newFormat.format(cal.getTime());
 		invoice.setInvoiceDate(invoiceDate);
 		int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+		int month = cal.get(Calendar.MONTH);
+		int year = cal.get(Calendar.YEAR);
+		// get last month last date invoice no
+		Calendar lastMonth = Calendar.getInstance();
+		lastMonth = cal;
+		lastMonth.add(Calendar.MONTH, -1);
+		lastMonth.set(Calendar.DAY_OF_MONTH, lastMonth.getActualMaximum(Calendar.DAY_OF_MONTH));
+		String lastMonthDate = newFormat.format(lastMonth.getTime());
+		Invoice lastInvoice = new Invoice(); 
+				BeanUtils.copyProperties(invoice, lastInvoice);
+		lastInvoice.setInvoiceDate(lastMonthDate);
+		Long lastMonthInvoiceId = taxInvoiceDAO.getFirstTaxInvoiceByDate(lastInvoice);
 		// check last used invoice id for the day of month
-		Long countInvoice = taxInvoiceDAO.countInvoiceByMonth(invoice);
+		Long countInvoice = taxInvoiceDAO.countInvoiceByDate(invoice);
 		if(countInvoice>invoicesPerDay){
 			throw new InvoiceLimitExceeded("Invoice Limit Exceeded for the day!");
 		}
-		Long lastInvoiceId = taxInvoiceDAO.getLastTaxInvoiceByMonth(invoice);
+		Long lastInvoiceId = taxInvoiceDAO.getLastTaxInvoiceByDate(invoice);
 		
 		long currentInvoiceId = 0;
 		if(null==lastInvoiceId){
@@ -78,7 +91,12 @@ public class TaxInvoiceServiceImpl implements TaxInvoiceService {
 			// if same day invoice are present increment invoice by 1
 				newInvoiceId = currentInvoiceId+1;				
 		}else{
-			newInvoiceId = ((dayOfMonth-1)*invoicesPerDay)+1;
+			if(null==lastMonthInvoiceId){
+				newInvoiceId = ((dayOfMonth-1)*invoicesPerDay)+1;
+			}else{
+				newInvoiceId = lastMonthInvoiceId+((dayOfMonth-1)*invoicesPerDay)+1;	
+			}
+			
 		}
 		
 		// loop until finding a suitable invoice number

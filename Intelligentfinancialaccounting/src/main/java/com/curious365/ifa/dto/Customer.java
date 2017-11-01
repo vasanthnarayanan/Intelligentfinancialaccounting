@@ -15,6 +15,7 @@ public class Customer implements Serializable {
 	
 	private String customerId;
 	private String name;
+	private String tradeName;
 	private String customerAddress;
 	private String customerPhoneNumber;
 	public String getCustomerState() {
@@ -88,6 +89,12 @@ public class Customer implements Serializable {
 	}
 	public void setCurrentBalance(double currentBalance) {
 		this.currentBalance = currentBalance;
+	}
+	public String getTradeName() {
+		return tradeName;
+	}
+	public void setTradeName(String tradeName) {
+		this.tradeName = tradeName;
 	}
 
 }

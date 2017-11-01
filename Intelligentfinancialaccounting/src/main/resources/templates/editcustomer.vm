@@ -49,6 +49,7 @@
 var flag=$!{customer.activeFlag};
 var customerId;
 var customerName;
+var tradeName;
 var initialBalance;
 var address;
 var state;
@@ -61,6 +62,7 @@ function autocompleteOnSearch(searchBoxId,query){
 						$(customerId).closest('.form-group').addClass('has-error');
 						$(customerId).parent().find('.help-block').show();
 						$(customerName).val('');
+						$(tradeName).val('');
 						$(initialBalance).val('');
 						$(address).val('');
 						$(state).val('');
@@ -91,6 +93,7 @@ function autocompleteOnSelect(searchBoxId,suggestion){
 						$(customerId).closest('.form-group').addClass('has-success');
 						}
 					customerName.val(responseData.name);
+					tradeName.val(responseData.tradeName);
 					initialBalance.val(responseData.initialBalance);
 					address.val(responseData.customerAddress);
 					state.val(responseData.customerState);
@@ -106,6 +109,7 @@ function autocompleteOnSelect(searchBoxId,suggestion){
 }
 $(function(){
 	customerName = $('#f_customername');
+	tradeName = $('#f_customertradename');
 	customerId = $('#f_customerid');
 	initialBalance = $('#f_initialbalance');
 	address = $('#f_customeraddress');
@@ -167,6 +171,12 @@ $(function(){
 	<label id="namelabel" class="control-label col-sm-2" for="f_customername">Name</label>
 	<div class="col-sm-10">
 		<input type="text" class="form-control" placeholder="Customer Name" id="f_customername" name="name" value="$!{customer.name}" autocomplete="off" required="true"/>
+	</div>
+	</div>
+	<div class="form-group">
+	<label id="namelabel" class="control-label col-sm-2" for="f_customertradename">Trade Name</label>
+	<div class="col-sm-10">
+		<input type="text" class="form-control" placeholder="Trade Name" id="f_customertradename" name="tradeName" value="$!{customer.tradeName}" autocomplete="off" required="true"/>
 	</div>
 	</div>
 	<div class="form-group">

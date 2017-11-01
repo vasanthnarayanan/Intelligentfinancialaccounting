@@ -23,6 +23,7 @@ $("document").ready(function(){
             { "data": "taxInvoiceDate" },
             { "data": "taxInvoiceType" },
             { "data": "taxInvoiceCustomerName" },
+            { "data": "consignorName" },
             { "data": "remarks" },
             { "data": null,
             	"render": function(data,type,row,meta){
@@ -37,6 +38,20 @@ $("document").ready(function(){
 		var month = $('#f_estimatemonth').val();
 		var monthOfYear = month+'-'+year;
 		listTaxInvoicesTable.ajax.url('/listTaxInvoicesForMonth?monthOfYear='+monthOfYear).load();
+	});
+	
+	$('#exportInvMonthAsPDF').on('click',function(){
+		var year = $('#f_estimateyear').val();
+		var month = $('#f_estimatemonth').val();
+		var monthOfYear = month+'-'+year;
+		window.location = '/exportInvMonthAsPDF?monthOfYear='+monthOfYear;
+	});
+	
+	$('#exportInvMonthAsCSV').on('click',function(){
+		var year = $('#f_estimateyear').val();
+		var month = $('#f_estimatemonth').val();
+		var monthOfYear = month+'-'+year;
+		window.location = '/exportInvMonthAsCSV?monthOfYear='+monthOfYear;
 	});
 	
 });
@@ -104,11 +119,16 @@ $("document").ready(function(){
 	            	<th>Date</th>
 	            	<th>Type</th>
 	                <th>Customer Name</th>
+	                <th>Trade Name</th>
 	                <th>Remarks</th>
 	                <th>Actions</th>
 	            </tr>
 	        </thead>
     		</table>    	
+    	</div>
+    	<div class="row">
+    	<a href="#" class="btn btn-default" id="exportInvMonthAsCSV">Export CSV</a>
+    	<a href="#" class="btn btn-default" id="exportInvMonthAsPDF">Export PDF</a>
     	</div>
     </div>
   </div>

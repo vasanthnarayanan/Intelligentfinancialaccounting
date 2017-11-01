@@ -71,7 +71,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 	@Override
 	public boolean addNewCustomer(Customer bean) {
 		// setting current balance with initial balance
-		int flag = jdbcTemplate.update(QueryConstants.INSERT_CUSTOMER, new Object[]{bean.getName(),Constants.ACTIVE,bean.getInitialBalance(),bean.getInitialBalance(),bean.getCustomerAddress(),bean.getCustomerState(),bean.getCustomerPhoneNumber(),bean.getTaxUniqueId(),bean.getPriveleged()});
+		int flag = jdbcTemplate.update(QueryConstants.INSERT_CUSTOMER, new Object[]{bean.getName(),bean.getTradeName(),Constants.ACTIVE,bean.getInitialBalance(),bean.getInitialBalance(),bean.getCustomerAddress(),bean.getCustomerState(),bean.getCustomerPhoneNumber(),bean.getTaxUniqueId(),bean.getPriveleged()});
 		if(flag>0){
 			return true;
 		}else{
@@ -137,7 +137,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 	
 	@Override
 	public boolean editCustomer(Customer bean) {
-		int flag = jdbcTemplate.update(QueryConstants.UPDATE_CUSTOMER, new Object[]{bean.getName(),bean.getInitialBalance(),bean.getCustomerAddress(),bean.getCustomerState(),bean.getCustomerPhoneNumber(),bean.getTaxUniqueId(),bean.getPriveleged(),bean.getCustomerId()});
+		int flag = jdbcTemplate.update(QueryConstants.UPDATE_CUSTOMER, new Object[]{bean.getName(),bean.getTradeName(),bean.getInitialBalance(),bean.getCustomerAddress(),bean.getCustomerState(),bean.getCustomerPhoneNumber(),bean.getTaxUniqueId(),bean.getPriveleged(),bean.getCustomerId()});
 		if(flag>0){
 			return true;
 		}else{

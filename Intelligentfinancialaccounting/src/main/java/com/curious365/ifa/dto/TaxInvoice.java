@@ -31,6 +31,7 @@ public class TaxInvoice implements Serializable {
 	private String consigneeTaxUniqueId;
 	
 	// consignor details
+	private String consignorName; // tradename
 	private String consignorAddress;
 	private String consignorState;
 	private String consignorStateCode;
@@ -243,6 +244,12 @@ public class TaxInvoice implements Serializable {
 	}
 	public void setTotalTaxInWords(String totalTaxInWords) {
 		this.totalTaxInWords = totalTaxInWords;
+	}
+	public String getConsignorName() {
+		return consignorName;
+	}
+	public void setConsignorName(String consignorName) {
+		this.consignorName = consignorName;
 	}
 	private List<?> records;
 

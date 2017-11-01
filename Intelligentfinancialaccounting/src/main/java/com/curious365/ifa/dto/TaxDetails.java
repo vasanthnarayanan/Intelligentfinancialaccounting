@@ -11,6 +11,8 @@ public class TaxDetails implements Serializable {
 	
 	private int serialNo;
 	private String hsnCode;
+	private double bagQuantity;
+	private double totalValue;
 	private double taxableValue;
 	private double cgst;
 	private double cgstamount;
@@ -92,6 +94,18 @@ public class TaxDetails implements Serializable {
 	}
 	public void setSerialNo(int serialNo) {
 		this.serialNo = serialNo;
+	}
+	public double getBagQuantity() {
+		return bagQuantity;
+	}
+	public void setBagQuantity(double bagQuantity) {
+		this.bagQuantity = bagQuantity;
+	}
+	public double getTotalValue() {
+		return totalValue;
+	}
+	public void setTotalValue(double totalValue) {
+		this.totalValue = totalValue;
 	}
 
 }
