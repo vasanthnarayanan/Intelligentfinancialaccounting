@@ -6,9 +6,11 @@ import java.io.FileWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +32,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.curious365.ifa.common.Roles;
 import com.curious365.ifa.dto.AuditedSales;
@@ -41,6 +45,7 @@ import com.curious365.ifa.dto.Invoice;
 import com.curious365.ifa.dto.TaxDetails;
 import com.curious365.ifa.dto.TaxInvoice;
 import com.curious365.ifa.exceptions.InvoiceLimitExceeded;
+import com.curious365.ifa.exceptions.NoStockInHand;
 import com.curious365.ifa.service.InvoiceService;
 import com.curious365.ifa.service.TaxInvoiceService;
 import com.curious365.ifa.util.NumberToWord;
@@ -931,6 +936,64 @@ public class TaxInvoiceController {
 			}
 		}
 
+	}
+	
+	@RequestMapping(value="/editTaxInvoice",method=RequestMethod.GET)
+	public ModelAndView editTaxInvoiceDisplay(@RequestParam(value = "error", required = false) String error,
+	@RequestParam(value = "info", required = false) String info,@RequestParam long invoiceid){
+		log.debug("entering..");
+		ModelAndView mav = new ModelAndView();
+		TaxInvoice taxInvoice = null;
+		try {
+			taxInvoice = taxInvoiceService.getTaxInvoiceWtDetails(invoiceid);
+		} catch (Exception e) {
+		}
+		mav.addObject("taxinvoice", taxInvoice);
+		mav.addObject("records", taxInvoice.getRecords());
+		mav.addObject("error", error);
+		mav.addObject("info", info);
+		mav.setViewName("edittaxinvoice");
+		return mav;
+	}
+	
+	@RequestMapping(value="/editTaxInvoice",method=RequestMethod.POST)
+	public ModelAndView editTaxInvoice(@ModelAttribute Invoice invoice){
+		boolean hasError= false;
+		UriComponentsBuilder urlBuilder = UriComponentsBuilder.fromPath("redirect:/showSalesSheet");
+		log.debug("entering..");
+		ModelAndView mav = new ModelAndView();
+		// converting to db supported date format
+		SimpleDateFormat formatter= 
+				new SimpleDateFormat("dd/MMM/yyyy");
+		DateFormat newformatter ; 
+		Date newdate = null ; 
+		newformatter = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			newdate = (Date)newformatter.parse(invoice.getInvoiceDate());
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		String dateString=formatter.format(newdate);
+		invoice.setInvoiceDate(dateString);
+		try{
+			taxInvoiceService.edit(invoice);	
+		}catch (NoStockInHand e) {
+			hasError= true;
+			urlBuilder.queryParam("error", e.getMessage());
+		} catch (Exception e) {
+			hasError= true;
+			urlBuilder.queryParam("error", "Unable to update invoice. Please try with valid data");
+		}finally{
+			if(hasError){
+				urlBuilder.replacePath("redirect:/editTaxInvoice");
+				urlBuilder.queryParam("invoiceid", invoice.getInvoiceId());
+			}else{
+				urlBuilder.queryParam("info", "Invoice successfully updated");
+			}
+		}
+
+		mav.setViewName(urlBuilder.build().encode().toUriString());
+		return mav;
 	}
 	
 	

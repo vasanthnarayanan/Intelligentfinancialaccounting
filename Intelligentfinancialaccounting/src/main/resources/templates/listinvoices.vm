@@ -27,7 +27,7 @@ $("document").ready(function(){
             { "data": "remarks" },
             { "data": null,
             	"render": function(data,type,row,meta){
-            		return '<a href="/printTaxInvoice?invoiceid='+row.taxInvoiceId+'" title="invoice" class="taxinvoicecustomer btn btn-default btn-sm"><span class="glyphicon glyphicon-print"></span> Print</a> <a href="/editCustomer?customerid='+row.taxInvoiceId+'" title="edit" class="editcustomer btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</a> <a href="'+row.taxInvoiceId+'" title="delete" class="deletecustomer btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span> Delete</a>';
+            		return '<a href="/printTaxInvoice?invoiceid='+row.taxInvoiceId+'" title="invoice" class="taxinvoicecustomer btn btn-default btn-sm"><span class="glyphicon glyphicon-print"></span> Print</a> <a href="/editTaxInvoice?invoiceid='+row.taxInvoiceId+'" title="edit" class="editinvoice btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</a> <a href="'+row.taxInvoiceId+'" title="delete" class="deleteinvoice btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span> Delete</a>';
             	}
             }
         ]

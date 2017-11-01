@@ -355,7 +355,7 @@ $('#purchasesheet').DataTable( {
 
       </div>
       <div class="row">
-      <table id="purchasesheet" class="display" width="100%" cellspacing="0">
+      <table id="purchasesheet" class="display" width="100%" cellspacing="0"  data-page-length='50'>
         <thead>
             <tr>
             	<th>Date</th>

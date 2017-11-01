@@ -13,6 +13,8 @@ public interface TaxInvoiceDAO {
 	public Long getCurrentTaxInvoiceSeq();
 	public boolean instantCreate(Invoice invoice);
 	public TaxInvoice getTaxInvoiceById(long taxInvoiceId);
+	public boolean edit(Invoice invoice);
+	public boolean softDelete(long invoiceId);
 	public List<TaxInvoice> listInvoiceByMonth(String monthOfYear);
 	public List<TaxInvoice> listInvoiceInclPrivelegedByMonth(String monthOfYear);
 }

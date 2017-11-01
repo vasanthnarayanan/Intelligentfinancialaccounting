@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.curious365.ifa.common.InvoiceType;
 import com.curious365.ifa.dao.AuditedSalesDAO;
 import com.curious365.ifa.dao.InvoiceDAO;
 import com.curious365.ifa.dao.SalesDAO;
@@ -234,6 +235,28 @@ public class TaxInvoiceServiceImpl implements TaxInvoiceService {
 		List<AuditedSales> auditedSalesList = auditedSalesDAO.listAuditedSalesByTaxInvoiceId(taxInvoiceId);
 		taxInvoice.setRecords(auditedSalesList);
 		return taxInvoice;
+	}
+
+	@Override
+	public void edit(Invoice invoice) throws Exception {
+
+		taxInvoiceDAO.edit(invoice);
+		
+		if(InvoiceType.SALES.getValue().equalsIgnoreCase(invoice.getInvoiceType())){
+			List<AuditedSales> salesList = auditedSalesDAO.listAuditedSalesByTaxInvoiceId(invoice.getTaxInvoiceId());
+			for (AuditedSales sales : salesList) {
+				AuditedSales salesCopy = new AuditedSales();
+				BeanUtils.copyProperties(sales, salesCopy);
+				salesCopy.setSalesCustomerId(invoice.getInvoiceCustomerId());
+				salesCopy.setSalesDate(invoice.getInvoiceDate());
+				auditedSalesDAO.edit(salesCopy);
+			}
+		}else if(InvoiceType.PURCHASE.getValue().equalsIgnoreCase(invoice.getInvoiceType())){
+			// yet to implement
+		}else if(InvoiceType.FAULT.getValue().equalsIgnoreCase(invoice.getInvoiceType())){
+			// yet to implement
+		}
+	
 	}
 
 }

@@ -11,6 +11,7 @@ import com.curious365.ifa.exceptions.InvoiceLimitExceeded;
 
 public interface TaxInvoiceService {
 	public long createInstantTaxInvoice(Invoice invoice) throws ParseException, InvoiceLimitExceeded;
+	public void edit(Invoice invoice)throws Exception;
 	public void generateTaxInvoiceForMonth(Calendar cal,List<Purchase> purchases);
 	public TaxInvoice getTaxInvoiceWtDetails(long taxInvoiceId)throws Exception;
 	public List<TaxInvoice> listTaxInvoicesInclPrivilegedForMonth(String monthOfYear);

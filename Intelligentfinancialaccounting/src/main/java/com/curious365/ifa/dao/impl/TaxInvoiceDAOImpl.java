@@ -109,6 +109,38 @@ public class TaxInvoiceDAOImpl implements TaxInvoiceDAO {
 	public Long countInvoiceByDate(Invoice invoice) {
 		return jdbcTemplate.queryForObject(QueryConstants.COUNT_TAX_INVOICE_BY_DATE,Long.class,new Object[]{invoice.getInvoiceDate(),Constants.ACTIVE});
 	}
+
+
+	@Override
+	public boolean edit(Invoice invoice) {
+		int flag = jdbcTemplate.update(
+				QueryConstants.UPDATE_TAX_INVOICE,
+				new Object[] { invoice.getInvoiceDate(),
+						invoice.getInvoiceType(),
+						invoice.getInvoiceCustomerId(),
+						invoice.getInvoiceTransportId(),
+						invoice.getOrderId(),
+						invoice.getRemarks(),
+						invoice.getTaxInvoiceId() });
+		if(flag>0){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+	@Override
+	public boolean softDelete(long invoiceId) {
+		int flag = jdbcTemplate.update(
+				QueryConstants.SOFT_DELETE_TAX_INVOICE,
+				new Object[] { Constants.INACTIVE, invoiceId });
+		if(flag>0){
+			return true;
+		}else{
+			return false;
+		}
+	}
 	
 	
 }
