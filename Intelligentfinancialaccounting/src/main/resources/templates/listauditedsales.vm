@@ -25,7 +25,7 @@ $("document").ready(function(){
             { "data": "salesTax" },
             { "data": null,
             	"render": function(data,type,row,meta){
-            			return '<a href="/editAuditedSales?recordid='+row.auditedSalesId+'" title="edit" class="editcustomer btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</a>';	
+            			return '<a href="/editAuditedSales?recordid='+row.auditedSalesId+'" title="edit" class="editcustomer btn btn-default btn-sm"><span class="glyphicon glyphicon-pencil"></span> Edit</a><a href="'+row.auditedSalesId+'" title="delete" class="deleteauditedsales btn btn-default btn-sm"><span class="glyphicon glyphicon-remove"></span></a>';	
             		
             	}
             }
@@ -38,6 +38,26 @@ $("document").ready(function(){
 		var monthOfYear = month+'-'+year;
 		listAuditedSalesTable.ajax.url('/listAuditedSalesForMonth?monthOfYear='+monthOfYear).load();
 	});
+	
+	/*-- Deleting entry --*/
+	$('#invoice tbody').on('click','.deleteauditedsales',function(event){
+		window.recordId=$(this).attr('href').trim();
+		var choice=confirm('Do you want to delete this entry ?');
+		if(choice==true)
+			{
+			$.ajax({
+				type: "GET",
+				url: "/removeAuditedSales",
+				data:{salesRecordId: recordId},
+				success: function(responseData)
+				{
+					window.location.href="/listAuditedSales";
+				}
+			});
+			}
+		event.preventDefault();
+	});
+	/*-- End of deleting entry --*/
 	
 });
 </script>

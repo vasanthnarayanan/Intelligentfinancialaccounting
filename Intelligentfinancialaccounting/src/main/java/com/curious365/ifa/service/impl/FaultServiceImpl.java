@@ -79,6 +79,7 @@ public class FaultServiceImpl implements FaultService {
 			transaction.setTransactionAmount(invoice.getCashPaid());
 			transaction.setIsIncome("N");
 			transaction.setModeOfPayment(ModeOfPayment.CASH.getValue());
+			transaction.setDueDate(invoice.getInvoiceDate());
 			transaction.setTransactionStatus(TransactionStatus.COMPLETE.getValue());
 			transaction.setTransactionRemarks("Immediate Payment for invoice #"+invoiceId);
 			

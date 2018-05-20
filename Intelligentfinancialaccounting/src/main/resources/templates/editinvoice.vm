@@ -247,6 +247,9 @@ invoiceDate = $('#f_invoicedate');
 	</div>
 	</form>
 	</div>
+	#set ($totalamountwotax=0)
+	#set ($taxamount=0)
+	#set ($totalamountwttax=0)
 	<div class="row">
 	<table  id="relatedtable" class="display" width="100%" cellspacing="0">
 	<caption>Related ${invoice.invoiceType}</caption>
@@ -264,6 +267,9 @@ invoiceDate = $('#f_invoicedate');
 	<tbody>
 	#if(${invoice.invoiceType}=="SALES")
 		#foreach($record in $records)
+		#set ($totalamountwotax=$totalamountwotax+$record.salesAmount)
+		#set ($taxamount=$taxamount+$record.salesTax)
+		#set ($totalamountwttax=$totalamountwttax+$record.salesTotal)
 		<tr>
 		<td>$record.salesItemName - $record.salesItemType - $record.salesItemQuantity KG</td>
 		<td>$record.salesPieces</td>
@@ -276,6 +282,9 @@ invoiceDate = $('#f_invoicedate');
 		#end
 	#elseif(${invoice.invoiceType}=="PURCHASE")
 		#foreach($record in $records)
+		#set ($totalamountwotax=$totalamountwotax+$record.purchaseAmount)
+		#set ($taxamount=$taxamount+$record.purchaseTax)
+		#set ($totalamountwttax=$totalamountwttax+$record.purchaseTotal)
 		<tr>
 		<td>$record.purchaseItemName - $record.purchaseItemType - $record.purchaseItemQuantity KG</td>
 		<td>$record.purchasePieces</td>
@@ -288,6 +297,9 @@ invoiceDate = $('#f_invoicedate');
 		#end
 	#elseif(${invoice.invoiceType}=="FAULT")
 		#foreach($record in $records)
+		#set ($totalamountwotax=$totalamountwotax+$record.faultAmount)
+		#set ($taxamount=$taxamount+$record.faultTax)
+		#set ($totalamountwttax=$totalamountwttax+$record.faultTotal)
 		<tr>
 		<td>$record.faultItemName - $record.faultItemType - $record.faultItemQuantity KG</td>
 		<td>$record.faultPieces</td>
@@ -303,6 +315,23 @@ invoiceDate = $('#f_invoicedate');
 	</tbody>
 	</table>
 	</div>
+	<div class="row">&nbsp;</div>
+	<div class="row bg-info">
+	<div class="row"><h4 class="col-sm-2">Invoice summary</h4></div>
+	<div class="row">
+    	<label class="col-sm-2">Total Amount Before Tax</label>
+        <label id="totalamountwotax" class="col-sm-1">$totalamountwotax</label>
+    </div>
+    <div class="row">
+    	<label class="col-sm-2">Tax Amount</label>
+    	<label id="taxamount" class="col-sm-1">$taxamount</label>
+    </div>
+    <div class="row">
+    	<label class="col-sm-2">Total Amount After Tax</label>
+    	<label id="totalamountwttax" class="col-sm-1">$totalamountwttax</label>
+    </div>
+	</div>
+	
 	</div>
  </div>
 </div>

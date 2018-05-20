@@ -66,7 +66,7 @@ public class TaxInvoiceDAOImpl implements TaxInvoiceDAO {
 	
 	@Override
 	public TaxInvoice getTaxInvoiceById(long taxInvoiceId) {
-		TaxInvoice taxInvoice = null;
+		TaxInvoice taxInvoice = new TaxInvoice();
 		try{
 			taxInvoice = jdbcTemplate.queryForObject(QueryConstants.GET_TAX_INVOICE_BY_ID,  new BeanPropertyRowMapper<TaxInvoice>(TaxInvoice.class),new Object[]{Constants.ACTIVE,taxInvoiceId});
 		}catch(Exception e){

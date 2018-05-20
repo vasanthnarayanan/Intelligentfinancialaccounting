@@ -61,7 +61,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 			purchaseCopy.setInvoiceId(invoiceId);
 			purchaseDAO.create(purchaseCopy); 
 			itemDAO.increaseStock(item);
-			customerDAO.decreaseCurrentBalance(""+purchaseCopy.getPurchaseCustomerId(), purchaseCopy.getPurchasePieces()*purchaseCopy.getPurchaseCost());
+			customerDAO.decreaseCurrentBalance(""+purchaseCopy.getPurchaseCustomerId(), purchaseCopy.getPurchaseTotal());
 		}
 		
 		if(invoice.getCashPaid()>0){
@@ -71,6 +71,7 @@ public class PurchaseServiceImpl implements PurchaseService {
 			transaction.setTransactionAmount(invoice.getCashPaid());
 			transaction.setIsIncome("N");
 			transaction.setModeOfPayment(ModeOfPayment.CASH.getValue());
+			transaction.setDueDate(invoice.getInvoiceDate());
 			transaction.setTransactionStatus(TransactionStatus.COMPLETE.getValue());
 			transaction.setTransactionRemarks("Immediate Payment for invoice #"+invoiceId);
 			

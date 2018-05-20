@@ -42,7 +42,7 @@ $("document").ready(function(){
     <div id="content" class="col-sm-9">
     <div  id="invoiceprint" class="col-sm-9">
     <div class="row">
-    <h3 class="text-center"><b>Tax Invoice</b></h3>
+    <h3 class="text-center"><b>Quotation</b></h3>
     </div>
     	<div class="row">
 			<table id="taxinvoice" width="100%" border=1>
@@ -54,10 +54,10 @@ $("document").ready(function(){
 			State: ${taxinvoice.consigneeState}<br />
 			State Code: ${taxinvoice.consigneeStateCode}<br />
 			GSTIN: ${taxinvoice.consigneeTaxUniqueId}</td>
-			<td>Invoice No: ${taxinvoice.taxInvoiceId}</td><td>Dated: ${taxinvoice.taxInvoiceDate}</td>
+			<td>Invoice No: Quotation</td><td>Dated: ${taxinvoice.taxInvoiceDate}</td>
 	        </tr>
 	        <tr><td>Delivery Note:</td><td>Mode of Payment:</td></tr>
-	        <tr><td>Despatched through:</td><td>Destination:</td></tr>
+	        <tr><td>Despatched through:</td><td>Destination: </td></tr>
 	        <tr>
 			<td rowspan=3 colspan=5>
 			<b><u>Consignor</u></b><br />
@@ -84,12 +84,14 @@ $("document").ready(function(){
 	        #foreach($record in $records)
 	        <tr class="noBorder">
 	        <td>$velocityCount</td>
-	        <td>$record.salesItemName $record.salesItemQuantity KG $record.salesItemType</td>
+	        <td rowspan=2>$record.salesItemName $record.salesRemarks <br/> <small>$record.salesItemQuantity KG $record.salesItemType</small></td>
 	        <td>$record.hsnCode</td>
 	        <td>$record.salesPieces</td>
 	        <td>BG</td>
 	        <td>$record.salesCost</td>
 	        <td>$record.salesAmount</td>
+	        </tr>
+	        <tr>
 	        </tr>
 	        #end
 	        <!-- <tr class="noBorder">

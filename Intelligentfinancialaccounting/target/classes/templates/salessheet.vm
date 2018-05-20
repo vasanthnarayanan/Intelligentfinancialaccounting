@@ -66,7 +66,7 @@ $('#salessheet').DataTable( {
 		"processing": true,
         "serverSide": true,
         "ordering": false,
-        "searching": false,
+        "searching": true,
         "ajax": "/listActiveSales?rowCount="+${rowCount},
         "columns": [
         	{ "data": "recordDate", "visible": false },

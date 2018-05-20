@@ -55,6 +55,7 @@ var customerId;
 var enableInstantPay = false;
 var showTax = false;
 $(function(){
+	$('#datavalidalert').hide();
 customerName = $('#customernameid');
 customerId = $('#customeridid');
 var max_rows = 10; // maximum record rows allowed
@@ -211,6 +212,16 @@ function initiateactions(){
 	    	$(this).parent().find('.stockclass').val(suggestion.data[0].stock);
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+' Stock In Hand '+suggestion.data[0].stock+'</small>');
+	    	var piecesclass = $(this).closest('.form-group').find('.piecesclass');
+	    	if(suggestion.data[0].hasDecimal==1){
+	    		if(!piecesclass.attr('step')){
+	    			piecesclass.attr('step','any');
+	    		}	
+	    	}else{
+	    		if(piecesclass.attr('step')){
+	    			piecesclass.removeAttr('step');
+	    		}	
+	    	}
 		    $(this).closest('.form-group').find('.costclass').val(suggestion.data[0].cost);
 		    $(this).closest('.form-group').find('.taxrateclass').val(suggestion.data[0].taxRate);
 	    	}
@@ -219,7 +230,8 @@ function initiateactions(){
 	  $('.piecesclass').on('blur',function(event){
 	  	var itemId = $(this).closest('.form-group').find('.itemidclass').val();
 	  	if(itemId){
-	  	var salesPieces = parseInt($(this).val());
+	  		$('#datavalidalert').hide();
+	  	var salesPieces = parseFloat($(this).val());
 	  	var stockInHand = parseInt($(this).closest('.form-group').find('.stockclass').val());
 	  	if(salesPieces>stockInHand){
 	  			if(sflag>0){
@@ -272,12 +284,13 @@ function initiateactions(){
 				sflag = sflag+1;
 			}
 		}else{
-			alert("Please select an Item!");
+			$('#datavalidalert').show();
+			$('#datavalidalert span').text("Please select an Item!");
 		}
 	  });
 	    
 	  $('.costclass').on('blur',function(event){
-		  	var salesPieces = parseInt($(this).closest('.form-group').find('.piecesclass').val());
+		  	var salesPieces = parseFloat($(this).closest('.form-group').find('.piecesclass').val());
 			var cost = parseFloat($(this).closest('.form-group').find('.costclass').val());
 			var taxRate = parseFloat($(this).closest('.form-group').find('.taxrateclass').val());
 			var total = salesPieces*cost;
@@ -420,6 +433,10 @@ function initiateactions(){
 		        <strong>Note!</strong> $info
 		    </div>
 	    #end
+	    <div class="alert alert-danger" id="datavalidalert">
+		        <a href="#" class="close" data-dismiss="alert">&times;</a>
+		        <strong>Error!</strong> <span></span>
+		    </div>
     	</div>
       <form id="addsales" class="form-horizontal" action="/addMultiSales" method="post">
 		<fieldset>

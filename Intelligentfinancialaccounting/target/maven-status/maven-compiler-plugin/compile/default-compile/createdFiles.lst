@@ -45,7 +45,6 @@ com\curious365\ifa\controller\AccountingController.class
 com\curious365\ifa\service\PurchaseService.class
 com\curious365\ifa\service\impl\InvoiceServiceImpl.class
 com\curious365\ifa\dto\InvoiceOrder.class
-com\curious365\ifa\controller\PrintController.class
 com\curious365\ifa\service\impl\SalesServiceImpl.class
 com\curious365\ifa\service\impl\ItemServiceImpl.class
 com\curious365\ifa\dao\impl\TransportDAOImpl.class

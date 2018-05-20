@@ -181,7 +181,7 @@ public class AccountingServiceImpl implements AccountingService {
 	@Override
 	public boolean editTransaction(Transaction record) throws Exception  {
 		Transaction oldData = getRecordById(record.getTransactionRecordId());
-		if(record.getIsIncome().equalsIgnoreCase(oldData.getIsIncome())&&record.getTransactionCustomerId()==oldData.getTransactionCustomerId()){
+		if(record.getIsIncome().equalsIgnoreCase(oldData.getIsIncome())&&record.getTransactionCustomerId().equals(oldData.getTransactionCustomerId())){
 			// same transaction income type and customer
 			double change = record.getTransactionAmount() - oldData.getTransactionAmount();
 			if(change>0){
@@ -197,7 +197,7 @@ public class AccountingServiceImpl implements AccountingService {
 					customerDAO.decreaseCurrentBalance(""+oldData.getTransactionCustomerId(), -change);
 				}
 			}	
-		}else if(record.getTransactionCustomerId()==oldData.getTransactionCustomerId()){
+		}else if(record.getTransactionCustomerId().equals(oldData.getTransactionCustomerId())){
 			// same customer
 			// reversing effect , so double effect changes
 			if(record.getIsIncome().equalsIgnoreCase("Y")){

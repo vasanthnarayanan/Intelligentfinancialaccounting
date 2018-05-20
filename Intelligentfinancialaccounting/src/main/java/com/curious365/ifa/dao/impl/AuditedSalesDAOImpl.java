@@ -11,7 +11,6 @@ import com.curious365.ifa.common.Constants;
 import com.curious365.ifa.common.QueryConstants;
 import com.curious365.ifa.dao.AuditedSalesDAO;
 import com.curious365.ifa.dto.AuditedSales;
-import com.curious365.ifa.dto.Sales;
 
 @Repository
 public class AuditedSalesDAOImpl implements AuditedSalesDAO {
@@ -120,6 +119,19 @@ public class AuditedSalesDAOImpl implements AuditedSalesDAO {
 			
 		}
 		return auditedSales;
+	}
+
+
+	@Override
+	public boolean softDelete(long recordid) {
+		int flag = jdbcTemplate.update(
+				QueryConstants.SOFT_DELETE_AUDITED_SALES,
+				new Object[] { Constants.INACTIVE, recordid });
+		if(flag>0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 	
 }

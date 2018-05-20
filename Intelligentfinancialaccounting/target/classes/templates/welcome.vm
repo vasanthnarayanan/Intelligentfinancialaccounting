@@ -69,7 +69,6 @@ $("document").ready(function(){
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
       <div class="list-group">
-      	<a href="/taxInvoicePrint" class="list-group-item">Tax Invoice Print</a>
         <a href="/backup" class="list-group-item">Backup</a>
         <a href="/restore" class="list-group-item">Restore</a>
       </div>

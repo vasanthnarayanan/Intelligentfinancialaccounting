@@ -91,6 +91,7 @@ public class SalesServiceImpl implements SalesService {
 			transaction.setTransactionAmount(invoice.getCashPaid());
 			transaction.setIsIncome("Y");
 			transaction.setModeOfPayment(ModeOfPayment.CASH.getValue());
+			transaction.setDueDate(invoice.getInvoiceDate());
 			transaction.setTransactionStatus(TransactionStatus.COMPLETE.getValue());
 			transaction.setTransactionRemarks("Immediate Payment for invoice #"+invoiceId);
 			

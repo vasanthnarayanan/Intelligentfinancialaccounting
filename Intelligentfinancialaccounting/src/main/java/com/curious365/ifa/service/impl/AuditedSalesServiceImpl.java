@@ -40,4 +40,9 @@ public class AuditedSalesServiceImpl implements AuditedSalesService {
 		return auditedSalesDAO.getRecordById(recordid);
 	}
 
+	@Override
+	public void remove(long recordid) throws Exception {
+		auditedSalesDAO.softDelete(recordid);
+	}
+
 }

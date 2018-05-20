@@ -348,9 +348,15 @@ public class TaxInvoiceController {
 			}
 			Map<String, TaxDetails> hsnSummaryMap = new HashMap<String, TaxDetails>();
 			for (TaxInvoice taxInvoiceAbstract : taxInvoiceList) {
-				TaxInvoice taxInvoice = taxInvoiceService
+				TaxInvoice taxInvoice = null;
+				try{
+				 taxInvoice = taxInvoiceService
 						.getTaxInvoiceWtDetails(taxInvoiceAbstract
 								.getTaxInvoiceId());
+				}catch(Exception e){
+					e.printStackTrace();
+					throw e;
+				}
 				taxInvoice.setConsigneeName("Dharmalakshmi Traders");
 				taxInvoice
 						.setConsigneeAddress("24 ,vallalar koil street, Redhills,Chennai-600052");
@@ -368,13 +374,17 @@ public class TaxInvoiceController {
 				double invoiceValue = 0;
 				boolean interState = false;
 				Map<String, TaxDetails> taxDetailsMap = new HashMap<String, TaxDetails>();
+				try{
 				if (taxInvoice.getConsigneeStateCode().equalsIgnoreCase(
 						taxInvoice.getConsignorStateCode())) {
 					interState = false;
 				} else {
 					interState = true;
 				}
+				}catch(Exception e){
+				}
 				int sno = 1;
+				try{
 				for (Object auditSales : taxInvoice.getRecords()) {
 					AuditedSales auditedSales = (AuditedSales) auditSales;
 
@@ -509,7 +519,11 @@ public class TaxInvoiceController {
 					}
 
 				}
+				}catch(Exception e){
+					throw e;
+				}
 
+				try{
 				for (Map.Entry<String, TaxDetails> entry : taxDetailsMap
 						.entrySet()) {
 					taxDetailsList.add(entry.getValue());
@@ -533,7 +547,10 @@ public class TaxInvoiceController {
 						.convertNumberToWords((int) roundedInvoiceValue));
 				taxInvoice.setTotalTaxInWords(numberToWord
 						.convertNumberToWords((int) totalTax));
-
+				}catch(Exception e){
+					throw e;
+				}
+				try{
 				for (TaxDetails taxDetails : taxDetailsList) {
 					if(null != taxInvoice.getConsignorTaxUniqueId()){
 						// b2b content	
@@ -606,6 +623,10 @@ public class TaxInvoiceController {
 					
 				}
 				
+				}catch(Exception e){
+					throw e;
+				}
+				
 			}
 			b2bWriter.flush();
 			b2clWriter.flush();
@@ -649,6 +670,7 @@ public class TaxInvoiceController {
 			writeToZipFile("downloads/hsn.csv", zipOS);
 			
 		} catch (Exception e) {
+			e.printStackTrace();
 			try {
 				b2bWriter.close();
 			} catch (Exception ne) {

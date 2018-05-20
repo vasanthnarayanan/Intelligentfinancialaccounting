@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -115,10 +116,20 @@ public class SalesRestController {
 		int strtRow=datatable.getStart();
 		int endRow=(datatable.getStart()+datatable.getLength());
 		try {
-			if(authentication.getAuthorities().contains(new SimpleGrantedAuthority(Roles.ROLE_ADMIN.getValue()))){
-				salesList = salesService.listAllActiveSalesInclPriveleged(strtRow, endRow);
+			if(StringUtils.isEmpty(datatable.getSearch().get("value"))){
+				if(authentication.getAuthorities().contains(new SimpleGrantedAuthority(Roles.ROLE_ADMIN.getValue()))){
+					salesList = salesService.listAllActiveSalesInclPriveleged(strtRow, endRow);
+				}else{
+					salesList = salesService.listAllActiveSales(strtRow, endRow);
+				}
+				salesMap.put("recordsFiltered", datatable.getRowCount());
 			}else{
-				salesList = salesService.listAllActiveSales(strtRow, endRow);
+				if(authentication.getAuthorities().contains(new SimpleGrantedAuthority(Roles.ROLE_ADMIN.getValue()))){
+					salesList = salesService.listAllActiveSalesInclPriveleged(strtRow, endRow);
+				}else{
+					salesList = salesService.listAllActiveSales(strtRow, endRow);
+				}
+				salesMap.put("recordsFiltered", datatable.getFiltered());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -126,7 +137,7 @@ public class SalesRestController {
 		salesMap.put("data", salesList);
 		salesMap.put("draw", datatable.getDraw());
 		salesMap.put("recordsTotal", datatable.getRowCount());
-		salesMap.put("recordsFiltered", datatable.getRowCount());
+		
 		return salesMap;
 	}
 	

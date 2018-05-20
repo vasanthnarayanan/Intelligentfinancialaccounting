@@ -8,6 +8,7 @@ import com.curious365.ifa.dto.AuditedSales;
 public interface AuditedSalesDAO {
 	public boolean create(AuditedSales record);
 	public boolean edit(AuditedSales record);
+	public boolean softDelete(long recordid);
 	public AuditedSales getRecordById(long recordid);
 	public List<AuditedSales> listAuditedSalesByTaxInvoiceId(long taxInvoiceId);
 	public List<AuditedSales> listAuditedSalesByMonthOfYear(String monthOfYear);

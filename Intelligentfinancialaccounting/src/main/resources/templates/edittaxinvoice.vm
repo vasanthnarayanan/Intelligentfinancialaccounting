@@ -135,16 +135,16 @@ invoiceDate = $('#f_invoicedate');
 	$('#relatedtable tbody').on('click','.deleterecord',function(event){
 		window.recordId=$(this).attr('href').trim();
 		var url = "invalid";
-		var redirect ="/showSalesSheet";
+		var redirect ="/editTaxInvoice?invoiceid=${taxinvoice.taxInvoiceId}";
 		if($(this).hasClass("deletesales")){
-			url = "removeSales?salesRecordId="+recordId;
-			redirect ="/showSalesSheet";
+			url = "removeAuditedSales?salesRecordId="+recordId;
+			redirect ="/editTaxInvoice?invoiceid=${taxinvoice.taxInvoiceId}";
 		}else if($(this).hasClass("deletepurchase")){
 			url = "removePurchase?purchaseRecordId="+recordId;
-			redirect ="/showPurchaseSheet";
+			redirect ="/editTaxInvoice?invoiceid=${taxinvoice.taxInvoiceId}";
 		}else if($(this).hasClass("deletefault")){
 			url = "removeFault?faultRecordId="+recordId;
-			redirect ="/showFaultSheet";
+			redirect ="/editTaxInvoice?invoiceid=${taxinvoice.taxInvoiceId}";
 		}else{
 			alert("Invalid delete operation");
 			event.preventDefault();
@@ -185,10 +185,9 @@ invoiceDate = $('#f_invoicedate');
   <div class="row">
     <div id="sidenavigation" class="col-sm-3">
       <div class="list-group">
-	    <a href="/addTransaction" class="list-group-item">Add Transaction</a>
-		<a href="/showSalesSheet" class="list-group-item">Sales Sheet</a>
-		<a href="/showPurchaseSheet" class="list-group-item">Purchase Sheet</a>
-		<a href="/showFaultSheet" class="list-group-item">Fault Sheet</a>
+      	<a href="/listTaxInvoices" class="list-group-item">Tax Invoices</a>
+      	<a href="/listAuditedSales" class="list-group-item">Audited Sales</a>
+        <a href="#" class="list-group-item">Reports</a>
       </div>
     </div>
     <div id="content" class="col-sm-9">
@@ -247,6 +246,9 @@ invoiceDate = $('#f_invoicedate');
 	</div>
 	</form>
 	</div>
+	#set ($totalamountwotax=0)
+	#set ($taxamount=0)
+	#set ($totalamountwttax=0)
 	<div class="row">
 	<table  id="relatedtable" class="display" width="100%" cellspacing="0">
 	<caption>Related ${taxinvoice.taxInvoiceType}</caption>
@@ -264,6 +266,9 @@ invoiceDate = $('#f_invoicedate');
 	<tbody>
 	#if(${taxinvoice.taxInvoiceType}=="SALES")
 		#foreach($record in $records)
+		#set ($totalamountwotax=$totalamountwotax+$record.salesAmount)
+		#set ($taxamount=$taxamount+$record.salesTax)
+		#set ($totalamountwttax=$totalamountwttax+$record.salesTotal)
 		<tr>
 		<td>$record.salesItemName - $record.salesItemType - $record.salesItemQuantity KG</td>
 		<td>$record.salesPieces</td>
@@ -276,6 +281,9 @@ invoiceDate = $('#f_invoicedate');
 		#end
 	#elseif(${taxinvoice.taxInvoiceType}=="PURCHASE")
 		#foreach($record in $records)
+		#set ($totalamountwotax=$totalamountwotax+$record.purchaseAmount)
+		#set ($taxamount=$taxamount+$record.purchaseTax)
+		#set ($totalamountwttax=$totalamountwttax+$record.purchaseTotal)
 		<tr>
 		<td>$record.purchaseItemName - $record.purchaseItemType - $record.purchaseItemQuantity KG</td>
 		<td>$record.purchasePieces</td>
@@ -288,6 +296,9 @@ invoiceDate = $('#f_invoicedate');
 		#end
 	#elseif(${taxinvoice.taxInvoiceType}=="FAULT")
 		#foreach($record in $records)
+		#set ($totalamountwotax=$totalamountwotax+$record.faultAmount)
+		#set ($taxamount=$taxamount+$record.faultTax)
+		#set ($totalamountwttax=$totalamountwttax+$record.faultTotal)
 		<tr>
 		<td>$record.faultItemName - $record.faultItemType - $record.faultItemQuantity KG</td>
 		<td>$record.faultPieces</td>
@@ -302,6 +313,22 @@ invoiceDate = $('#f_invoicedate');
 		
 	</tbody>
 	</table>
+	</div>
+	<div class="row">&nbsp;</div>
+	<div class="row bg-info">
+	<div class="row"><h4 class="col-sm-2">Invoice summary</h4></div>
+	<div class="row">
+    	<label class="col-sm-2">Total Amount Before Tax</label>
+        <label id="totalamountwotax" class="col-sm-1">$totalamountwotax</label>
+    </div>
+    <div class="row">
+    	<label class="col-sm-2">Tax Amount</label>
+    	<label id="taxamount" class="col-sm-1">$taxamount</label>
+    </div>
+    <div class="row">
+    	<label class="col-sm-2">Total Amount After Tax</label>
+    	<label id="totalamountwttax" class="col-sm-1">$totalamountwttax</label>
+    </div>
 	</div>
 	</div>
  </div>

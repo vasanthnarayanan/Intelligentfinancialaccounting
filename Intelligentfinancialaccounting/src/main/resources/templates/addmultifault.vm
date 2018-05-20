@@ -208,14 +208,23 @@ function initiateactions(){
 	    	$(this).parent().find('.itemidclass').val(suggestion.data[0].itemId);
 	    	$(this).parent().find('.help-block').show();
 	    	$(this).parent().find('.help-block').html('<small>'+suggestion.data[0].quantity+' kg  '+suggestion.data[0].type+'</small>');
+	    	var piecesclass = $(this).closest('.form-group').find('.piecesclass');
+	    	if(suggestion.data[0].hasDecimal==1){
+	    		if(!piecesclass.attr('step')){
+	    			piecesclass.attr('step','any');
+	    		}	
+	    	}else{
+	    		if(piecesclass.attr('step')){
+	    			piecesclass.removeAttr('step');
+	    		}	
+	    	}
 		    $(this).closest('.form-group').find('.costclass').val(suggestion.data[0].cost);
 		    $(this).closest('.form-group').find('.taxrateclass').val(suggestion.data[0].taxRate);
 	    	}
 	    });
 	    
 	    $('.piecesclass').on('blur',function(event){
-		  	var faultPieces = parseInt($(this).val());
-			var faultPieces = parseInt($(this).closest('.form-group').find('.piecesclass').val());
+		  	var faultPieces = parseFloat($(this).val());
 			var cost = parseFloat($(this).closest('.form-group').find('.costclass').val());
 			var taxRate = parseFloat($(this).closest('.form-group').find('.taxrateclass').val());
 			var total = faultPieces*cost;
@@ -260,7 +269,7 @@ function initiateactions(){
 		  });
 		    
 		  $('.costclass').on('blur',function(event){
-			  	var faultPieces = parseInt($(this).closest('.form-group').find('.piecesclass').val());
+			  	var faultPieces = parseFloat($(this).closest('.form-group').find('.piecesclass').val());
 			var cost = parseFloat($(this).closest('.form-group').find('.costclass').val());
 			var taxRate = parseFloat($(this).closest('.form-group').find('.taxrateclass').val());
 			var total = faultPieces*cost;

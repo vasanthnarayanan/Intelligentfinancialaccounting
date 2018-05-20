@@ -1,6 +1,8 @@
 package com.curious365.ifa.dto;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Datatable implements Serializable {
 
@@ -13,8 +15,10 @@ public class Datatable implements Serializable {
 	private int start;
 	private int length;
 	private long rowCount;
+	private long filtered;
 	private long customerId;
 	private double initialBalance;
+	private Map<String,String> search = new HashMap<String,String>();
 	
 	public long getCustomerId() {
 		return customerId;
@@ -51,6 +55,18 @@ public class Datatable implements Serializable {
 	}
 	public void setInitialBalance(double initialBalance) {
 		this.initialBalance = initialBalance;
+	}
+	public Map<String,String> getSearch() {
+		return search;
+	}
+	public void setSearch(Map<String,String> search) {
+		this.search = search;
+	}
+	public long getFiltered() {
+		return filtered;
+	}
+	public void setFiltered(long filtered) {
+		this.filtered = filtered;
 	}
 
 }

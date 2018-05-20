@@ -86,6 +86,13 @@ public class Item implements Serializable {
 		this.vendor = vendor;
 	}
 
+	public int getHasDecimal() {
+		return hasDecimal;
+	}
+	public void setHasDecimal(int hasDecimal) {
+		this.hasDecimal = hasDecimal;
+	}
+
 	private long quantityId;
 	private long quantity;
 	private String type;
@@ -94,5 +101,6 @@ public class Item implements Serializable {
 	private double taxRate;
 	private long stock;
 	private String vendor;
+	private int hasDecimal;
 	private int activeFlag;
 }
